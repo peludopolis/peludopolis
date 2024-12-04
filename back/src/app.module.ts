@@ -17,9 +17,9 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     AppointmentsModule,
     ServicesCatalogModule,
     TipsModule,
-    NotificationsModule,
+    NotificationsModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService]
 })
 export class AppModule {}
