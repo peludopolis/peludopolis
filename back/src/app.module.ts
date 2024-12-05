@@ -8,9 +8,24 @@ import { AppointmentsModule } from './modules/appointments/appointments.module';
 import { ServicesCatalogModule } from './modules/services-catalog/services-catalog.module';
 import { TipsModule } from './modules/tips/tips.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import typeOrmConfig from './config/typeOrm.config';
+import { UploadImageModule } from './modules/image-upload/image-upload.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [typeOrmConfig],
+    }),
+
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) =>
+        configService.get('typeorm'),
+    }),
+
     AuthModule,
     UsersModule,
     PostsModule,
@@ -18,6 +33,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     ServicesCatalogModule,
     TipsModule,
     NotificationsModule,
+    UploadImageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
