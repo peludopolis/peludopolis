@@ -1,0 +1,4 @@
+* Instalar Lucide para los Iconos
+npm install lucide-react.
+
+* la carpeta sounds debe estar dentro de la carpeta public.
