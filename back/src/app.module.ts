@@ -12,30 +12,37 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import typeOrmConfig from './config/typeOrm.config';
 import { UploadImageModule } from './modules/image-upload/image-upload.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [typeOrmConfig],
+      load: [typeOrmConfig]
     }),
 
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) =>
-        configService.get('typeorm'),
+      useFactory: (configService: ConfigService) => configService.get('typeorm')
     }),
 
     AuthModule,
+    JwtModule.register({
+      global: true,
+      signOptions: {
+        expiresIn: '1h'
+      },
+      secret: process.env.JWT_SECRET
+    }),
     UsersModule,
     PostsModule,
     AppointmentsModule,
     ServicesCatalogModule,
     TipsModule,
     NotificationsModule,
-    UploadImageModule,
+    UploadImageModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService]
 })
 export class AppModule {}
