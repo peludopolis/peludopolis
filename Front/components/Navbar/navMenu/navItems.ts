@@ -5,6 +5,7 @@ import { NavItem } from './constants';
 export const navItems: NavItem[] = [
     { href: '/servicios', label: 'Servicios', soundKey: 'servicios', icon: '🐶' },
     { href: '/turnos', label: 'Turnos', soundKey: 'turnos', icon: '🐱' },
-    { href: '/foro', label: 'Foro', soundKey: 'foro', icon: '🐕' },
-    { href: '/about', label: 'About', soundKey: 'about', icon: '🐈‍⬛' },
+    { href: '/comunidad', label: 'Comunidad', soundKey: 'foro', icon: '🐕‍🦺' },
+    { href: '/Tips', label: 'Tips', soundKey: 'about', icon: '😽' },
+    { href: '/nosotros', label: 'Nosotros', soundKey: 'about', icon: '🐈‍⬛' },
 ];

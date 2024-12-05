@@ -2,12 +2,13 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import NavMenu from '../navMenu/NavMenu'
+import NavMenu from './navMenu/NavMenu'
+import NavAuth from './navAuth/NavAuth'
 
 const Navbar: React.FC = () => {
 
   return (
-    <nav className="w-full bg-white shadow-md">
+    <nav className="w-full bg-light ">
       <div className="grid grid-cols-3 gap-4 px-4 py-2 items-center">
         {/* Columna 1: Logo */}
         <div className="flex items-center justify-start">
@@ -40,18 +41,7 @@ const Navbar: React.FC = () => {
 
         {/* Columna 3: Menú de Autenticación */}
         <div className="flex items-center justify-end space-x-4">
-          <Link
-            href="/login"
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-          >
-            Iniciar Sesión
-          </Link>
-          <Link
-            href="/signup"
-            className="px-4 py-2 border border-blue-500 text-blue-500 rounded-md hover:bg-blue-50 transition-colors"
-          >
-            Registrarse
-          </Link>
+          <NavAuth />
         </div>
       </div>
     </nav>
