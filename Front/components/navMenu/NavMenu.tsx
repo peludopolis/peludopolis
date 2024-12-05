@@ -40,7 +40,7 @@ const NavAnimals: React.FC = () => {
     };
 
     return (
-        <nav className="bg-white shadow-lg relative">
+        <nav className="bg-white shadow-lg relative font-fun">
             {/* Controles del sonido */}
             <SoundToggle isSoundEnabled={isSoundEnabled} toggleSound={toggleSound} />
 
