@@ -10,7 +10,7 @@ export class FileValidationPipe implements PipeTransform {
   transform(value: Express.Multer.File) {
     if (value === null || value === undefined) {
       throw new BadRequestException(
-        `No se encontró ningún archivo en la solicitud`,
+        `No se encontró ningún imagen en la solicitud`,
       );
     }
     if (value.size > this.maxSize) {
