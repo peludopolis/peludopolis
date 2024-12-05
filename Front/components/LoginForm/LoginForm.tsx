@@ -62,17 +62,17 @@ const router = useRouter(); // Obtiene la función de enrutamiento de Next.js
                     password: validatePassword(data.password),   
         });
     }, [data]); // El efecto se ejecuta cuando cambian los datos del formulario o los campos tocados
-
+ 
 return (
 <form className="max-w-sm mx-auto flex flex-col gap-3" onSubmit={(e) => handleSubmit(e)}> 
     <div>
         <label 
         className="block mb-2 text-sm font-medium"
         htmlFor="">
-            User
+            Usuario
         </label>
         <input type="text" 
-        className="bg-tertiary border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
         placeholder="name@email.com"
         name="email"
         onChange={(e)=>handleChange(e)} // Llama a handleChange cuando cambia el valor
@@ -80,17 +80,17 @@ return (
         onBlur={(e)=> handleBlur(e)}  // Llama a handleBlur cuando el campo pierde el foco
         />
         {touched.email &&  
-        <p className="text-red">{errors.email}</p>}
+        <p className="text-black">{errors.email}</p>}
     </div>
     
     <div>
         <label 
         className="block mb-2 text-sm font-medium"
         htmlFor="">
-            Password
+            Contraseña
         </label>
         <input type="password" 
-        className="bg-tertiary border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
         placeholder="password"
         name="password"
         onChange={(e)=>handleChange(e)}
@@ -98,7 +98,7 @@ return (
         onBlur={(e)=> handleBlur(e)}
         />
         {touched.password &&
-        <p className="text-red">{errors.password}</p>}
+        <p className="text-black">{errors.password}</p>}
     </div>
     <button type="submit"
     className={"text-white bg-primary hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" 

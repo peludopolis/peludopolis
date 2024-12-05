@@ -5,7 +5,7 @@ const apiUrl= process.env.API_URL || "http://localhost:5432";
 
 // Función para registrar un nuevo usuario, realiza una solicitud POST con los datos proporcionados
 export const register = async (data: UserData) => {
-    const res = await fetch(`${apiUrl}/users/register`, {
+    const res = await fetch(`${apiUrl}/auth/signup`, {
         method: 'POST', // Método de la solicitud HTTP
         body: JSON.stringify(data), // Convierte los datos del usuario a formato JSON para enviarlos en el cuerpo de la solicitud
         headers: {
@@ -17,7 +17,7 @@ export const register = async (data: UserData) => {
 
 // Función para iniciar sesión de un usuario, realiza una solicitud POST con los datos de inicio de sesión proporcionados
 export const login = async (data: UserLogin) => {
-    const res = await fetch(`${apiUrl}/users/login`, {
+    const res = await fetch(`${apiUrl}/auth/signin`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
