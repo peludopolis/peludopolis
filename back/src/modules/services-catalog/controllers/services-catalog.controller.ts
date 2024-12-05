@@ -1,5 +1,7 @@
-import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, Patch, Post } from '@nestjs/common';
 import { ServicesCatalogService } from '../services/services-catalog.service';
+import { CreateServicesCatalogDto } from '../dtos/create-services-catalog.dto';
+import { UpdateServicesCatalogDto } from '../dtos/update-services-catalog.dto';
 
 
 @Controller('services-catalog')
@@ -18,5 +20,15 @@ export class ServicesCatalogController {
             throw new NotFoundException(`Servicio con id ${id} no encontrado`);
         }
         return service;
+    }
+
+    @Post()
+    create(@Body() createServiceCatalogDto: CreateServicesCatalogDto) {
+        return this.servicesCatalogService.create(createServiceCatalogDto);
+    }
+
+    @Patch(':id')
+    update(@Param('id') id: string, @Body() updateServiceCatalogDto: UpdateServicesCatalogDto) {
+        return this.servicesCatalogService.update(id, updateServiceCatalogDto);
     }
 }
