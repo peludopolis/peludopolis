@@ -16,10 +16,11 @@ const Navbar: React.FC = () => {
             <Image
               src="/logo.svg"
               alt="Logo"
-              width={100}
-              height={100}
+              width={80}
+              height={80}
             />
           </Link>
+          <h1>Peludopolis</h1>
         </div>
 
         {/* Columna 2: Search Input y Navegación */}
@@ -35,7 +36,7 @@ const Navbar: React.FC = () => {
 
           {/* Fila de Navegación */}
           <div className="flex space-x-4 justify-center">
-            <NavMenu />
+          {/*   <NavMenu /> */}
           </div>
         </div>
 
@@ -44,6 +45,7 @@ const Navbar: React.FC = () => {
           <NavAuth />
         </div>
       </div>
+      <NavMenu />
     </nav>
   );
 };
