@@ -40,9 +40,7 @@ const NavAnimals: React.FC = () => {
     };
 
     return (
-        <nav className="bg-white shadow-lg relative font-fun">
-            {/* Controles del sonido */}
-            <SoundToggle isSoundEnabled={isSoundEnabled} toggleSound={toggleSound} />
+        <nav className="bg-white shadow-lg relative font-fun rounded-lg">
 
             {/* Contenedor general */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -59,7 +57,7 @@ const NavAnimals: React.FC = () => {
                     </button>
 
                     {/* Menú de navegación (pantallas grandes) */}
-                    <div className="hidden md:flex space-x-8">
+                    <div className="hidden md:flex space-x-4">
                         {navItems.map((item) => (
                             <NavItemComponent
                                 key={item.href}
@@ -69,6 +67,8 @@ const NavAnimals: React.FC = () => {
                             />
                         ))}
                     </div>
+                    {/* Controles del sonido */}
+                    <SoundToggle isSoundEnabled={isSoundEnabled} toggleSound={toggleSound} />
                 </div>
 
                 {/* Menú desplegable (pantallas pequeñas) */}
