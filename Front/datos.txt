@@ -1,0 +1,16 @@
+Colors
+
+Primary: #F9A826 (Naranja claro, cálido y amigable).
+Secondary: #A7C7E7 (Azul claro, fresco y confiable).
+Success: #98FB98 (Verde menta, ideal para botones o mensajes positivos).
+Danger: #FF7F50 (Coral, para advertencias o botones importantes).
+Warning: #FFD700 (Amarillo brillante, para destacar promociones o alertas suaves).
+Info: #FADADD (Rosa pastel, para detalles amigables o secciones decorativas).
+Light: #F5F5DC (Beige, para fondos claros).
+Dark: #D2B48C (Marrón claro, para texto oscuro o detalles de contraste).
+Muted: #F0F0F0 (Gris claro, para áreas secundarias o menos destacadas).
+
+Fonts
+
+Poppins (Google Fonts): Moderna y redondeada, fácil de leer y amigable.
+Chewy: Ideal para transmitir un toque juguetón y relacionado con mascotas.

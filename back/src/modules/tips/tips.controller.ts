@@ -9,7 +9,7 @@ import {
 import { TipsService } from './tips.service';
 import { CreateTipDto } from './dto/create-tips.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FileValidationPipe } from './pipes/file-validation.pipe';
+import { FileValidationPipe } from '../image-upload/pipes/file-validation.pipe';
 
 @Controller('tips')
 export class TipsController {
