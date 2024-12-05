@@ -7,7 +7,7 @@ import NavItemComponent from "./NavItem";
 import SoundToggle from "./SoundToggle";
 import { Menu, X } from "lucide-react";
 
-const NavAnimals: React.FC = () => {
+const NavMenu: React.FC = () => {
     const [isSoundEnabled, setIsSoundEnabled] = useState(true);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Estado del menú móvil
     const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
@@ -89,6 +89,6 @@ const NavAnimals: React.FC = () => {
     );
 };
 
-export default NavAnimals;
+export default NavMenu;
 
 
