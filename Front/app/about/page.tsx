@@ -3,7 +3,7 @@ import { ServiceSectionProps } from "../interfaces/index";
 
 const ServiceSection = ({ title, description, imageSrc, imageAlt }: ServiceSectionProps) => {
   return (
-    <div className="flex flex-col md:flex-row items-center justify-between mb-16">
+    <div className="flex flex-col md:flex-row items-center justify-between mb-16 px-6 md:px-12">
       <div className="w-full md:w-1/2 text-center md:text-left">
         <h3 className="text-2xl font-semibold text-gray-100">{title}</h3>
         <p className="text-lg text-gray-400 mt-4">{description}</p>
@@ -24,8 +24,8 @@ const ServiceSection = ({ title, description, imageSrc, imageAlt }: ServiceSecti
 
 const Page = () => {
   return (
-    <div className="max-w-screen-xl mx-auto px-8 py-16 bg-black text-white">
-      <header className="text-center mb-16">
+    <div className="flex flex-col min-h-screen bg-gray-700 mt-[10px]">
+      <header className="text-center mb-16 p-8">
         <h1 className="text-5xl font-extrabold text-gray-100 leading-tight">
           Sobre Nosotros
         </h1>

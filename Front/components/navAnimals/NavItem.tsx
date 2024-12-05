@@ -36,7 +36,7 @@ const NavItem: React.FC<Props> = ({ href, label, soundKey, icon, isSoundEnabled,
                 }}
                 className="
           flex items-center h-full 
-          text-gray-700 
+          text-white
           hover:text-blue-600 
           transition duration-300 
           transform 

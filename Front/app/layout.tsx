@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import Footer from "./Footer/page"
 
 import NavAnimals from "../components/navAnimals/NavAnimals";
 
@@ -33,6 +34,7 @@ export default function RootLayout({
         <NavAnimals />
         <main>
         {children}
+        <Footer />
         </main>
       </body>
     </html>
