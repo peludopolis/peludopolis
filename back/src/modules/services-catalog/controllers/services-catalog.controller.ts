@@ -1,6 +1,7 @@
 import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
 import { ServicesCatalogService } from '../services/services-catalog.service';
 
+
 @Controller('services-catalog')
 export class ServicesCatalogController {
     constructor(private readonly servicesCatalogService: ServicesCatalogService) {}
@@ -12,7 +13,7 @@ export class ServicesCatalogController {
 
     @Get(':id') 
     async findOne(@Param('id') id: string) {
-        const service = await this.servicesCatalogService.findOne(Number(id));
+        const service = await this.servicesCatalogService.findOne(id);
         if(!service) {
             throw new NotFoundException(`Servicio con id ${id} no encontrado`);
         }

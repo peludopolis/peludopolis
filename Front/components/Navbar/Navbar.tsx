@@ -6,7 +6,7 @@ const Navbar = () => {
       <nav className="text-aliceblue flex justify-between items-center p-4 bg-primary-color shadow-md">
         <div className="container flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2">
-            HOME
+            HOME start
           </Link>
           <input
             type="text"
