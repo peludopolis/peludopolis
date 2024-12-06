@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 
 import Navbar from "../components/Navbar/Navbar";
+import BadgeWhatsapp from "../components/badgeWhatsapp/BadgeWhatsapp";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,6 +35,7 @@ export default function RootLayout({
         <main>
         {children}
         </main>
+        <BadgeWhatsapp />
       </body>
     </html>
   );

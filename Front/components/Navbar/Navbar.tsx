@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { PawPrint } from 'lucide-react';
+
 
 import NavMenu from './navMenu/NavMenu'
 import NavAuth from './navAuth/NavAuth'
@@ -12,15 +14,12 @@ const Navbar: React.FC = () => {
       <div className="grid grid-cols-3 gap-4 px-4 py-2 items-center">
         {/* Columna 1: Logo */}
         <div className="flex items-center justify-start">
-          <Link href="/" className='m-3'>
-            <Image
-              src="/logo.svg"
-              alt="Logo"
-              width={80}
-              height={80}
-            />
-          </Link>
-          <h1>Peludopolis</h1>
+          <div className="flex items-center justify-center gap-2 font-bold text-3xl tracking-wide">
+            <PawPrint className="w-12 h-12 " color="#F9A826" />
+            <span className="text-blue-500 font-fun drop-shadow-[0_0_10px_rgba(37,99,235,0.9)]">
+              Peludopolis
+            </span>
+          </div>
         </div>
 
         {/* Columna 2: Search Input y Navegación */}
@@ -36,7 +35,7 @@ const Navbar: React.FC = () => {
 
           {/* Fila de Navegación */}
           <div className="flex space-x-4 justify-center">
-          {/*   <NavMenu /> */}
+            {/*   <NavMenu /> */}
           </div>
         </div>
 
