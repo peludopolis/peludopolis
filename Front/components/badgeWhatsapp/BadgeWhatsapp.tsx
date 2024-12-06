@@ -14,7 +14,7 @@ const WhatsAppBadge: React.FC<{}> = () => {
         className="fixed bottom-6 left-6 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition-colors duration-300 flex items-center justify-center z-50"
       >
       <Phone size={30} />
-      <span className="ml-2 hidden sm:inline">Whatsapp</span>
+      <span className="ml-2 hidden sm:inline"></span>
     </a >
     </div >
   );
