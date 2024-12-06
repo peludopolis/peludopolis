@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Post } from "src/modules/posts/entities/post.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity('services_catalog')
@@ -14,4 +15,7 @@ export class ServicesCatalog {
 
     @Column('decimal', { precision: 10, scale: 2})
     price: number;
+
+    @OneToMany(() => Post, (post) => post.service)
+    posts: Post[];
 }
