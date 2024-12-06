@@ -25,7 +25,7 @@ const NavAuth = () => {
                     onClick={toggleDropdown}
                     className="bg-blue-400 hover:bg-blue-500 px-4 py-2 rounded-md text-white text-sm font-medium shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                    Mi Cuenta
+                    Mi Cuenta ▽
                 </button>
 
                 {isDropdownOpen && (
