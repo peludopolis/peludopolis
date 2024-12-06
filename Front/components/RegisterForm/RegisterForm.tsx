@@ -105,7 +105,10 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
     return (
         <form className="max-w-sm mx-auto flex flex-col gap-3" onSubmit={handleSubmit}>
             <div>
-                <label className="block mb-2 text-sm font-medium">Nombre</label>
+                <h1 className="m-5 text-center font-bold">Crear Cuenta</h1>
+                <h3>Campos con * son requeridos</h3>
+                <h3>¿Aún no tienes una cuenta? Obtén los beneficios de Peludóólis haciendo una cita.</h3>
+                <label className="block mb-2 text-sm font-medium mt-4">*Nombre</label>
                 <input
                     type="text"
                     className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -120,7 +123,7 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
             </div>
 
             <div>
-                <label className="block mb-2 text-sm font-medium">Correo Electrónico</label>
+                <label className="block mb-2 text-sm font-medium">*Correo Electrónico</label>
                 <input
                     type="text"
                     className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -134,7 +137,7 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
             </div>
 
             <div>
-                <label className="block mb-2 text-sm font-medium">Contraseña</label>
+                <label className="block mb-2 text-sm font-medium">*Contraseña</label>
                 <input
                     type="password"
                     className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -148,7 +151,7 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
             </div>
 
             <div>
-                <label className="block mb-2 text-sm font-medium">Confirmar Contraseña</label>
+                <label className="block mb-2 text-sm font-medium">*Confirmar Contraseña</label>
                 <input
                     type="password"
                     className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -162,7 +165,7 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
             </div>
 
             <div>
-                <label className="block mb-2 text-sm font-medium">Dirección</label>
+                <label className="block mb-2 text-sm font-medium">*Dirección</label>
                 <input
                     type="text"
                     className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -176,7 +179,7 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
             </div>
 
             <div>
-                <label className="block mb-2 text-sm font-medium">Teléfono</label>
+                <label className="block mb-2 text-sm font-medium">*Teléfono</label>
                 <input
                     type="text"
                     className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -191,9 +194,9 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
 
             <button
                 type="submit"
-                className="text-white bg-primary hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                className="text-white bg-primary hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center m-2 mb-10"
             >
-                Registrarse
+                Registro
             </button>
         </form>
     );
