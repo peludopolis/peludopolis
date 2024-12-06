@@ -32,6 +32,9 @@ export class User {
   @Column({ default: false })
   isAdmin: boolean;
 
+  @Column({ nullable: true })
+  profilePicture: string;
+
   // @OneToMany(() => Appointment, (appointment) => appointment.user)
   // appointments: Appointment[];
 
