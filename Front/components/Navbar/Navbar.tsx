@@ -17,7 +17,7 @@ const Navbar: React.FC = () => {
           <div className="flex items-center justify-center gap-2 font-bold text-3xl tracking-wide">
             <PawPrint className="w-12 h-12 " color="#F9A826" />
             <span className="text-blue-500 font-fun drop-shadow-[0_0_10px_rgba(37,99,235,0.9)]">
-              Peludopolis
+              Peludópolis
             </span>
           </div>
         </div>
