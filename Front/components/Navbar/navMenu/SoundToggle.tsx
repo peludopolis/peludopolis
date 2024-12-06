@@ -10,7 +10,7 @@ interface Props {
 }
 
 const SoundToggle: React.FC<Props> = ({ isSoundEnabled, toggleSound }) => (
-    <div className="absolute top-4 right-4 z-10">
+    <div className="ml-6">
         <button
             onClick={toggleSound}
             className="

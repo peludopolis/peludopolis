@@ -23,7 +23,7 @@ const NavItem: React.FC<Props> = ({ href, label, soundKey, icon, isSoundEnabled,
 
         setTimeout(() => {
             router.push(href); // Navega después del retraso
-        }, 1200); // 1000 ms = 1 segundo
+        }, 1200); // 1200 ms = 1.2 segundos
     };
 
     return (
@@ -35,15 +35,15 @@ const NavItem: React.FC<Props> = ({ href, label, soundKey, icon, isSoundEnabled,
                     if (isSoundEnabled) playSound(soundKey);
                 }}
                 className="
-          flex items-center h-full 
-          text-white
-          hover:text-blue-600 
-          transition duration-300 
-          transform 
-          hover:scale-110 
-          hover:font-semibold
-          px-3 py-2
-        "
+                    flex items-center h-full 
+                    text-white hover:text-blue-600 
+                    md:text-gray-700 md:hover:text-blue-400  /* Mantener ambos colores para pantallas grandes */
+                    transition duration-300 
+                    transform 
+                    hover:scale-110 
+                    hover:font-semibold
+                    px-3 py-2
+                "
             >
                 <span className="mr-2 text-xl">{icon}</span>
                 {label}
@@ -51,17 +51,17 @@ const NavItem: React.FC<Props> = ({ href, label, soundKey, icon, isSoundEnabled,
 
             <span
                 className="
-          absolute 
-          bottom-0 
-          left-0 
-          h-1 
-          bg-blue-500 
-          origin-left 
-          scale-x-0 
-          group-hover:scale-x-100 
-          transition-transform 
-          duration-300
-        "
+                    absolute 
+                    bottom-0 
+                    left-0 
+                    h-1 
+                    bg-blue-400
+                    origin-left 
+                    scale-x-0 
+                    group-hover:scale-x-100 
+                    transition-transform 
+                    duration-300
+                "
                 style={{ width: "100%" }}
             />
         </div>
@@ -69,4 +69,3 @@ const NavItem: React.FC<Props> = ({ href, label, soundKey, icon, isSoundEnabled,
 };
 
 export default NavItem;
-

@@ -8,7 +8,7 @@ const Hero = () => {
             
             <div className="relative z-10 text-center px-4">
                 <h1 className="text-5xl md:text-6xl font-bold mb-6">
-                    Bienvenido a Peludopolis!
+                    Bienvenido a <span className="font-fun">Peludopolis!</span>
                 </h1>
                 <p className="text-xl md:text-2xl mb-8">
                     Hoy es un gran dia para consentir a tu mascota, encuentra el mejor servicio para el!
