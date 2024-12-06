@@ -1,7 +1,9 @@
+
+import { Post } from 'src/modules/posts/entities/post.entity';
 import {
   Column,
   Entity,
-  // OneToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique
 } from 'typeorm';
@@ -32,15 +34,12 @@ export class User {
   @Column({ default: false })
   isAdmin: boolean;
 
-  @Column({ nullable: true })
-  profilePicture: string;
-
   // @OneToMany(() => Appointment, (appointment) => appointment.user)
   // appointments: Appointment[];
 
-  // @OneToMany(() => Post, (post) => post.user)
-  // posts: Post[];
-
-  // @OneToMany(() => Comment, (comment) => comment.user)
-  // comments: Comment[];
+  @OneToMany(() => Post, (post) => post.user)
+  posts: Post[];
+=======
+  @Column({ nullable: true })
+  profilePicture: string;
 }
