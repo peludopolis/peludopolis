@@ -2,10 +2,12 @@
 
 
 export const animalSounds = {
-    servicios: '/sounds/dog-bark.mp3',
-    turnos: '/sounds/cat-meow.mp3',
-    foro: '/sounds/big-dog.mp3',
-    about: '/sounds/cat-purr.mp3'
+    inicio: '/sounds/big-dog.mp3',
+    servicios: '/sounds/cat-meow.mp3',
+    turnos: '/sounds/dog-bark.mp3',
+    comunidad: '/sounds/cat-purr.mp3',
+    tips: '/sounds/small-dog.mp3',
+    nosotros: '/sounds/small-cat.mp3'
 } as const;
 
 export type SoundKey = keyof typeof animalSounds;
