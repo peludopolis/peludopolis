@@ -31,3 +31,4 @@ body {
 .shake-on-hover:hover {
   animation: shake 0.5s ease-in-out;
 }
+

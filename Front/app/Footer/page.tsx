@@ -27,7 +27,7 @@ const Page = () => {
                 <div>
                     <p className="text-lg font-semibold text-black">Teléfono:</p>
                     <p className="text-black mb-4">
-                        <strong>341-64532342</strong>
+                        <strong>3513908198</strong>
                     </p>
                     <p className="text-lg font-semibold text-black">Trabaja con nosotros:</p>
                     <p>
