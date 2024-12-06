@@ -4,8 +4,8 @@ import { NavItem } from './constants';
 
 export const navItems: NavItem[] = [
     { href: '/servicesPets', label: 'Servicios', soundKey: 'servicios', icon: '🐶' },
-    { href: '/turnos', label: 'Turnos', soundKey: 'turnos', icon: '🐱' },
-    { href: '/comunidad', label: 'Comunidad', soundKey: 'foro', icon: '🐕‍🦺' },
-    { href: '/Tips', label: 'Tips', soundKey: 'about', icon: '😽' },
-    { href: '/nosotros', label: 'Nosotros', soundKey: 'about', icon: '🐈‍⬛' },
+    { href: '/appointments', label: 'Turnos', soundKey: 'turnos', icon: '🐱' },
+    { href: '/comunity', label: 'Comunidad', soundKey: 'foro', icon: '🐕‍🦺' },
+    { href: '/tips', label: 'Tips', soundKey: 'about', icon: '😽' },
+    { href: '/about', label: 'Nosotros', soundKey: 'about', icon: '🐈‍⬛' },
 ];
