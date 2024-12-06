@@ -25,4 +25,9 @@ export class UpdateUserDto {
   @IsNotEmpty()
   @IsOptional()
   phone?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  profilePicture?: string;
 }
