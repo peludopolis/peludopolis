@@ -64,10 +64,12 @@ const router = useRouter(); // Obtiene la función de enrutamiento de Next.js
     }, [data]); // El efecto se ejecuta cuando cambian los datos del formulario o los campos tocados
  
 return (
-<form className="max-w-sm mx-auto flex flex-col gap-3" onSubmit={(e) => handleSubmit(e)}> 
+<form className="max-w-sm mx-auto flex flex-col gap-3 m-20" onSubmit={(e) => handleSubmit(e)}> 
     <div>
+        <h1 className="m-5 text-center font-bold">Soy Cliente</h1>
+        <h3>Si ya eres parte de Peludópolis. Inicia sesión con tu correo electrónico y contraseña.</h3>
         <label 
-        className="block mb-2 text-sm font-medium"
+        className="block mb-2 text-sm font-medium mt-4"
         htmlFor="">
             Usuario
         </label>
@@ -101,9 +103,14 @@ return (
         <p className="text-black">{errors.password}</p>}
     </div>
     <button type="submit"
-    className={"text-white bg-primary hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" 
+    className={"text-white bg-primary hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" 
 
-    }> Submit </button>
+    }> Iniciar Sesion </button>
+
+    <a href="/forgot-password" className="text-blue-500 hover:text-blue-700 text-sm mt-2 inline-block">
+        ¿Olvidaste tu contraseña?
+    </a>
+
     
 </form>
 )
