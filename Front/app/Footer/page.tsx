@@ -3,7 +3,7 @@ import { FaPhone, FaLightbulb, FaNewspaper, FaRegFileAlt } from 'react-icons/fa'
 
 const Page = () => {
     return (
-        <footer className="bg-gray-700 h-auto py-8 px-6 flex flex-col items-center gap-8">
+        <footer className="bg-gray-700 h-auto py-8 px-6 flex flex-col items-center gap-8 mt-4">
             <div className="flex flex-col items-start p-6 border border-gray-400 rounded-lg bg-gray-50 shadow-lg w-full">
                 <div className="grid grid-cols-4 gap-6 mb-4 w-full">
                     <div className="flex items-center gap-2">

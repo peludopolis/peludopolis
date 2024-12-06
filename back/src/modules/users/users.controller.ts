@@ -2,10 +2,15 @@ import {
   Body,
   Controller,
   Delete,
+  FileTypeValidator,
   Get,
+  MaxFileSizeValidator,
   Param,
+  ParseFilePipe,
   Put,
-  UseGuards
+  UploadedFile,
+  UseGuards,
+  UseInterceptors
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { RolesGuard } from '../auth/guard/roles.guard';
@@ -14,7 +19,7 @@ import { Roles } from '../auth/guard/roles.decorator';
 import { UserRole } from './user-role.enum';
 import { ValidateIdDto } from './dtos/validateId.dto';
 import { UpdateUserDto } from './dtos/updateUser.dto';
-
+import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -35,11 +40,25 @@ export class UsersController {
 
   @Put(':id')
   @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor('profilePicture'))
   async updateUser(
     @Param() params: ValidateIdDto,
-    @Body() UpdateUserDto: UpdateUserDto
+    @Body() UpdateUserDto: UpdateUserDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 200000 }),
+          new FileTypeValidator({ fileType: /jpeg|jpg|png|webp/ })
+        ]
+      })
+    )
+    profilePicture?: Express.Multer.File
   ) {
-    return await this.usersService.updateUser(params.id, UpdateUserDto);
+    return await this.usersService.updateUser(
+      params.id,
+      UpdateUserDto,
+      profilePicture
+    );
   }
 
   @Delete(':id')

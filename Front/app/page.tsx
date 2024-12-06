@@ -1,12 +1,10 @@
-import Hero from '../components/Hero/Hero';
-import Slider from '../components/Slider/Slider'; // Asegúrate de que la ruta sea la correcta
+import Hero from '../components/hero/Hero';
 
 export default function Home() {
   return (
     <>
-      <Hero />
-      <Slider />
-      <h1 className="text-center text-4xl font-bold text-gray-100 mt-8">Home Peludopolis</h1>
+    <Hero/>
+    <h1>Home Peludopolis</h1>
     </>
   );
 }
