@@ -7,7 +7,7 @@ import NavItemComponent from "./NavItem";
 import SoundToggle from "./SoundToggle";
 import { Menu, X } from "lucide-react";
 
-const NavAnimals: React.FC = () => {
+const NavMenu: React.FC = () => {
     const [isSoundEnabled, setIsSoundEnabled] = useState(true);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Estado del menú móvil
     const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
@@ -40,14 +40,10 @@ const NavAnimals: React.FC = () => {
     };
 
     return (
-        <nav className="bg-white shadow-lg relative">
-            {/* Controles del sonido */}
-            <SoundToggle isSoundEnabled={isSoundEnabled} toggleSound={toggleSound} />
-
+        <nav className="bg-gray-700 shadow-lg relative font-fun rounded-lg">
             {/* Contenedor general */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between h-16 items-center">
-
+                <div className="flex justify-around h-16 items-center">
 
                     {/* Menú hamburguesa (visible en pantallas medianas y más pequeñas) */}
                     <button
@@ -59,7 +55,7 @@ const NavAnimals: React.FC = () => {
                     </button>
 
                     {/* Menú de navegación (pantallas grandes) */}
-                    <div className="hidden md:flex space-x-8">
+                    <div className="hidden md:flex space-x-4">
                         {navItems.map((item) => (
                             <NavItemComponent
                                 key={item.href}
@@ -69,6 +65,9 @@ const NavAnimals: React.FC = () => {
                             />
                         ))}
                     </div>
+
+                    {/* Controles del sonido */}
+                    <SoundToggle isSoundEnabled={isSoundEnabled} toggleSound={toggleSound} />
                 </div>
 
                 {/* Menú desplegable (pantallas pequeñas) */}
@@ -89,6 +88,4 @@ const NavAnimals: React.FC = () => {
     );
 };
 
-export default NavAnimals;
-
-
+export default NavMenu;

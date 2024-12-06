@@ -1,3 +1,4 @@
+
 import { Post } from 'src/modules/posts/entities/post.entity';
 import {
   Column,
@@ -38,7 +39,7 @@ export class User {
 
   @OneToMany(() => Post, (post) => post.user)
   posts: Post[];
-
-  // @OneToMany(() => Comment, (comment) => comment.user)
-  // comments: Comment[];
+=======
+  @Column({ nullable: true })
+  profilePicture: string;
 }

@@ -1,22 +1,52 @@
-import Link from "next/link"
+import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { PawPrint } from 'lucide-react';
 
 
-const Navbar = () => {
-    return (
-      <nav className="text-aliceblue flex justify-between items-center p-4 bg-primary-color shadow-md">
-        <div className="container flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-2">
-            HOME start
-          </Link>
-          <input
-            type="text"
-            placeholder="Busca un servicio"
-            className="border rounded-lg px-3 py-1.5 text-sm w-1/3 text-black"
-          />
+import NavMenu from './navMenu/NavMenu'
+import NavAuth from './navAuth/NavAuth'
+
+const Navbar: React.FC = () => {
+
+  return (
+    <nav className="w-full bg-light ">
+      <div className="grid grid-cols-3 gap-4 px-4 py-2 items-center">
+        {/* Columna 1: Logo */}
+        <div className="flex items-center justify-start">
+          <div className="flex items-center justify-center gap-2 font-bold text-3xl tracking-wide">
+            <PawPrint className="w-12 h-12 " color="#F9A826" />
+            <span className="text-blue-500 font-fun drop-shadow-[0_0_10px_rgba(37,99,235,0.9)]">
+              Peludópolis
+            </span>
+          </div>
         </div>
-      </nav>
-    );
-  };
-  
-  export default Navbar;
-  
+
+        {/* Columna 2: Search Input y Navegación */}
+        <div className="flex flex-col space-y-2">
+          {/* Fila de Search Input */}
+          <div>
+            <input
+              type="search"
+              placeholder="Buscar..."
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Fila de Navegación */}
+          <div className="flex space-x-4 justify-center">
+            {/*   <NavMenu /> */}
+          </div>
+        </div>
+
+        {/* Columna 3: Menú de Autenticación */}
+        <div className="flex items-center justify-end space-x-4">
+          <NavAuth />
+        </div>
+      </div>
+      <NavMenu />
+    </nav>
+  );
+};
+
+export default Navbar;
