@@ -1,5 +1,6 @@
 // constants.ts
 
+import { ReactNode } from "react";
 
 export const animalSounds = {
     inicio: '/sounds/big-dog.mp3',
@@ -16,5 +17,5 @@ export interface NavItem {
     href: string;
     label: string;
     soundKey: SoundKey;
-    icon: string;
+    icon: ReactNode;
 }
