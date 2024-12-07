@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { SoundKey } from "./constants";
@@ -9,7 +9,7 @@ interface Props {
     href: string;
     label: string;
     soundKey: SoundKey;
-    icon: string;
+    icon: ReactNode;
     isSoundEnabled: boolean;
     playSound: (soundKey: SoundKey) => void;
 }
