@@ -36,7 +36,8 @@ export class UsersService {
         password: hashedPassword,
         profilePicture:
           'https://media.istockphoto.com/id/1495088043/es/vector/icono-de-perfil-de-usuario-avatar-o-icono-de-persona-foto-de-perfil-s%C3%ADmbolo-de-retrato.jpg?s=612x612&w=0&k=20&c=mY3gnj2lU7khgLhV6dQBNqomEGj3ayWH-xtpYuCXrzk=',
-        isAdmin: false
+        isAdmin: false,
+        posts: []
       };
       console.log(newUser);
       const createdUser = await this.usersRepository.createUser(newUser);
