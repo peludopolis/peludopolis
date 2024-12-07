@@ -30,7 +30,7 @@ const AppointmentPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold mb-6">Citas Programadas</h1>
+      <h1 className="text-black text-3xl font-bold mb-6">Citas Programadas</h1>
 
       {/* Botón para agregar nueva cita */}
       <button

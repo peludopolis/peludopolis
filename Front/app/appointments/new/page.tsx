@@ -66,7 +66,7 @@ const NewAppointmentPage: React.FC = () => {
       <h1 className="text-3xl text-center font-bold mb-6 mt-4">Agendar Nueva Cita</h1>
       <form className="max-w-md mx-auto space-y-4" onSubmit={handleSubmit}>
         <div>
-          <label className="block mb-2 text-sm font-medium">Nombre del Cliente</label>
+          <label className="text-black block mb-2 text-sm font-medium">Nombre del Cliente</label>
           <input
             type="text"
             name="name"
@@ -78,7 +78,7 @@ const NewAppointmentPage: React.FC = () => {
           />
         </div>
         <div>
-          <label className="block mb-2 text-sm font-medium">Nombre de la Mascota</label>
+          <label className="text-black block mb-2 text-sm font-medium">Nombre de la Mascota</label>
           <input
             type="text"
             name="petName"
@@ -90,7 +90,7 @@ const NewAppointmentPage: React.FC = () => {
           />
         </div>
         <div>
-          <label className="block mb-2 text-sm font-medium">Fecha</label>
+          <label className="text-black block mb-2 text-sm font-medium">Fecha</label>
           <input
             type="date"
             name="date"
@@ -101,7 +101,7 @@ const NewAppointmentPage: React.FC = () => {
           />
         </div>
         <div>
-          <label className="block mb-2 text-sm font-medium">Hora</label>
+          <label className="text-black block mb-2 text-sm font-medium">Hora</label>
           <input
             type="time"
             name="time"
