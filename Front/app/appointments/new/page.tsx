@@ -63,7 +63,7 @@ const NewAppointmentPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-3xl text-center font-bold mb-6 mt-4">Agendar Nueva Cita</h1>
+      <h1 className="text-black text-3xl text-center font-bold mb-6 mt-4">Agendar Nueva Cita</h1>
       <form className="max-w-md mx-auto space-y-4" onSubmit={handleSubmit}>
         <div>
           <label className="text-black block mb-2 text-sm font-medium">Nombre del Cliente</label>
