@@ -15,7 +15,7 @@ const PetCareTips = () => {
         <div className="text-center mb-12">
           <h1 className="font-title text-primary text-4xl font-extrabold  sm:text-5xl">
             Tips de Cuidado para 
-            <span >tu mascota</span>
+            <span > tu mascota</span>
           </h1>
           <p className="mt-4 text-xl text-gray-600">
             Guía completa para el cuidado de tus mejores amigos peludos
