@@ -83,102 +83,6 @@ export class AppointmentsService {
     return horariosDisponibles;
   }
 
-  // async obtenerHorariosDisponibles(
-  //   date: Date,
-  //   serviciosSolicitados: string[], // IDs de los servicios solicitados
-  //   // duracionServicio: number,
-  // ): Promise<string[]> {
-  //   // Obtener las citas confirmadas para la fecha dada
-  //   const reservedAppointments: Appointment[] =
-  //     await this.appointmentRepository.getReservedAppointments(date);
-
-  //   // Mapear horarios ocupados por tipo de servicio
-  //   // const horariosOcupados: Record<string, Set<string>> = {};
-  //   // reservedAppointments.forEach((cita) => {
-  //   //   cita.services.forEach((servicio) => {
-  //   //     if (!horariosOcupados[servicio.id]) {
-  //   //       horariosOcupados[servicio.id] = new Set();
-  //   //     }
-
-  //   //     // Agregar los horarios ocupados al conjunto correspondiente
-  //   //     const indiceInicio = schedule.indexOf(
-  //   //       this.formtatTimeAppointments(cita.startTime),
-  //   //     );
-  //   //     const indiceFin = schedule.indexOf(
-  //   //       this.formtatTimeAppointments(cita.endTime),
-  //   //     );
-  //   //     const horarios = schedule.slice(indiceInicio, indiceFin);
-
-  //   //     horarios.forEach((hora) => horariosOcupados[servicio.id].add(hora));
-  //   //   });
-  //   // });
-
-  //   const horariosOcupados: Record<string, string[]> = {};
-
-  //   reservedAppointments.forEach((cita) => {
-  //     let horaActual = this.formtatTimeAppointments(cita.startTime); // Inicializa en el horario de inicio de la cita
-  //     const indiceInicio = schedule.indexOf(horaActual);
-
-  //     // Validar que el horario inicial está en el rango esperado
-  //     if (indiceInicio === -1) {
-  //       console.error(
-  //         `Error: El horario ${cita.startTime} no está en el horario definido.`,
-  //       );
-  //       return;
-  //     }
-
-  //     cita.services.forEach((servicio, index) => {
-  //       // Inicializar el array de horarios ocupados para el servicio si no existe
-  //       if (!horariosOcupados[servicio.id]) {
-  //         horariosOcupados[servicio.id] = [];
-  //       }
-
-  //       // Determina el rango de tiempo ocupado por el servicio (bloques de 30 minutos)
-  //       const indiceFin = schedule.indexOf(horaActual) + 1; // Bloque de 30 minutos
-  //       const horarioBloque = schedule.slice(
-  //         schedule.indexOf(horaActual),
-  //         indiceFin,
-  //       );
-
-  //       // Agregar al registro del servicio
-  //       horariosOcupados[servicio.id].push(...horarioBloque);
-
-  //       // Avanzar al siguiente bloque de tiempo para el próximo servicio
-  //       horaActual = schedule[indiceFin] || horaActual; // Mueve al siguiente bloque
-  //     });
-  //   });
-
-  //   console.log('horarios ocupados');
-  //   console.log(horariosOcupados);
-
-  //   // Calcular bloques requeridos para los servicios solicitados
-  //   const bloquesRequeridos = serviciosSolicitados.length;
-
-  //   const horariosDisponibles: string[] = [];
-
-  //   // Iterar por todos los horarios posibles
-  //   for (let i = 0; i <= schedule.length - bloquesRequeridos; i++) {
-  //     const posiblesHorarios = schedule.slice(i, i + bloquesRequeridos);
-
-  //     // Verificar si los horarios están disponibles para los servicios solicitados
-  //     const estanDisponibles = serviciosSolicitados.every(
-  //       (servicioId, index) => {
-  //         const horaInicio = posiblesHorarios[index];
-  //         return !horariosOcupados[servicioId]?.includes(horaInicio);
-  //       },
-  //     );
-  //     // Si están disponibles y son consecutivos, agregarlos
-  //     if (
-  //       estanDisponibles &&
-  //       this.sonConsecutivos(posiblesHorarios, schedule)
-  //     ) {
-  //       horariosDisponibles.push(posiblesHorarios[0]);
-  //     }
-  //   }
-
-  //   return horariosDisponibles;
-  // }
-
   async obtenerHorariosOcupados(
     date: Date,
     serviciosSolicitados: string[],
@@ -256,22 +160,6 @@ export class AppointmentsService {
       throw new BadRequestException('Algunos servicios no existen.');
     }
 
-    // const horariosDisponibles: string[] = await this.obtenerHorariosDisponibles(
-    //   date,
-    //   serviceIds,
-    // );
-
-    // console.log(horariosDisponibles);
-    // const endTime = this.convertMinutesToTime(endMinutes);
-    // console.log(startTime, endTime);
-
-    // if (!this.isTimeRangeAvailable(startTime, endTime, horariosDisponibles)) {
-    //   throw new BadRequestException(
-    //     'El horario solicitado no está disponible.',
-    //   );
-    // }
-
-    // Calcular duración total de los servicios
     const bloquesRequeridos = serviceDtos.length;
     const startIndex = schedule.indexOf(startTime);
 
@@ -341,27 +229,6 @@ export class AppointmentsService {
     });
   }
 
-  private isTimeRangeAvailable(
-    startTime: string,
-    endTime: string,
-    horariosDisponibles: string[],
-  ): boolean {
-    console.log(startTime);
-    console.log(endTime);
-    const startIndex = horariosDisponibles.indexOf(startTime);
-    const endIndex = horariosDisponibles.indexOf(endTime);
-    console.log(startIndex);
-    console.log(endIndex);
-
-    if (startIndex === -1 || endIndex === -1) {
-      return false;
-    }
-
-    return horariosDisponibles
-      .slice(startIndex, endIndex)
-      .every((time) => horariosDisponibles.includes(time));
-  }
-
   private convertTimeToMinutes(time: string): number {
     const [hours, minutes] = time.split(':').map(Number);
     return hours * 60 + minutes;
@@ -371,19 +238,6 @@ export class AppointmentsService {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
-  }
-
-  private sonConsecutivos(
-    horarios: string[],
-    todosLosHorarios: string[],
-  ): boolean {
-    const indices = horarios.map((horario) =>
-      todosLosHorarios.indexOf(horario),
-    );
-    return indices.every(
-      (valor, indice, arreglo) =>
-        indice === 0 || valor - arreglo[indice - 1] === 1,
-    );
   }
 
   private formtatTimeAppointments(time: string): string {

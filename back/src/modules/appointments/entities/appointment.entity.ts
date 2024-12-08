@@ -41,9 +41,6 @@ export class Appointment {
   @JoinTable()
   services: ServicesCatalog[];
 
-  // @Column({ default: 'pending' })
-  // status: string;
-
   // Para probar se cambió a confirmed
   @Column({
     type: 'enum',

@@ -16,7 +16,7 @@ export class QueryValidationDto {
   date: string;
 
   @IsNotEmpty({ message: 'El parámetro "services" es obligatorio.' })
-  @Transform(({ value }) => value.split(',').map((s: string) => s.trim())) // Transforma el string en un array
+  @Transform(({ value }) => value.split(',').map((s: string) => s.trim()))
   @IsArray({
     message:
       'El parámetro "services" debe ser una lista de UUIDs separados por comas.',
