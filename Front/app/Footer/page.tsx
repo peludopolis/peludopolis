@@ -39,14 +39,18 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <FaNewspaper className="text-danger" size={24} />
-            <span className="text-lg font-semibold text-black">Noticias</span>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <FaNewspaper className="text-danger" size={24} />
+              <span className="text-lg font-semibold text-black">Noticias</span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <FaRegFileAlt className="text-success" size={24} />
-            <span className="text-lg font-semibold text-black">Políticas de la empresa</span>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <FaRegFileAlt className="text-success" size={24} />
+              <span className="text-lg font-semibold text-black">Políticas de la empresa</span>
+            </div>
           </div>
         </div>
       </div>
