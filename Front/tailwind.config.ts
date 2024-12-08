@@ -1,4 +1,4 @@
-import { Config } from 'tailwindcss';
+import { Config } from "tailwindcss";
 
 export default {
   content: [
@@ -12,7 +12,9 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
         primary: "#F9A826", // Naranja claro
-        secondary: "#A7C7E7", // Azul claro
+        secondary: "#0A5EB0", // Azul claro
+        tertiary: "#9AA6B2", // Gris claro
+        quaternary: "#4B5563", // Gris oscuro
         success: "#98FB98", // Verde menta
         danger: "#FF7F50", // Coral
         warning: "#FFD700", // Amarillo brillante
@@ -30,4 +32,3 @@ export default {
   },
   plugins: [],
 } satisfies Config;
-

@@ -5,8 +5,8 @@ const ServiceSection = ({ title, description, imageSrc, imageAlt }: ServiceSecti
   return (
     <div className="flex flex-col md:flex-row items-center justify-center mb-16 px-6 md:px-12">
       <div className="w-full md:w-1/2 text-center md:text-left">
-        <h3 className="text-2xl font-semibold text-gray-100">{title}</h3>
-        <p className="text-lg text-gray-400 mt-4">{description}</p>
+        <h3 className="text-2xl font-semibold text-primary">{title}</h3>
+        <p className="text-lg text-tertiary mt-4">{description}</p>
       </div>
       <div className="w-full md:w-1/2 mt-8 md:mt-0 flex justify-center">
         <Image
@@ -24,20 +24,20 @@ const ServiceSection = ({ title, description, imageSrc, imageAlt }: ServiceSecti
 
 const Page = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-700 mt-[10px]">
+    <div className="flex flex-col min-h-screen bg-quaternary mt-[10px]">
       <header className="text-center mb-16 p-8">
-        <h1 className="text-5xl font-extrabold text-gray-100 leading-tight">
+        <h1 className="text-5xl font-extrabold text-primary leading-tight">
           Sobre Nosotros
         </h1>
-        <p className="text-xl text-gray-300 mt-4 max-w-2xl mx-auto">
+        <p className="text-xl text-tertiary mt-4 max-w-2xl mx-auto">
           Bienvenidos a <strong>Peludópolis</strong>, el espacio donde tus hijos
           peludos reciben el cuidado y amor que merecen.
         </p>
       </header>
 
       <section className="mb-16 text-center">
-        <h2 className="text-3xl font-semibold text-gray-100">Nuestra Misión</h2>
-        <p className="text-lg text-gray-400 mt-4 max-w-3xl mx-auto">
+        <h2 className="text-3xl font-semibold text-primary">Nuestra Misión</h2>
+        <p className="text-lg text-tertiary mt-4 max-w-3xl mx-auto">
           En <strong>Peludópolis</strong>, nuestra misión es ofrecer a tus
           mascotas un lugar donde puedan disfrutar del mejor cuidado posible,
           mientras compartimos consejos, historias y experiencias con nuestra
@@ -46,7 +46,7 @@ const Page = () => {
       </section>
 
       <section className="my-16">
-        <h2 className="text-3xl font-semibold text-center text-gray-100 mb-10">
+        <h2 className="text-3xl font-semibold text-center text-primary mb-10">
           Servicios
         </h2>
 
@@ -73,19 +73,20 @@ const Page = () => {
       </section>
 
       <section className="text-center mb-16">
-        <h2 className="text-3xl font-semibold text-gray-100 mb-6">
+        <h2 className="text-3xl font-semibold text-primary mb-6">
           ¡Únete a nuestra comunidad!
         </h2>
-        <p className="text-lg text-gray-400 mb-8 max-w-2xl mx-auto">
+        <p className="text-lg text-tertiary mb-8 max-w-2xl mx-auto">
           Comparte tus historias, aprende tips útiles y disfruta de ser parte
           de una familia que ama y cuida a los peludos tanto como tú.
         </p>
-        <p className="text-xl font-semibold text-gray-100">
+        <p className="text-xl font-semibold text-primary">
           Porque en Peludópolis, ¡ellos son los verdaderos protagonistas!
         </p>
       </section>
     </div>
   );
 };
+
 
 export default Page;
