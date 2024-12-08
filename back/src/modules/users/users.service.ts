@@ -1,7 +1,7 @@
 import {
   Injectable,
   InternalServerErrorException,
-  NotFoundException
+  NotFoundException,
 } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { v4 as uuid } from 'uuid';
@@ -17,7 +17,7 @@ type UserWithoutSensitiveInfo = Omit<User, 'password' | 'isAdmin'>;
 export class UsersService {
   constructor(
     private usersRepository: UsersRepository,
-    private uploadImageService: UploadImageService
+    private uploadImageService: UploadImageService,
   ) {}
 
   private generateUUID(): string {
@@ -25,7 +25,7 @@ export class UsersService {
   }
 
   async createUser(
-    createUserDto: CreateUserDto
+    createUserDto: CreateUserDto,
   ): Promise<UserWithoutSensitiveInfo> {
     try {
       const newId = this.generateUUID();
@@ -37,7 +37,8 @@ export class UsersService {
         profilePicture:
           'https://media.istockphoto.com/id/1495088043/es/vector/icono-de-perfil-de-usuario-avatar-o-icono-de-persona-foto-de-perfil-s%C3%ADmbolo-de-retrato.jpg?s=612x612&w=0&k=20&c=mY3gnj2lU7khgLhV6dQBNqomEGj3ayWH-xtpYuCXrzk=',
         isAdmin: false,
-        posts: []
+        posts: [],
+        appointments: [],
       };
       console.log(newUser);
       const createdUser = await this.usersRepository.createUser(newUser);
@@ -46,7 +47,7 @@ export class UsersService {
       return userWithoutSensitiveInfo;
     } catch (error) {
       throw new InternalServerErrorException(
-        `No se pudo crear el usuario. Por favor, intenta nuevamente más tarde. ${error}`
+        `No se pudo crear el usuario. Por favor, intenta nuevamente más tarde. ${error}`,
       );
     }
   }
@@ -57,7 +58,7 @@ export class UsersService {
       return users;
     } catch (error) {
       throw new InternalServerErrorException(
-        `No se pudo encontrar los usuarios. Por favor, intenta nuevamente más tarde. ${error}`
+        `No se pudo encontrar los usuarios. Por favor, intenta nuevamente más tarde. ${error}`,
       );
     }
   }
@@ -71,7 +72,7 @@ export class UsersService {
       return user;
     } catch (error) {
       throw new InternalServerErrorException(
-        `No se pudo encontrar el usuario. Por favor, intenta nuevamente más tarde. ${error}`
+        `No se pudo encontrar el usuario. Por favor, intenta nuevamente más tarde. ${error}`,
       );
     }
   }
@@ -85,7 +86,7 @@ export class UsersService {
       return user;
     } catch (error) {
       throw new InternalServerErrorException(
-        `No se pudo encontrar el usuario. Por favor, intenta nuevamente más tarde. ${error}`
+        `No se pudo encontrar el usuario. Por favor, intenta nuevamente más tarde. ${error}`,
       );
     }
   }
@@ -93,7 +94,7 @@ export class UsersService {
   async updateUser(
     id: string,
     updateUserDto: UpdateUserDto,
-    profilePicture?: Express.Multer.File
+    profilePicture?: Express.Multer.File,
   ) {
     try {
       const findUser = await this.usersRepository.findById(id);
@@ -112,13 +113,13 @@ export class UsersService {
       const updatedUser = {
         ...findUser,
         ...updateUserDto,
-        profilePicture: profilePictureUrl
+        profilePicture: profilePictureUrl,
       };
       const user = await this.usersRepository.updateUser(updatedUser);
       return user;
     } catch (error) {
       throw new InternalServerErrorException(
-        `No se pudo actualizar el usuario. Por favor, intenta nuevamente más tarde. ${error}`
+        `No se pudo actualizar el usuario. Por favor, intenta nuevamente más tarde. ${error}`,
       );
     }
   }
@@ -133,7 +134,7 @@ export class UsersService {
       return user;
     } catch (error) {
       throw new InternalServerErrorException(
-        `No se pudo eliminar el usuario. Por favor, intenta nuevamente más tarde. ${error}`
+        `No se pudo eliminar el usuario. Por favor, intenta nuevamente más tarde. ${error}`,
       );
     }
   }

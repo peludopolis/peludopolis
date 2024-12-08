@@ -9,6 +9,7 @@ import {
   ManyToMany,
   JoinTable,
 } from 'typeorm';
+import { StatusAppointment } from '../enum/status-appointment.enum';
 
 @Entity()
 export class Appointment {
@@ -16,7 +17,7 @@ export class Appointment {
   id: number;
 
   @Column({ type: 'date' })
-  date: string;
+  date: Date;
 
   @Column()
   namePet: string;
@@ -28,20 +29,28 @@ export class Appointment {
   endTime: string;
 
   @Column({ type: 'date' })
-  createdAt: string;
+  createdAt: Date;
 
-  @Column({ type: 'date' })
-  updatedAt: string;
+  @Column({ type: 'date', nullable: true })
+  updatedAt: Date;
 
-  // @ManyToOne(() => User, (user) => user.appointments)
-  // user: User;
+  @ManyToOne(() => User, (user) => user.appointments)
+  user: User;
 
   @ManyToMany(() => ServicesCatalog)
   @JoinTable()
   services: ServicesCatalog[];
 
-  @Column({ default: 'pending' })
-  status: string;
+  // @Column({ default: 'pending' })
+  // status: string;
+
+  // Para probar se cambió a confirmed
+  @Column({
+    type: 'enum',
+    enum: StatusAppointment,
+    default: StatusAppointment.Confirmed,
+  })
+  status: StatusAppointment;
 
   //OneToOne(() => PaymentDetail)
   // paymentDetail: PaymentDetail;

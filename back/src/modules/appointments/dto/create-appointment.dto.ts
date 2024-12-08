@@ -15,15 +15,15 @@ import { StatusAppointment } from '../enum/status-appointment.enum';
 export class CreateAppointmentDto {
   @IsNotEmpty()
   @IsDateString()
-  date: string;
+  date: Date;
 
   @IsNotEmpty()
   @IsString()
   namePet: string;
 
-  @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, {
+  @Matches(/^([01]\d|2[0-3]):([03]0)$/, {
     message:
-      'El campo "startTime" debe estar en formato 24 horas y tener la estructura HH:mm',
+      'El campo "startTime" debe estar en formato 24 horas y tener la estructura HH:mm, en bloques de 30 minutos',
   })
   startTime: string;
 
@@ -36,10 +36,6 @@ export class CreateAppointmentDto {
   @ValidateNested({ each: true })
   @Type(() => ServiceAppointmentDto)
   services: ServiceAppointmentDto[];
-
-  // @IsNotEmpty()
-  // @IsEnum(StatusAppointment)
-  // status: StatusAppointment;
 
   //OneToOne(() => PaymentDetail)
   // paymentDetail: PaymentDetail;
