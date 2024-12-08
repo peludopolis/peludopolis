@@ -8,7 +8,6 @@ import { UsersService } from '../users/users.service';
 import { ServicesCatalogService } from '../services-catalog/services/services-catalog.service';
 import { SaveAppointment } from './dto/save-appointment.dto';
 import { ServicesCatalog } from '../services-catalog/entities/services-catalog.entity';
-import { App } from 'supertest/types';
 
 @Injectable()
 export class AppointmentsService {
@@ -24,7 +23,7 @@ export class AppointmentsService {
   ) {
     const reservedAppointments =
       await this.appointmentRepository.getReservedAppointmentsToSend(date);
-    console.log(reservedAppointments);
+    // console.log(reservedAppointments);
 
     // Inicializar un registro para almacenar los horarios ocupados por servicio
     const horariosOcupados: Record<string, Set<string>> = {};
@@ -44,9 +43,6 @@ export class AppointmentsService {
 
         if (indiceInicio !== -1 && indiceFin !== -1) {
           const horarios = schedule.slice(indiceInicio, indiceFin);
-          console.log(appointment.id);
-          console.log(service.id);
-          console.log(horarios);
           horarios.forEach((horario) =>
             horariosOcupados[service.id].add(horario),
           );
@@ -54,7 +50,7 @@ export class AppointmentsService {
       });
     });
 
-    console.log(horariosOcupados);
+    // console.log(horariosOcupados);
     // Calcular bloques consecutivos libres para los servicios solicitados
     const bloquesRequeridos = serviciosSolicitados.length;
     const horariosDisponibles: Record<string, string[]> = {};
@@ -87,10 +83,9 @@ export class AppointmentsService {
     date: Date,
     serviciosSolicitados: string[],
   ): Promise<Record<string, Set<string>>> {
-    console.log(date);
     const reservedAppointments: Appointment[] =
       await this.appointmentRepository.getReservedAppointments(date);
-    console.log(reservedAppointments);
+    // console.log(reservedAppointments);
 
     // Crear un mapa de horarios ocupados para cada servicio
     const horariosOcupados: Record<string, Set<string>> = {};
@@ -128,9 +123,6 @@ export class AppointmentsService {
       services: serviceDtos,
     } = dataAppointment;
 
-    console.log('hora crear');
-
-    console.log(date);
     // Paso 1: Validar que la hora esté dentro del horario laboral
     const startMinutes = this.convertTimeToMinutes(startTime);
     const openingMinutes = this.convertTimeToMinutes(openingTime);
@@ -180,7 +172,7 @@ export class AppointmentsService {
       serviceIds,
     );
 
-    console.log(horariosOcupados);
+    // console.log(horariosOcupados);
 
     // Validar si los horarios solicitados están disponibles
     const estanDisponibles = this.isRangeAvailable(
