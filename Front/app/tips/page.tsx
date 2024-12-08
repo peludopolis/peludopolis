@@ -10,9 +10,9 @@ const PetCareTips = () => {
     if (hash && TIP_CATEGORIES.some(category => category.key === hash)) {
       setActiveCategory(hash);
       const section = document.getElementById(hash);
-      if (section) {
-        section.scrollIntoView({ behavior: "smooth" });
-      }
+      // if (section) {
+      //   section.scrollIntoView({ behavior: "smooth" });
+      // }
     }
   };
 
