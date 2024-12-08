@@ -5,6 +5,7 @@ import Footer from "./Footer/page"
 
 import Navbar from "../components/Navbar/Navbar";
 import BadgeWhatsapp from "../components/badgeWhatsapp/BadgeWhatsapp";
+import Chatbot from "../components/Chatbot/Chatbot";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -38,6 +39,7 @@ export default function RootLayout({
         <Footer />
         </main>
         <BadgeWhatsapp />
+        <Chatbot />
       </body>
     </html>
   );

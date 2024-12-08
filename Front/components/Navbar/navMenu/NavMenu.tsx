@@ -40,7 +40,7 @@ const NavMenu: React.FC = () => {
     };
 
     return (
-        <nav className="bg-white shadow-lg relative font-fun rounded-lg">
+        <nav className="md:bg-white shadow-lg relative font-fun rounded-lg">
 
             {/* Contenedor general */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -50,7 +50,7 @@ const NavMenu: React.FC = () => {
                     {/* Menú hamburguesa (visible en pantallas medianas y más pequeñas) */}
                     <button
                         onClick={toggleMobileMenu}
-                        className="block md:hidden p-2 rounded-md focus:outline-none hover:bg-gray-200"
+                        className="block md:hidden bg-gray-100 p-2 rounded-md focus:outline-none hover:bg-gray-200 shadow-lg"
                         aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
                     >
                         {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}

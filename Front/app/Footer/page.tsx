@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaWhatsapp } from "react-icons/fa";
 import { FaPhone, FaLightbulb, FaNewspaper, FaRegFileAlt } from 'react-icons/fa';
 
 const Page = () => {
@@ -27,7 +28,7 @@ const Page = () => {
                 <div>
                     <p className="text-lg font-semibold text-black">Teléfono:</p>
                     <p className="text-black mb-4">
-                        <strong>3513908198</strong>
+                    <FaWhatsapp /><strong> 3513908198</strong>
                     </p>
                     <p className="text-lg font-semibold text-black">Trabaja con nosotros:</p>
                     <p>
@@ -36,6 +37,7 @@ const Page = () => {
                         </a>
                     </p>
                 </div>
+                
             </div>
 
             <div className="flex gap-6 justify-center w-full">
