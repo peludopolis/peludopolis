@@ -106,8 +106,8 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
         <form className="max-w-sm mx-auto flex flex-col gap-3" onSubmit={handleSubmit}>
             <div>
                 <h1 className="m-5 text-center font-bold text-black">Crear Cuenta</h1>
-                <h3 className="text-black">Campos con * son requeridos</h3>
-                <h3 className="text-black">¿Aún no tienes una cuenta? Obtén los beneficios de Peludópolis haciendo una cita.</h3>
+                <h3 >Campos con * son requeridos</h3>
+                <h3>¿Aún no tienes una cuenta? Obtén los beneficios de Peludópolis haciendo una cita.</h3>
                 <label className="block mb-2 text-sm font-medium mt-4 text-black">*Nombre</label>
                 <input
                     type="text"
