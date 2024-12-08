@@ -1,7 +1,7 @@
 import { UserData, UserLogin } from "../app/interfaces/index";
 
 // Definir la URL base de la API, se obtiene del entorno o se usa localhost por defecto
-const apiUrl= process.env.API_URL || "http://localhost:5432";
+const apiUrl= process.env.API_URL || "http://localhost:3001";
 
 // Función para registrar un nuevo usuario, realiza una solicitud POST con los datos proporcionados
 export const register = async (data: UserData) => {
