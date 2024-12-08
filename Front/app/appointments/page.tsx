@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import AppointmentCard from '../../components/AppontmentCard/AppointmentCard';
+import AppointmentCard from '../../components/AppointmentCard/AppointmentCard';
 
 const AppointmentPage: React.FC = () => {
   const [appointments, setAppointments] = useState<

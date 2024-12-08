@@ -41,8 +41,6 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
         e.preventDefault(); //previene recargar la pagina
         if (data.password !== data.confirmPassword) {
             alert("Las contraseñas no coinciden");
-        } else {
-            alert("Registro exitoso");
         }
         //llama al servicio de registro
         const res = await register(data);
@@ -107,7 +105,7 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
             <div>
                 <h1 className="m-5 text-center font-bold">Crear Cuenta</h1>
                 <h3>Campos con * son requeridos</h3>
-                <h3>¿Aún no tienes una cuenta? Obtén los beneficios de Peludóólis haciendo una cita.</h3>
+                <h3>¿Aún no tienes una cuenta? Obtén los beneficios de Peludópolis haciendo una cita.</h3>
                 <label className="block mb-2 text-sm font-medium mt-4">*Nombre</label>
                 <input
                     type="text"

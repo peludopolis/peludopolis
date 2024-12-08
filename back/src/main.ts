@@ -15,6 +15,9 @@ async function bootstrap() {
     }),
   );
   app.useGlobalInterceptors(new RemoveSensitiveFieldsInterceptor());
-  await app.listen(3000);
+
+  const port = process.env.PORT || 3001; // Usa el puerto de las variables de entorno o el 3000 como predeterminado
+  await app.listen(port);
+  console.log(`Application is running on: http://localhost:${port}`);
 }
 bootstrap();
