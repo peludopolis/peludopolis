@@ -41,8 +41,6 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
         e.preventDefault(); //previene recargar la pagina
         if (data.password !== data.confirmPassword) {
             alert("Las contraseñas no coinciden");
-        } else {
-            alert("Registro exitoso");
         }
         //llama al servicio de registro
         const res = await register(data);
