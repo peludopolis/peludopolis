@@ -10,7 +10,7 @@ const NewAppointmentPage: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     petName: '',
-    professional: '',
+    service: '',
     date: '',
     time: '',
   });
@@ -18,7 +18,7 @@ const NewAppointmentPage: React.FC = () => {
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [availableSlots, setAvailableSlots] = useState<AvailableSlots>({});
   const router = useRouter();
-  const professionals = ['Elija un profesional', 'Dr Iván', 'Dr Miguel', 'Dr Marco'];
+  const services = ['Elija un servicio ', 'Baño', 'Corte de pelo', 'Corte de uña'];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
@@ -98,7 +98,7 @@ const NewAppointmentPage: React.FC = () => {
     setSelectedSlot({
       name: formData.name,
       petName: formData.petName,
-      professional: formData.professional,
+      service: formData.service,
       date,
       time,
     });
@@ -138,17 +138,17 @@ const NewAppointmentPage: React.FC = () => {
           />
         </div>
         <div>
-          <label className="text-black block mb-2 text-sm font-medium">Profesional</label>
+          <label className="text-black block mb-2 text-sm font-medium">Servicio</label>
           <select
-            name="professional"
-            value={formData.professional}
+            name="service"
+            value={formData.service}
             onChange={handleChange}
             className="w-full border border-gray-300 p-2 rounded text-black"
             required
           >
-            {professionals.map((professional, index) => (
-              <option key={index} value={professional}>
-                {professional}
+            {services.map((service, index) => (
+              <option key={index} value={service}>
+                {service}
               </option>
             ))}
           </select>
@@ -202,7 +202,7 @@ const NewAppointmentPage: React.FC = () => {
             <h3 className="text-lg font-bold text-black">Detalles de la Cita:</h3>
             <p className="text-black"><strong>Cliente:</strong> {selectedSlot.name}</p>
             <p className="text-black"><strong>Mascota:</strong> {selectedSlot.petName}</p>
-            <p className="text-black"><strong>Profesional:</strong> {selectedSlot.professional}</p>
+            <p className="text-black"><strong>Servicio:</strong> {selectedSlot.service}</p>
             <p className="text-black"><strong>Fecha:</strong> {selectedSlot.date}</p>
             <p className="text-black"><strong>Hora:</strong> {selectedSlot.time}</p>
           </div>

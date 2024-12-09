@@ -61,7 +61,7 @@ interface Credential {
 export interface Slot {
   name: string;
   petName: string;
-  professional: string;
+  service: string;
   date: string;
   time: string;
 }
