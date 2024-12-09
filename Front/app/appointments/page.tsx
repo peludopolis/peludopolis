@@ -13,7 +13,7 @@ const AppointmentPage: React.FC = () => {
   useEffect(() => {
     async function fetchAppointments() {
       try {
-        const response = await fetch("http://localhost:3000/api/appointments"); // Cambiar cuando esté listo el backend
+        const response = await fetch("http://localhost:3001/api/appointments"); // Cambiar cuando esté listo el backend
         if (response.ok) {
           const data = await response.json();
           setAppointments(data);
