@@ -15,10 +15,8 @@ const NewAppointmentPage: React.FC = () => {
     time: '',
   });
 
-
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [availableSlots, setAvailableSlots] = useState<AvailableSlots>({});
-
   const router = useRouter();
   const professionals = ['Elija un profesional', 'Dr Iván', 'Dr Miguel', 'Dr Marco'];
 
@@ -29,28 +27,21 @@ const NewAppointmentPage: React.FC = () => {
     });
   };
 
-  //este codigo simula el pago sin una respuesta exitosa o sea sin necesidad de conectarse a la base de datos
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = { ok: true }; // Cambia esto para probar la redirección
-  
+      const response = { ok: true };
       if (response.ok) {
-        console.log('Cita creada con éxito, redirigiendo...');
         router.push(
           `/appointments/payment?${new URLSearchParams(formData).toString()}`
         );
-
       } else {
-        console.error('Error al crear la cita');
         alert('Hubo un problema al crear la cita. Por favor, inténtalo de nuevo.');
       }
     } catch (error) {
-      console.error('Error al enviar la cita:', error);
       alert('Error al enviar la cita. Por favor, verifica la conexión al servidor.');
     }
   };
-  
 
   const generateDates = () => {
     const today = new Date();
@@ -83,6 +74,39 @@ const NewAppointmentPage: React.FC = () => {
   const getDatesForDay = (day: string) => {
     const dates = [...week1, ...week2].filter((d) => d.day === day);
     return dates;
+  };
+
+  const handleSelectSlot = (date: string, time: string) => {
+    const slotKey = `${date} ${time}`;
+
+    setAvailableSlots((prevSlots) => {
+      if (selectedSlot) {
+        const previousSlotKey = `${selectedSlot.date} ${selectedSlot.time}`;
+        return {
+          ...prevSlots,
+          [previousSlotKey]: 'available',
+          [slotKey]: 'occupied',
+        };
+      }
+
+      return {
+        ...prevSlots,
+        [slotKey]: 'occupied',
+      };
+    });
+
+    setSelectedSlot({
+      name: formData.name,
+      petName: formData.petName,
+      professional: formData.professional,
+      date,
+      time,
+    });
+    setFormData({
+      ...formData,
+      date,
+      time,
+    });
   };
 
   return (
@@ -154,14 +178,10 @@ const NewAppointmentPage: React.FC = () => {
                 {['9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00'].map((time, timeIndex) => {
                   const slotKey = `${format(new Date(d.date), 'd MMMM yyyy', { locale: es })} ${time}`;
                   const isOccupied = availableSlots[slotKey] === 'occupied';
-                  function handleSelectSlot(arg0: string, time: string): void {
-                    throw new Error('Function not implemented.');
-                  }
-
                   return (
                     <button
                       key={timeIndex}
-                      type="button" 
+                      type="button"
                       onClick={() => handleSelectSlot(format(new Date(d.date), 'd MMMM yyyy', { locale: es }), time)}
                       className={`${
                         isOccupied ? 'bg-red-500' : 'bg-green-500'
@@ -180,11 +200,11 @@ const NewAppointmentPage: React.FC = () => {
         {selectedSlot && (
           <div className="mt-6 border p-4 rounded-lg bg-gray-50">
             <h3 className="text-lg font-bold text-black">Detalles de la Cita:</h3>
-            <p className='text-black'><strong>Cliente:</strong> {selectedSlot.name}</p>
-            <p className='text-black'><strong>Mascota:</strong> {selectedSlot.petName}</p>
-            <p className='text-black'><strong>Profesional:</strong> {selectedSlot.professional}</p>
-            <p className='text-black'><strong>Fecha:</strong> {selectedSlot.date}</p>
-            <p className='text-black'><strong>Hora:</strong> {selectedSlot.time}</p>
+            <p className="text-black"><strong>Cliente:</strong> {selectedSlot.name}</p>
+            <p className="text-black"><strong>Mascota:</strong> {selectedSlot.petName}</p>
+            <p className="text-black"><strong>Profesional:</strong> {selectedSlot.professional}</p>
+            <p className="text-black"><strong>Fecha:</strong> {selectedSlot.date}</p>
+            <p className="text-black"><strong>Hora:</strong> {selectedSlot.time}</p>
           </div>
         )}
 
