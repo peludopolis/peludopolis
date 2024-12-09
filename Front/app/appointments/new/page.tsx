@@ -29,53 +29,28 @@ const NewAppointmentPage: React.FC = () => {
     });
   };
 
-  const handleSelectSlot = (date: string, time: string) => {
-    const slotKey = `${date} ${time}`;
-    if (availableSlots[slotKey] === 'occupied') {
-      return;
-    }
-
-    const selectedSlotData: Slot = {
-      date,
-      time,
-      name: formData.name,
-      petName: formData.petName,
-      professional: formData.professional,
-    };
-
-    setSelectedSlot(selectedSlotData);
-
-    setAvailableSlots((prev) => {
-      const newSlots = { ...prev };
-      Object.keys(newSlots).forEach((key) => {
-        if (newSlots[key] === 'occupied') {
-          newSlots[key] = 'available';
-        }
-      });
-      newSlots[slotKey] = 'occupied';
-      return newSlots;
-    });
-  };
-
+  //este codigo simula el pago sin una respuesta exitosa o sea sin necesidad de conectarse a la base de datos
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = { ok: true };
-
+      const response = { ok: true }; // Cambia esto para probar la redirección
+  
       if (response.ok) {
         console.log('Cita creada con éxito, redirigiendo...');
         router.push(
           `/appointments/payment?${new URLSearchParams(formData).toString()}`
         );
+
       } else {
         console.error('Error al crear la cita');
         alert('Hubo un problema al crear la cita. Por favor, inténtalo de nuevo.');
       }
     } catch (error) {
       console.error('Error al enviar la cita:', error);
-      alert('Error al enviar la cita. Por favor, verifica la conexión a la base de datos.');
+      alert('Error al enviar la cita. Por favor, verifica la conexión al servidor.');
     }
   };
+  
 
   const generateDates = () => {
     const today = new Date();
@@ -179,6 +154,10 @@ const NewAppointmentPage: React.FC = () => {
                 {['9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00'].map((time, timeIndex) => {
                   const slotKey = `${format(new Date(d.date), 'd MMMM yyyy', { locale: es })} ${time}`;
                   const isOccupied = availableSlots[slotKey] === 'occupied';
+                  function handleSelectSlot(arg0: string, time: string): void {
+                    throw new Error('Function not implemented.');
+                  }
+
                   return (
                     <button
                       key={timeIndex}

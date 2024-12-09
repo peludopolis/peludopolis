@@ -1,14 +1,15 @@
+import { Appointment } from 'src/modules/appointments/entities/appointment.entity';
 import { Post } from 'src/modules/posts/entities/post.entity';
 import {
   Column,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  Unique
+  Unique,
 } from 'typeorm';
 
 @Entity({
-  name: 'users'
+  name: 'users',
 })
 @Unique(['email'])
 export class User {
@@ -33,8 +34,8 @@ export class User {
   @Column({ default: false })
   isAdmin: boolean;
 
-  // @OneToMany(() => Appointment, (appointment) => appointment.user)
-  // appointments: Appointment[];
+  @OneToMany(() => Appointment, (appointment) => appointment.user)
+  appointments: Appointment[];
 
   @OneToMany(() => Post, (post) => post.user)
   posts: Post[];
