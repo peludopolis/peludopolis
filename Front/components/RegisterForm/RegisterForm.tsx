@@ -103,13 +103,13 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
     return (
         <form className="max-w-sm mx-auto flex flex-col gap-3" onSubmit={handleSubmit}>
             <div>
-                <h1 className="m-5 text-center font-bold">Crear Cuenta</h1>
-                <h3>Campos con * son requeridos</h3>
+                <h1 className="m-5 text-center font-bold text-black">Crear Cuenta</h1>
+                <h3 >Campos con * son requeridos</h3>
                 <h3>¿Aún no tienes una cuenta? Obtén los beneficios de Peludópolis haciendo una cita.</h3>
-                <label className="block mb-2 text-sm font-medium mt-4">*Nombre</label>
+                <label className="block mb-2 text-sm font-medium mt-4 text-black">*Nombre</label>
                 <input
                     type="text"
-                    className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    className="bg-white border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                     placeholder="Nombre"
                     name="name"
                     onChange={handleChange}
@@ -121,7 +121,7 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
             </div>
 
             <div>
-                <label className="block mb-2 text-sm font-medium">*Correo Electrónico</label>
+                <label className="block mb-2 text-sm font-medium text-black">*Correo Electrónico</label>
                 <input
                     type="text"
                     className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -135,7 +135,7 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
             </div>
 
             <div>
-                <label className="block mb-2 text-sm font-medium">*Contraseña</label>
+                <label className="block mb-2 text-sm font-medium text-black">*Contraseña</label>
                 <input
                     type="password"
                     className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -149,7 +149,7 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
             </div>
 
             <div>
-                <label className="block mb-2 text-sm font-medium">*Confirmar Contraseña</label>
+                <label className="block mb-2 text-sm font-medium text-black">*Confirmar Contraseña</label>
                 <input
                     type="password"
                     className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -163,7 +163,7 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
             </div>
 
             <div>
-                <label className="block mb-2 text-sm font-medium">*Dirección</label>
+                <label className="block mb-2 text-sm font-medium text-black">*Dirección</label>
                 <input
                     type="text"
                     className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -177,7 +177,7 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
             </div>
 
             <div>
-                <label className="block mb-2 text-sm font-medium">*Teléfono</label>
+                <label className="block mb-2 text-sm font-medium text-black">*Teléfono</label>
                 <input
                     type="text"
                     className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
