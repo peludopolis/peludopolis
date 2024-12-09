@@ -14,27 +14,32 @@ const NewAppointmentPage: React.FC = () => {
     });
   };
 
-  //este codigo simula el pago sin una respuesta exitosa o sea sin necesidad de conectarse a la base de datos
+  //este codigo evita el pago sin una respuesta exitosa pero se conecta a la base de datos para probar crear un tunro
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = { ok: true }; // Cambia esto para probar la redirección
+      // Enviar la solicitud de creación de cita al backend
+      const response = await fetch('http://localhost:3001/appointments/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
   
       if (response.ok) {
-        console.log('Cita creada con éxito, redirigiendo...');
-        router.push(
-          `/appointments/payment?${new URLSearchParams(formData).toString()}`
-        );
-
+        console.log('Cita creada con éxito');
+        // Puedes mostrar un mensaje de éxito o realizar otras acciones aquí
       } else {
         console.error('Error al crear la cita');
         alert('Hubo un problema al crear la cita. Por favor, inténtalo de nuevo.');
       }
     } catch (error) {
       console.error('Error al enviar la cita:', error);
-      alert('Error al enviar la cita. Por favor, verifica la conexión a la base de datos.');
+      alert('Error al enviar la cita. Por favor, verifica la conexión al servidor.');
     }
   };
+  
 
   //Cuando la pasarela de pago la tengamos lista aqui la vamos a configurar:
   /*const handleSubmit = async (e: React.FormEvent) => {
