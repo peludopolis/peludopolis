@@ -13,9 +13,11 @@ describe('ServicesCatalogController', () => {
         {
           provide: ServicesCatalogService,
           useValue: {
-            findAll: jest.fn().mockReturnValue([
-              { id: '1', name: 'Test Service', description: 'Description' },
-            ]),
+            findAll: jest
+              .fn()
+              .mockReturnValue([
+                { id: '1', name: 'Test Service', description: 'Description' },
+              ]),
             findOne: jest.fn().mockImplementation((id: string) => ({
               id,
               name: 'Test Service',
@@ -26,7 +28,9 @@ describe('ServicesCatalogController', () => {
       ],
     }).compile();
 
-    controller = module.get<ServicesCatalogController>(ServicesCatalogController);
+    controller = module.get<ServicesCatalogController>(
+      ServicesCatalogController,
+    );
     service = module.get<ServicesCatalogService>(ServicesCatalogService);
   });
 

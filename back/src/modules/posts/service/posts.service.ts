@@ -7,29 +7,29 @@ import { UpdatePostDto } from '../dtos/update-post.dto';
 
 @Injectable()
 export class PostsService {
-    constructor(
-        @InjectRepository(Post)
-        private readonly postRepository: Repository<Post>,
-    ) {}
+  constructor(
+    @InjectRepository(Post)
+    private readonly postRepository: Repository<Post>,
+  ) {}
 
-    create(createPostDto: CreatePostDto) {
-        const post = this.postRepository.create(createPostDto);
-        return this.postRepository.save(post);
-    }
+  create(createPostDto: CreatePostDto) {
+    const post = this.postRepository.create(createPostDto);
+    return this.postRepository.save(post);
+  }
 
-    findAll() {
-        return this.postRepository.find();
-    }
+  findAll() {
+    return this.postRepository.find();
+  }
 
-    findOne(id: string) {
-        return this.postRepository.findOne({ where: { id } });
-    }
+  findOne(id: string) {
+    return this.postRepository.findOne({ where: { id } });
+  }
 
-    update(id: string, updatePostDto: UpdatePostDto) {
-        return this.postRepository.update(id, updatePostDto);
-    }
+  update(id: string, updatePostDto: UpdatePostDto) {
+    return this.postRepository.update(id, updatePostDto);
+  }
 
-    remove(id: string) {
-        return this.postRepository.delete(id);
-    }
+  remove(id: string) {
+    return this.postRepository.delete(id);
+  }
 }
