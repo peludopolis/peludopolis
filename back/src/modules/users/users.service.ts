@@ -11,7 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dtos/updateUser.dto';
 import { UploadImageService } from '../image-upload/image-upload.service';
 
-type UserWithoutSensitiveInfo = Omit<User, 'password' | 'isAdmin'>;
+// type UserWithoutSensitiveInfo = Omit<User, 'password' | 'isAdmin'>;
 
 @Injectable()
 export class UsersService {
@@ -24,9 +24,7 @@ export class UsersService {
     return uuid();
   }
 
-  async createUser(
-    createUserDto: CreateUserDto,
-  ): Promise<UserWithoutSensitiveInfo> {
+  async createUser(createUserDto: CreateUserDto) {
     try {
       const newId = this.generateUUID();
       const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
@@ -43,8 +41,7 @@ export class UsersService {
       console.log(newUser);
       const createdUser = await this.usersRepository.createUser(newUser);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { isAdmin, password, ...userWithoutSensitiveInfo } = createdUser;
-      return userWithoutSensitiveInfo;
+      return createdUser;
     } catch (error) {
       throw new InternalServerErrorException(
         `No se pudo crear el usuario. Por favor, intenta nuevamente más tarde. ${error}`,
@@ -80,14 +77,9 @@ export class UsersService {
   async findByEmail(email: string) {
     try {
       const user = await this.usersRepository.findByEmail(email);
-      if (!user) {
-        throw new NotFoundException('No se encontró el usuario');
-      }
       return user;
     } catch (error) {
-      throw new InternalServerErrorException(
-        `No se pudo encontrar el usuario. Por favor, intenta nuevamente más tarde. ${error}`,
-      );
+      throw new NotFoundException(`No se encontró el usuario. ${error}`);
     }
   }
 
