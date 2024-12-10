@@ -10,6 +10,6 @@ import { UploadImageModule } from '../image-upload/image-upload.module';
   imports: [UploadImageModule, TypeOrmModule.forFeature([User])],
   providers: [UsersRepository, UsersService],
   controllers: [UsersController],
-  exports: [UsersService]
+  exports: [UsersService],
 })
 export class UsersModule {}

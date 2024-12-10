@@ -4,21 +4,21 @@ import { Post } from "../../posts/entities/post.entity";
 
 @Entity('services_catalog')
 export class ServicesCatalog {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column({ length: 50 })
-    name: string;
+  @Column({ length: 50 })
+  name: string;
 
-    @Column('text')
-    description: string
+  @Column('text')
+  description: string;
 
-    @Column('decimal', { precision: 10, scale: 2})
-    price: number;
+  @Column('decimal', { precision: 10, scale: 2 })
+  price: number;
 
-    @Column({ length: 50 })
-    employee: string;
+  @Column({ length: 50 })
+  employee: string;
 
-    @OneToMany(() => Post, (post) => post.service)
-    posts: Post[];
+  @OneToMany(() => Post, (post) => post.service)
+  posts: Post[];
 }

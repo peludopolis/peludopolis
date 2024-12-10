@@ -66,10 +66,10 @@ const router = useRouter(); // Obtiene la función de enrutamiento de Next.js
 return (
 <form className="max-w-sm mx-auto flex flex-col gap-3 m-20" onSubmit={(e) => handleSubmit(e)}> 
     <div>
-        <h1 className="m-5 text-center font-bold">Soy Cliente</h1>
-        <h3>Si ya eres parte de Peludópolis. Inicia sesión con tu correo electrónico y contraseña.</h3>
+        <h1 className="m-5 text-center font-bold text-black">Soy Cliente</h1>
+        <h3 className="text-black">Si ya eres parte de Peludópolis. Inicia sesión con tu correo electrónico y contraseña.</h3>
         <label 
-        className="block mb-2 text-sm font-medium mt-4"
+        className="block mb-2 text-sm font-medium mt-4 text-black"
         htmlFor="">
             Usuario
         </label>
@@ -87,7 +87,7 @@ return (
     
     <div>
         <label 
-        className="block mb-2 text-sm font-medium"
+        className="block mb-2 text-sm font-medium text-black"
         htmlFor="">
             Contraseña
         </label>

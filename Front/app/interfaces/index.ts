@@ -57,3 +57,15 @@ interface Credential {
   id: number;
   password: string;
 }
+
+export interface Slot {
+  name: string;
+  petName: string;
+  service: string;
+  date: string;
+  time: string;
+}
+
+export interface AvailableSlots {
+  [key: string]: 'available' | 'occupied';
+}
