@@ -17,6 +17,7 @@ const NewAppointmentPage: React.FC = () => {
 
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [availableSlots, setAvailableSlots] = useState<AvailableSlots>({});
+  const [appointments, setAppointments] = useState<Slot[]>([]); // Para almacenar múltiples citas
   const router = useRouter();
   const services = ['Elija un servicio ', 'Baño', 'Corte de pelo', 'Corte de uña'];
 
@@ -41,6 +42,21 @@ const NewAppointmentPage: React.FC = () => {
     } catch (error) {
       alert('Error al enviar la cita. Por favor, verifica la conexión al servidor.');
     }
+  };
+
+  const handleAddAnotherService = () => {
+    if (selectedSlot) {
+      setAppointments((prevAppointments) => [...prevAppointments, selectedSlot]);
+    }
+    setFormData({
+      name: '',
+      petName: '',
+      service: '',
+      date: '',
+      time: '',
+    });
+    setSelectedSlot(null);
+    alert('Puedes agregar otro servicio ahora.');
   };
 
   const generateDates = () => {
@@ -197,22 +213,34 @@ const NewAppointmentPage: React.FC = () => {
           </div>
         </div>
 
-        {selectedSlot && (
+        {appointments.length > 0 && (
           <div className="mt-6 border p-4 rounded-lg bg-gray-50">
-            <h3 className="text-lg font-bold text-black">Detalles de la Cita:</h3>
-            <p className="text-black"><strong>Cliente:</strong> {selectedSlot.name}</p>
-            <p className="text-black"><strong>Mascota:</strong> {selectedSlot.petName}</p>
-            <p className="text-black"><strong>Servicio:</strong> {selectedSlot.service}</p>
-            <p className="text-black"><strong>Fecha:</strong> {selectedSlot.date}</p>
-            <p className="text-black"><strong>Hora:</strong> {selectedSlot.time}</p>
+            <h3 className="text-lg font-bold text-black">Detalles de las Citas:</h3>
+            {appointments.map((appointment, index) => (
+              <div key={index} className="mb-4">
+                <p className="text-black"><strong>Cliente:</strong> {appointment.name}</p>
+                <p className="text-black"><strong>Mascota:</strong> {appointment.petName}</p>
+                <p className="text-black"><strong>Servicio:</strong> {appointment.service}</p>
+                <p className="text-black"><strong>Fecha:</strong> {appointment.date}</p>
+                <p className="text-black"><strong>Hora:</strong> {appointment.time}</p>
+              </div>
+            ))}
           </div>
         )}
 
-        <div className="mt-6">
+        <div className="mt-6 flex justify-between items-center space-x-4">
+          <button
+            type="button"
+            onClick={handleAddAnotherService}
+            className="flex-1 bg-green-400 text-black p-3 rounded-lg hover:bg-green-500"
+          >
+            Agregar Otro Servicio
+          </button>
+
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white p-3 rounded-lg"
-            disabled={!selectedSlot}
+            className="flex-1 bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600"
+            disabled={appointments.length === 0}
           >
             Agendar Cita
           </button>
