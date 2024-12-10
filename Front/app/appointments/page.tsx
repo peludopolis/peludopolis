@@ -47,7 +47,7 @@ const AppointmentPage: React.FC = () => {
             <AppointmentCard key={index} appointment={appointment} />
           ))
         ) : (
-          <p className="text-gray-600">No hay citas programadas.</p>
+          <p className="text-black">No hay citas programadas.</p>
         )}
       </div>
     </div>

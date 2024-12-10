@@ -11,7 +11,7 @@ interface AppointmentCardProps {
 
 const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment }) => {
   return (
-    <div className="bg-white border border-gray-300 rounded-lg shadow-md p-4">
+    <div className="text-black bg-white border border-gray-300 rounded-lg shadow-md p-4">
       <h2 className="text-xl font-bold mb-2">{appointment.name}</h2>
       <p className="text-sm text-gray-600">Mascota: {appointment.petName}</p>
       <p className="text-sm text-gray-600">Fecha: {appointment.date}</p>
