@@ -10,7 +10,7 @@ export class Comment {
     @Column('text')
     content: string;
 
-    // @ManyToOne(() => User, (user) => user.comments, { eager: true })
+    // @ManyToOne(() => User, (user) => user.comments})
     // user: User;
 
     @ManyToOne(() => Post, (post) => post.comments)
