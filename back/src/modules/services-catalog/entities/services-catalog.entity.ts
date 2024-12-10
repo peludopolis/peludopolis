@@ -1,12 +1,13 @@
-import { Post } from 'src/modules/posts/entities/post.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Post } from "../../posts/entities/post.entity";
+
 
 @Entity('services_catalog')
 export class ServicesCatalog {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 100 })
+  @Column({ length: 50 })
   name: string;
 
   @Column('text')
@@ -14,6 +15,9 @@ export class ServicesCatalog {
 
   @Column('decimal', { precision: 10, scale: 2 })
   price: number;
+
+  @Column({ length: 50 })
+  employee: string;
 
   @OneToMany(() => Post, (post) => post.service)
   posts: Post[];
