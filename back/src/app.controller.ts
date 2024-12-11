@@ -9,4 +9,9 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  // @Get()
+  // authValidation(req: Request, res: Response) {
+  //   res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+  // }
 }
