@@ -4,7 +4,8 @@ import {
   Get,
   Post,
   Req,
-  ValidationPipe,
+  UnauthorizedException,
+  ValidationPipe
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dtos/createUser.dto';
@@ -17,7 +18,7 @@ import { User } from '../users/entities/user.entity';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly usersService: UsersService,
+    private readonly usersService: UsersService
   ) {}
 
   @Post('signin')
@@ -35,8 +36,12 @@ export class AuthController {
   async handleAuth0(@Req() req: Request) {
     const auth0User = req.oidc.user;
 
+    if (!auth0User) {
+      throw new UnauthorizedException('El usuario no está logueado');
+    }
+
     let user: Partial<User> = await this.usersService.findByEmail(
-      auth0User.email,
+      auth0User.email
     );
 
     if (!user) {
@@ -46,18 +51,18 @@ export class AuthController {
         name:
           auth0User.name || `${auth0User.given_name} ${auth0User.family_name}`,
         address: '',
-        phone: '',
+        phone: ''
         // profilePicture: auth0User.picture,
       });
       console.log(user);
     }
 
-    const jwt = await this.authService.generateJwtForAuth0User({
+    const { accessToken } = await this.authService.generateJwtForAuth0User({
       email: user.email,
       sub: user.id,
-      isAdmin: user.isAdmin,
+      isAdmin: user.isAdmin
     });
 
-    return { jwt, user };
+    return { accessToken, user };
   }
 }

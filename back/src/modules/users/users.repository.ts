@@ -8,7 +8,7 @@ import { UpdateUserDto } from './dtos/updateUser.dto';
 export class UsersRepository {
   constructor(
     @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    private readonly usersRepository: Repository<User>
   ) {}
   async createUser(CreateUserDto: User) {
     return this.usersRepository.save(CreateUserDto);
@@ -26,6 +26,10 @@ export class UsersRepository {
 
   async updateUser(updateUserDto: UpdateUserDto) {
     return this.usersRepository.save(updateUserDto);
+  }
+
+  async makeAdmin(user: User) {
+    return this.usersRepository.save(user);
   }
 
   async deleteUser(id: string) {

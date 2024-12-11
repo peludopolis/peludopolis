@@ -32,31 +32,45 @@ export class AuthService {
       const payload = {
         email: user.email,
         sub: user.id,
-        isAdmin: user.isAdmin,
+        isAdmin: user.isAdmin
       };
       const accessToken = this.jwtService.sign(payload, {
-        expiresIn: '1h',
+        expiresIn: '1h'
       });
 
       return { accessToken };
     } catch (error) {
       throw new InternalServerErrorException(
-        `Error en el servicio de autenticación: ${error}`,
+        `Error en el servicio de autenticación: ${error}`
       );
     }
   }
 
   async generateJwtForAuth0User(auth0User: any) {
-    const payload = {
-      email: auth0User.email,
-      sub: auth0User.sub,
-      isAdmin: auth0User.isAdmin,
-    };
+    try {
+      // Verificar si el usuario está logueado (auth0User debe existir y contener datos válidos)
+      if (!auth0User || !auth0User.email || !auth0User.sub) {
+        throw new UnauthorizedException(
+          'El usuario no está logueado o los datos son inválidos'
+        );
+      }
 
-    const accessToken = this.jwtService.sign(payload, {
-      expiresIn: '1h',
-    });
+      const payload = {
+        email: auth0User.email,
+        sub: auth0User.sub,
+        isAdmin: auth0User.isAdmin || false
+      };
 
-    return { accessToken };
+      const accessToken = this.jwtService.sign(payload, {
+        expiresIn: '1h'
+      });
+
+      return { accessToken };
+    } catch (error) {
+      throw new UnauthorizedException(
+        'Ocurrió un error inesperado al generar el token de autenticación:' +
+          error
+      );
+    }
   }
 }
