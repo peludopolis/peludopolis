@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const ServiciosMascota = () => {
   const servicios = [
     {
@@ -33,7 +35,7 @@ const ServiciosMascota = () => {
             key={index}
             className="bg-white rounded-lg shadow-lg overflow-hidden text-center"
           >
-            <img
+            <Image
               src={servicio.imagen}
               alt={servicio.titulo}
               className="w-full h-48 object-cover"
