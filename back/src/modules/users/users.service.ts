@@ -74,10 +74,12 @@ export class UsersService implements OnModuleInit {
   async createUser(createUserDto: CreateUserDto) {
     try {
       const newId = this.generateUUID();
+      console.log(createUserDto.password);
       const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+      console.log(hashedPassword);
       const newUser: User = {
-        id: newId,
         ...createUserDto,
+        id: newId,
         password: hashedPassword,
         profilePicture:
           'https://media.istockphoto.com/id/1495088043/es/vector/icono-de-perfil-de-usuario-avatar-o-icono-de-persona-foto-de-perfil-s%C3%ADmbolo-de-retrato.jpg?s=612x612&w=0&k=20&c=mY3gnj2lU7khgLhV6dQBNqomEGj3ayWH-xtpYuCXrzk=',
@@ -87,6 +89,7 @@ export class UsersService implements OnModuleInit {
       };
       console.log(newUser);
       const createdUser = await this.usersRepository.createUser(newUser);
+      console.log('USUARIO CREADO:', createdUser);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       return createdUser;
     } catch (error) {

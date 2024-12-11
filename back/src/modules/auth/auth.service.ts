@@ -1,7 +1,7 @@
 import {
   Injectable,
   UnauthorizedException,
-  InternalServerErrorException,
+  InternalServerErrorException
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
@@ -12,7 +12,7 @@ import * as bcrypt from 'bcrypt';
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
-    private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService
   ) {}
 
   async signin(loginDto: LoginDto) {

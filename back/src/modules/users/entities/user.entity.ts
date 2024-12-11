@@ -3,6 +3,7 @@ import { Post } from 'src/modules/posts/entities/post.entity';
 import {
   Column,
   Entity,
+  JoinColumn,
   OneToMany,
   PrimaryGeneratedColumn,
   Unique,
@@ -35,9 +36,11 @@ export class User {
   isAdmin: boolean;
 
   @OneToMany(() => Appointment, (appointment) => appointment.user)
+  @JoinColumn({ name: 'appointmentId' })
   appointments: Appointment[];
 
   @OneToMany(() => Post, (post) => post.user)
+  @JoinColumn({ name: 'postsId' })
   posts: Post[];
 
   @Column({ nullable: true })
