@@ -1,7 +1,7 @@
 import React from 'react';
 import { Phone } from 'lucide-react';
 
-const WhatsAppBadge: React.FC<{}> = () => {
+const WhatsAppBadge: React.FC = () => {
   const phoneNumber = '3513908198';
   const whatsappLink = `https://wa.me/${phoneNumber}`;
 
