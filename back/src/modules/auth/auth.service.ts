@@ -38,7 +38,7 @@ export class AuthService {
         expiresIn: '1h'
       });
 
-      return { accessToken };
+      return { accessToken, user };
     } catch (error) {
       throw new InternalServerErrorException(
         `Error en el servicio de autenticación: ${error}`

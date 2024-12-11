@@ -4,6 +4,7 @@ import {
   Get,
   Post,
   Req,
+  Res,
   UnauthorizedException,
   ValidationPipe
 } from '@nestjs/common';
@@ -11,7 +12,7 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dtos/createUser.dto';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { User } from '../users/entities/user.entity';
 
 @Controller('auth')
@@ -23,8 +24,8 @@ export class AuthController {
 
   @Post('signin')
   async signin(@Body() LoginDto: LoginDto) {
-    const { accessToken } = await this.authService.signin(LoginDto);
-    return { accessToken };
+    const { accessToken, user } = await this.authService.signin(LoginDto);
+    return { accessToken, user };
   }
 
   @Post('signup')
@@ -33,7 +34,7 @@ export class AuthController {
   }
 
   @Get('auth0')
-  async handleAuth0(@Req() req: Request) {
+  async handleAuth0(@Req() req: Request, @Res() res: Response) {
     const auth0User = req.oidc.user;
 
     if (!auth0User) {
@@ -52,7 +53,6 @@ export class AuthController {
           auth0User.name || `${auth0User.given_name} ${auth0User.family_name}`,
         address: '',
         phone: ''
-        // profilePicture: auth0User.picture,
       });
       console.log(user);
     }
@@ -62,7 +62,6 @@ export class AuthController {
       sub: user.id,
       isAdmin: user.isAdmin
     });
-
-    return { accessToken, user };
+    return res.json({ accessToken, user });
   }
 }
