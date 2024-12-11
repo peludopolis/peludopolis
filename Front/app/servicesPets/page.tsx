@@ -9,13 +9,14 @@ import { Droplet, Scissors, Bed, Stethoscope, Dog, Cat, PawPrint, Calendar } fro
 import services from './services';
 
 // Mapeo de iconos para tipos de servicios
-const serviceIcons: { [key: string]: React.ComponentType<any> } = {
+const serviceIcons: { [key: string]: React.ComponentType<React.SVGProps<SVGSVGElement>> } = {
   'Corte de pelo': Scissors,
   'Baño': Droplet,
   'Corte de uñas': Scissors,
   'Consulta veterinaria': Stethoscope,
   'Spa': Bed
 };
+
 
 interface Service {
   id: number;
