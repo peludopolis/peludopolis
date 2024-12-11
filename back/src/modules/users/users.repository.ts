@@ -14,14 +14,20 @@ export class UsersRepository {
     return this.usersRepository.save(CreateUserDto);
   }
   async findAll() {
-    return this.usersRepository.find();
+    return this.usersRepository.find({ relations: ['appointments', 'posts'] });
   }
   async findById(id: string) {
-    return this.usersRepository.findOne({ where: { id } });
+    return this.usersRepository.findOne({
+      where: { id },
+      relations: ['appointments', 'posts']
+    });
   }
 
   async findByEmail(email: string) {
-    return this.usersRepository.findOne({ where: { email } });
+    return this.usersRepository.findOne({
+      where: { email },
+      relations: ['appointments', 'posts']
+    });
   }
 
   async updateUser(updateUserDto: UpdateUserDto) {
