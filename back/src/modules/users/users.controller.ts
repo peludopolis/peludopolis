@@ -25,15 +25,14 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Roles(UserRole.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.Admin)
   async getUsers() {
     return await this.usersService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRole.Admin)
+  @UseGuards(AuthGuard)
   async getUserById(@Param('id') id: string) {
     return await this.usersService.findById(id);
   }
