@@ -2,11 +2,15 @@
 
 // pages/dashboard.tsx
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 const Dashboard = () => {
-  const [userData, setUserData] = useState(null);
-  const router = useRouter();
+  interface UserData {
+    name: string;
+    email: string;
+    appointments: { id: number; date: string; service: string; payment: string }[];
+  }
+  
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   useEffect(() => {
     // Simula la carga de datos del usuario (puedes reemplazar esto más tarde)
