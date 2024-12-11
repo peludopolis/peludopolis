@@ -35,11 +35,14 @@ const ServiciosMascota = () => {
             key={index}
             className="bg-white rounded-lg shadow-lg overflow-hidden text-center"
           >
-            <Image
-              src={servicio.imagen}
-              alt={servicio.titulo}
-              className="w-full h-48 object-cover"
-            />
+            <div className="relative w-full h-48">
+              <Image
+                src={servicio.imagen}
+                alt={servicio.titulo}
+                layout="fill" // Hace que la imagen llene el contenedor
+                objectFit="cover" // Ajusta la imagen dentro del espacio
+              />
+            </div>
             <div className="p-4">
               <h3 className="text-lg font-medium text-black">{servicio.titulo}</h3>
               <p className="text-sm text-gray-600">{servicio.descripcion}</p>
