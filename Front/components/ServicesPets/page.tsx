@@ -39,6 +39,8 @@ const ServiciosMascota = () => {
               src={servicio.imagen}
               alt={servicio.titulo}
               className="w-full h-48 object-cover"
+              width={400}
+              height={200}
             />
             <div className="p-4">
               <h3 className="text-lg font-medium text-black">{servicio.titulo}</h3>
