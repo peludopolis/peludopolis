@@ -28,16 +28,16 @@ const PaymentPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold mb-6">Confirmación de Cita y Pago</h1>
+      <h1 className=" text-black text-3xl font-bold mb-6">Confirmación de Cita y Pago</h1>
       {appointmentData ? (
-        <div className="mb-6">
+        <div className="text-black mb-6">
           <p><strong>Cliente:</strong> {appointmentData.name}</p>
           <p><strong>Mascota:</strong> {appointmentData.petName}</p>
           <p><strong>Fecha:</strong> {appointmentData.date}</p>
           <p><strong>Hora:</strong> {appointmentData.time}</p>
         </div>
       ) : (
-        <p>Cargando información de la cita...</p>
+        <p className='text-black'>Cargando información de la cita...</p>
       )}
       <button
         onClick={handlePayment}

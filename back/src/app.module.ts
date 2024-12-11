@@ -7,7 +7,7 @@ import { PostsModule } from './modules/posts/posts.module';
 import { AppointmentsModule } from './modules/appointments/appointments.module';
 import { ServicesCatalogModule } from './modules/services-catalog/services-catalog.module';
 import { TipsModule } from './modules/tips/tips.module';
-import { NotificationsModule } from './modules/notifications/notifications.module';
+import { EmailModule } from './modules/notifications/notifications.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import typeOrmConfig from './config/typeOrm.config';
@@ -41,7 +41,7 @@ import { JwtModule } from '@nestjs/jwt';
     AppointmentsModule,
     ServicesCatalogModule,
     TipsModule,
-    NotificationsModule,
+    EmailModule,
     UploadImageModule,
   ],
   controllers: [AppController],

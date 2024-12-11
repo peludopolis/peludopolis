@@ -5,11 +5,11 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  Unique,
+  Unique
 } from 'typeorm';
 
 @Entity({
-  name: 'users',
+  name: 'users'
 })
 @Unique(['email'])
 export class User {
