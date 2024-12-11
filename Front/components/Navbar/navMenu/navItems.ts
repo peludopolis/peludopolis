@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavItem } from './constants';
-import { Home, Sun, Calendar, Users, Lightbulb, Book } from 'lucide-react';
+import { Home, Sun, Calendar, Users, Lightbulb } from 'lucide-react';
 
 export const navItems: NavItem[] = [
     { href: '/', label: 'Inicio', soundKey: 'inicio', icon: React.createElement(Home, { size: 24, color: '#1DA1F2' }) },
