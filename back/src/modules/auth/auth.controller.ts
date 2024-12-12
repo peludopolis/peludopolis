@@ -53,6 +53,7 @@ export class AuthController {
           auth0User.name || `${auth0User.given_name} ${auth0User.family_name}`,
         address: '',
         phone: ''
+        // profilePicture: auth0User.picture
       });
       console.log(user);
     }
