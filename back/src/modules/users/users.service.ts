@@ -28,36 +28,29 @@ export class UsersService implements OnModuleInit {
 
     const adminEmail = 'peludopolispf@gmail.com';
 
-    // Buscar si el usuario administrador ya existe
     const existingUser = await this.usersRepository.findByEmail(adminEmail);
 
     if (!existingUser) {
-      // Si no existe, crear el usuario administrador
       console.log('Creando usuario administrador...');
-      const hashedPassword = await bcrypt.hash('Hola123!', 10);
 
       const newAdmin: CreateUserDto = {
         name: 'admin',
         email: adminEmail,
-        password: hashedPassword,
+        password: 'Hola123!',
         address: '123 calle del admin',
         phone: '1234567890'
       };
       await this.createUser(newAdmin);
-      console.log('Usuario administrador creado.');
-      // Asignar permisos de administrador
       await this.makeAdmin(adminEmail);
       console.log('Permisos de administrador asignados.');
     } else {
-      // Si el usuario ya existe, verificar si es administrador
       if (!existingUser.isAdmin) {
-        console.log(
-          'Usuario encontrado, asignando permisos de administrador...'
-        );
         await this.makeAdmin(adminEmail);
-        console.log('Permisos de administrador asignados.');
+        console.log('Usuario administrador cargado en la base de datos.');
       } else {
-        console.log('El usuario ya es administrador.');
+        console.log(
+          'El usuario administrador ya esta cargado en la base de datos.'
+        );
       }
     }
   }
