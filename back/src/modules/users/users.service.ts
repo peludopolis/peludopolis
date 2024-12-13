@@ -37,6 +37,7 @@ export class UsersService {
         isAdmin: false,
         posts: [],
         appointments: [],
+        comments: []
       };
       console.log(newUser);
       const createdUser = await this.usersRepository.createUser(newUser);

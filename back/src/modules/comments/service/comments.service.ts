@@ -1,53 +1,95 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Comment } from '../entities/comment.entity';
 import { UpdateCommentDto } from '../dtos/update-comment.dto';
 import { CreateCommentDto } from '../dtos/create-comment.dto';
 import { Repository } from 'typeorm';
+import { Post } from 'src/modules/posts/entities/post.entity';
+import { isUUID } from 'class-validator';
+import { User } from 'src/modules/users/entities/user.entity';
 
 @Injectable()
 export class CommentsService {
   constructor(
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
+    @InjectRepository(Post)
+    private readonly postRepository: Repository<Post>,
   ) {}
 
-  async create(createCommentDto: CreateCommentDto): Promise<Comment> {
-    const comment = this.commentRepository.create(createCommentDto);
-    return this.commentRepository.save(comment);
+  async create(createCommentDto: CreateCommentDto, user: User): Promise<{ message: string; comment: Comment}> {
+    if (!isUUID(createCommentDto.postId)) {
+      throw new BadRequestException('Invalid UUID format for postId');
+    }
+    
+    //cargamos el post relacionado
+    const post = await this.postRepository.findOne({ where: { id: createCommentDto.postId }})
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    // creamos el comentario
+    const comment = this.commentRepository.create({
+      ...createCommentDto,
+      post,
+      user,//asociamos el user al comment
+    });
+    await this.commentRepository.save(comment);
+
+    //recargamos el comentario con las relaciones necesarias
+    const fullComment = await this.commentRepository.findOne({
+      where: { id: comment.id },
+      relations: ['post', 'user']
+    });
+
+    if (!fullComment) {
+      throw new NotFoundException('Comment could not be retrieved')
+    }
+
+    return {
+      message: 'Comment successfully created',
+      comment: fullComment,
+    };
   }
 
   async findByPost(postId: string): Promise<Comment[]> {
     return this.commentRepository.find({
       where: { post: { id: postId } },
-      relations: ['post'],
+      relations: ['post', 'user'],
     });
   }
 
   async findOne(id: string): Promise<Comment> {
     const comment = this.commentRepository.findOne({
       where: { id },
-      relations: ['post'],
+      relations: ['post', 'user'],
     });
+
     if (!comment) {
-      throw new NotFoundException(`Comentario con id ${id} no encontrado`);
+      throw new NotFoundException(`Comment with ID ${id} not found`);
     }
     return comment;
   }
 
-  async update(id: string, updateCommentDto: UpdateCommentDto): Promise<void> {
+  async update(id: string, updateCommentDto: UpdateCommentDto): Promise<Comment> {
     const comment = await this.findOne(id);
-    if (!comment) {
-      throw new NotFoundException(`Comentario con id ${id} no encontrado`);
-    }
     await this.commentRepository.update(id, updateCommentDto);
+    
+    const updatedComment = await this.commentRepository.findOne({
+      where: { id },
+      relations: ['post', 'user'],
+    });
+
+    if (!updatedComment) {
+      throw new NotFoundException(`Comment with ID ${id} not found`);
+    }
+    return updatedComment;
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<Comment> {
     const comment = await this.findOne(id);
-    if (!comment) {
-      throw new NotFoundException(`Comentario con id ${id} no encontrado`);
-    }
     await this.commentRepository.delete(id);
+    
+    return comment;
   }
 }
