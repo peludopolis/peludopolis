@@ -1,12 +1,9 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  InternalServerErrorException
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
+import { Auth0UserDto } from './dto/auth0User.dto';
 
 @Injectable()
 export class AuthService {
@@ -40,15 +37,13 @@ export class AuthService {
 
       return { accessToken, user };
     } catch (error) {
-      throw new InternalServerErrorException(
-        `Error en el servicio de autenticación: ${error}`
-      );
+      error.message = `Error durante el inicio de sesión: ${error.message}`;
+      throw error;
     }
   }
 
-  async generateJwtForAuth0User(auth0User: any) {
+  async generateJwtForAuth0User(auth0User: Auth0UserDto) {
     try {
-      // Verificar si el usuario está logueado (auth0User debe existir y contener datos válidos)
       if (!auth0User || !auth0User.email || !auth0User.sub) {
         throw new UnauthorizedException(
           'El usuario no está logueado o los datos son inválidos'
@@ -67,10 +62,8 @@ export class AuthService {
 
       return { accessToken };
     } catch (error) {
-      throw new UnauthorizedException(
-        'Ocurrió un error inesperado al generar el token de autenticación:' +
-          error
-      );
+      error.message = `Error al generar el token para Auth0: ${error.message}`;
+      throw error;
     }
   }
 }

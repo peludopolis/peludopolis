@@ -6,7 +6,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  @Redirect('/auth/auth0', 302)
+  @Redirect('http://localhost:3000', 302)
   getHello(): string {
     return this.appService.getHello();
   }
