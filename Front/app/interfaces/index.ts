@@ -73,6 +73,7 @@ export interface AvailableSlots {
 export interface Appointment {
   name: string;
   petName: string;
+  service: string;
   date: string;
   time: string;
 }
