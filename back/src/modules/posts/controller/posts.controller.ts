@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { PostsService } from '../service/posts.service';
 import { CreatePostDto } from '../dtos/create-post.dto';
 import { UpdatePostDto } from '../dtos/update-post.dto';
+import { isUUID } from 'class-validator';
 
 @Controller('posts')
 export class PostsController {
@@ -18,12 +19,23 @@ export class PostsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(id, updatePostDto);
+  async findOne(@Param('id') id: string) {
+    if (!isUUID(id)) {
+      throw new BadRequestException('Invalid UUID format');
+    }
+    return this.postsService.findOne(id);
+  }
+
+  @Put(':id')
+  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
+    return this.postsService.update(id, updatePostDto); 
   }
 
   @Delete(':id')
-  remove(@Param(':id') id: string) {
+  async remove(@Param('id') id: string) {
+    if (!isUUID(id)) {
+      throw new BadRequestException('Invalid UUID format');
+    }
     return this.postsService.remove(id);
   }
 }

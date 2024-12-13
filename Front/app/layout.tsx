@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Footer from "./Footer/page"
-
+import Footer from "./Footer/page";
 import Navbar from "../components/Navbar/Navbar";
 import BadgeWhatsapp from "../components/badgeWhatsapp/BadgeWhatsapp";
 import Chatbot from "../components/Chatbot/Chatbot";
+import { AuthProvider } from "../contexts/authContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,14 +33,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navbar />
-        <main>
-        {children}
-        <Footer />
-        </main>
-        <BadgeWhatsapp />
-        <Chatbot />
+        <AuthProvider>
+          <Navbar />
+          <main>
+            {children}
+            <Footer />
+          </main>
+          <BadgeWhatsapp />
+          <Chatbot />
+        </AuthProvider>
       </body>
     </html>
   );
 }
+

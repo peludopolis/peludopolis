@@ -9,11 +9,7 @@ export class UpdatePostDto {
   @IsString()
   image?: string;
 
-  @IsOptional()
-  @IsUUID()
-  userId?: string;
-
-  @IsOptional()
-  @IsUUID()
-  serviceId?: string;
+  // @IsOptional()
+  // @IsUUID()
+  // serviceId?: string;
 }

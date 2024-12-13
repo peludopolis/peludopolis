@@ -94,6 +94,46 @@ const Footer = () => {
         </div>
       </div>
 
+  
+      <div className="flex gap-8 mt-6">
+        <a
+          href="https://www.facebook.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="relative w-16 h-16 flex items-center justify-center rounded-full transition-all duration-300 ease-in-out hover:scale-110 hover:bg-blue-500"
+        >
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
+            alt="Facebook"
+            className="w-10 h-10 transition-all duration-300 ease-in-out transform rotate-animate"
+          />
+        </a>
+        <a
+          href="https://x.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="relative w-16 h-16 flex items-center justify-center rounded-full transition-all duration-300 ease-in-out hover:scale-110 hover:bg-gray-800"
+        >
+          <img
+            src="https://static.vecteezy.com/system/resources/previews/031/737/206/non_2x/twitter-new-logo-twitter-icons-new-twitter-logo-x-2023-x-social-media-icon-free-png.png"
+            alt="X"
+            className="w-10 h-10 transition-all duration-300 ease-in-out transform rotate-animate"
+          />
+        </a>
+        <a
+          href="https://www.instagram.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="relative w-16 h-16 flex items-center justify-center rounded-full transition-all duration-300 ease-in-out hover:scale-110 hover:bg-pink-500"
+        >
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png"
+            alt="Instagram"
+            className="w-10 h-10 transition-all duration-300 ease-in-out transform rotate-animate"
+          />
+        </a>
+      </div>
+
       {popupContent && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
