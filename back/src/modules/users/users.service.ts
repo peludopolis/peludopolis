@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-  OnModuleInit
-} from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { v4 as uuid } from 'uuid';
 import { CreateUserDto } from './dtos/createUser.dto';
@@ -49,57 +44,56 @@ export class UsersService implements OnModuleInit {
         console.log('Usuario administrador cargado en la base de datos.');
       } else {
         console.log(
-          'El usuario administrador ya esta cargado en la base de datos.'
+          'El usuario administrador ya está cargado en la base de datos.'
         );
       }
     }
   }
 
   async makeAdmin(email: string) {
-    const user = await this.usersRepository.findByEmail(email);
-    if (!user) {
-      throw new NotFoundException('No se encontró el usuario');
+    try {
+      const user = await this.usersRepository.findByEmail(email);
+      if (!user) {
+        throw new NotFoundException('No se encontró el usuario');
+      }
+      user.isAdmin = true;
+      await this.usersRepository.makeAdmin(user);
+    } catch (error) {
+      throw new Error(
+        `No se pudo asignar permisos de administrador: ${error.message}`
+      );
     }
-    user.isAdmin = true;
-    await this.usersRepository.makeAdmin(user);
   }
 
   async createUser(createUserDto: CreateUserDto) {
     try {
       const newId = this.generateUUID();
-      console.log(createUserDto.password);
       const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-      console.log(hashedPassword);
       const newUser: User = {
         ...createUserDto,
         id: newId,
         password: hashedPassword,
-        profilePicture:
-          'https://media.istockphoto.com/id/1495088043/es/vector/icono-de-perfil-de-usuario-avatar-o-icono-de-persona-foto-de-perfil-s%C3%ADmbolo-de-retrato.jpg?s=612x612&w=0&k=20&c=mY3gnj2lU7khgLhV6dQBNqomEGj3ayWH-xtpYuCXrzk=',
+        profilePicture: createUserDto.profilePicture
+          ? createUserDto.profilePicture
+          : 'https://media.istockphoto.com/id/1495088043/es/vector/icono-de-perfil-de-usuario-avatar-o-icono-de-persona-foto-de-perfil-s%C3%ADmbolo-de-retrato.jpg?s=612x612&w=0&k=20&c=mY3gnj2lU7khgLhV6dQBNqomEGj3ayWH-xtpYuCXrzk=',
         isAdmin: false,
         posts: [],
         appointments: [],
         comments: []
       };
-      console.log(newUser);
       const createdUser = await this.usersRepository.createUser(newUser);
-      console.log('USUARIO CREADO:', createdUser);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       return createdUser;
     } catch (error) {
-      throw new InternalServerErrorException(
-        `No se pudo crear el usuario. Por favor, intenta nuevamente más tarde. ${error}`
-      );
+      throw new Error(`No se pudo crear el usuario: ${error.message}`);
     }
   }
 
   async findAll() {
     try {
-      const users = await this.usersRepository.findAll();
-      return users;
+      return await this.usersRepository.findAll();
     } catch (error) {
-      throw new InternalServerErrorException(
-        `No se pudo encontrar los usuarios. Por favor, intenta nuevamente más tarde. ${error}`
+      throw new Error(
+        `No se pudo obtener la lista de usuarios: ${error.message}`
       );
     }
   }
@@ -112,18 +106,17 @@ export class UsersService implements OnModuleInit {
       }
       return user;
     } catch (error) {
-      throw new InternalServerErrorException(
-        `No se pudo encontrar el usuario. Por favor, intenta nuevamente más tarde. ${error}`
-      );
+      throw new Error(`No se pudo encontrar el usuario: ${error.message}`);
     }
   }
 
   async findByEmail(email: string) {
     try {
-      const user = await this.usersRepository.findByEmail(email);
-      return user;
+      return await this.usersRepository.findByEmail(email);
     } catch (error) {
-      throw new NotFoundException(`No se encontró el usuario. ${error}`);
+      throw new Error(
+        `No se pudo encontrar el usuario por email: ${error.message}`
+      );
     }
   }
 
@@ -151,12 +144,9 @@ export class UsersService implements OnModuleInit {
         ...updateUserDto,
         profilePicture: profilePictureUrl
       };
-      const user = await this.usersRepository.updateUser(updatedUser);
-      return user;
+      return await this.usersRepository.updateUser(updatedUser);
     } catch (error) {
-      throw new InternalServerErrorException(
-        `No se pudo actualizar el usuario. Por favor, intenta nuevamente más tarde. ${error}`
-      );
+      throw new Error(`No se pudo actualizar el usuario: ${error.message}`);
     }
   }
 
@@ -169,9 +159,7 @@ export class UsersService implements OnModuleInit {
       await this.usersRepository.deleteUser(id);
       return user;
     } catch (error) {
-      throw new InternalServerErrorException(
-        `No se pudo eliminar el usuario. Por favor, intenta nuevamente más tarde. ${error}`
-      );
+      throw new Error(`No se pudo eliminar el usuario: ${error.message}`);
     }
   }
 }
