@@ -24,8 +24,7 @@ import { JwtModule } from '@nestjs/jwt';
 
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) =>
-        configService.get('typeorm'),
+      useFactory: (configService: ConfigService) => configService.get('typeorm')
     }),
 
     AuthModule,

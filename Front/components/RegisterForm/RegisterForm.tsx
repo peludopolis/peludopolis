@@ -109,7 +109,7 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
                 <label className="block mb-2 text-sm font-medium mt-4 text-black">*Nombre</label>
                 <input
                     type="text"
-                    className="bg-white border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                    className="bg-white border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 text-black "
                     placeholder="Nombre"
                     name="name"
                     onChange={handleChange}
@@ -124,7 +124,7 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
                 <label className="block mb-2 text-sm font-medium text-black">*Correo Electrónico</label>
                 <input
                     type="text"
-                    className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    className="bg-white border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     placeholder="name@email.com"
                     name="email"
                     onChange={handleChange}
@@ -138,7 +138,7 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
                 <label className="block mb-2 text-sm font-medium text-black">*Contraseña</label>
                 <input
                     type="password"
-                    className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    className="bg-white border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     placeholder="Contraseña"
                     name="password"
                     onChange={handleChange}
@@ -152,7 +152,7 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
                 <label className="block mb-2 text-sm font-medium text-black">*Confirmar Contraseña</label>
                 <input
                     type="password"
-                    className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    className="bg-white border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     placeholder="Confirmar contraseña"
                     name="confirmPassword"
                     onChange={handleChange}
@@ -166,7 +166,7 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
                 <label className="block mb-2 text-sm font-medium text-black">*Dirección</label>
                 <input
                     type="text"
-                    className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    className="bg-white border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     placeholder="Dirección"
                     name="address"
                     onChange={handleChange}
@@ -180,7 +180,7 @@ const router = useRouter(); // // Instancia el hook de enrutamiento para redirig
                 <label className="block mb-2 text-sm font-medium text-black">*Teléfono</label>
                 <input
                     type="text"
-                    className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    className="bg-white border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     placeholder="Teléfono"
                     name="phone"
                     onChange={handleChange}
