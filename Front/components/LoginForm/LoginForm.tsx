@@ -74,7 +74,7 @@ return (
             Usuario
         </label>
         <input type="text" 
-        className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 text-black"
         placeholder="name@email.com"
         name="email"
         onChange={(e)=>handleChange(e)} // Llama a handleChange cuando cambia el valor
@@ -92,7 +92,7 @@ return (
             Contraseña
         </label>
         <input type="password" 
-        className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 text-black"
         placeholder="password"
         name="password"
         onChange={(e)=>handleChange(e)}
