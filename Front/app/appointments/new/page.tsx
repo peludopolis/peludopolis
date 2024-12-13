@@ -17,7 +17,7 @@ const NewAppointmentPage: React.FC = () => {
 
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [availableSlots, setAvailableSlots] = useState<AvailableSlots>({});
-  const [appointments, setAppointments] = useState<Slot[]>([]); // Para almacenar múltiples citas
+  const [appointments, setAppointments] = useState<Slot[]>([]);
   const router = useRouter();
   const services = ['Elija un servicio ', 'Baño', 'Corte de pelo', 'Corte de uña'];
 
@@ -31,13 +31,16 @@ const NewAppointmentPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = { ok: true };
-      if (response.ok) {
+      if (appointments.length === 0) {
         router.push(
           `/appointments/payment?${new URLSearchParams(formData).toString()}`
         );
       } else {
-        alert('Hubo un problema al crear la cita. Por favor, inténtalo de nuevo.');
+        const citas = [selectedSlot, ...appointments].filter(Boolean);
+        const queryString = new URLSearchParams({
+          appointments: JSON.stringify(citas),
+        }).toString();
+        router.push(`/appointments/payment?${queryString}`);
       }
     } catch (error) {
       alert('Error al enviar la cita. Por favor, verifica la conexión al servidor.');
@@ -127,7 +130,7 @@ const NewAppointmentPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-black text-3xl text-center font-bold mb-6 mt-4">Agendar Nueva Cita</h1>
+      <h1 className="text-black text-3xl text-center font-bold mb-6 mt-4"> Nueva Cita</h1>Agendar
       <form className="max-w-md mx-auto space-y-4" onSubmit={handleSubmit}>
         <div>
           <label className="text-black block mb-2 text-sm font-medium">Nombre del Cliente</label>
@@ -169,7 +172,6 @@ const NewAppointmentPage: React.FC = () => {
             ))}
           </select>
         </div>
-
         <div className="mb-4">
           <label className="block text-lg font-semibold text-black">Selecciona el día y horario:</label>
           <div className="flex space-x-4 mb-4">
@@ -228,19 +230,17 @@ const NewAppointmentPage: React.FC = () => {
           </div>
         )}
 
-        <div className="mt-6 flex justify-between items-center space-x-4">
+        <div className="flex justify-between">
           <button
             type="button"
             onClick={handleAddAnotherService}
-            className="flex-1 bg-green-400 text-black p-3 rounded-lg hover:bg-green-500"
+            className="bg-gray-500 text-white p-2 rounded-md"
           >
-            Agregar Otro Servicio
+            Agregar otro servicio
           </button>
-
           <button
             type="submit"
-            className="flex-1 bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600"
-            disabled={appointments.length === 0}
+            className="bg-blue-500 text-white p-2 rounded-md"
           >
             Agendar Cita
           </button>
