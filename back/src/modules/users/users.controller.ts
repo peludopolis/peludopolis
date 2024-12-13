@@ -10,7 +10,7 @@ import {
   Put,
   UploadedFile,
   UseGuards,
-  UseInterceptors,
+  UseInterceptors
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { RolesGuard } from '../auth/guard/roles.guard';
@@ -32,8 +32,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRole.Admin)
+  @UseGuards(AuthGuard)
   async getUserById(@Param('id') id: string) {
     return await this.usersService.findById(id);
   }
@@ -48,16 +47,16 @@ export class UsersController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 200000 }),
-          new FileTypeValidator({ fileType: /jpeg|jpg|png|webp/ }),
-        ],
-      }),
+          new FileTypeValidator({ fileType: /jpeg|jpg|png|webp/ })
+        ]
+      })
     )
-    profilePicture?: Express.Multer.File,
+    profilePicture?: Express.Multer.File
   ) {
     return await this.usersService.updateUser(
       params.id,
       UpdateUserDto,
-      profilePicture,
+      profilePicture
     );
   }
 

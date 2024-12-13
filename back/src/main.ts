@@ -8,7 +8,7 @@ import { config as auth0Config } from './config/auth0.config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: '*', // Para pruebas
+    origin: '*' // Para pruebas
   });
 
   app.use(auth(auth0Config));
@@ -16,8 +16,8 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      transform: true,
-    }),
+      transform: true
+    })
   );
   app.useGlobalInterceptors(new RemoveSensitiveFieldsInterceptor());
 

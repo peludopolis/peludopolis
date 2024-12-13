@@ -5,16 +5,18 @@ import { TIP_CATEGORIES, TIP_CONTENT } from "./constants";
 
 const PetCareTips = () => {
   const [activeCategory, setActiveCategory] = React.useState<string>("general");
+
   const handleHashChange = () => {
     const hash = window.location.hash.substring(1);
     if (hash && TIP_CATEGORIES.some(category => category.key === hash)) {
       setActiveCategory(hash);
       const section = document.getElementById(hash);
-      // if (section) {
-      //   section.scrollIntoView({ behavior: "smooth" });
-      // }
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
+      }
     }
   };
+  
 
 
   const handleCategoryClick = (categoryKey: string) => {
