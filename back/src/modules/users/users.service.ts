@@ -6,6 +6,7 @@ import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dtos/updateUser.dto';
 import { UploadImageService } from '../image-upload/image-upload.service';
+import { Auth0UserDto } from '../auth/dto/auth0User.dto';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -48,6 +49,24 @@ export class UsersService implements OnModuleInit {
         );
       }
     }
+  }
+
+  async findOrCreateUserFromAuth0(auth0User: Auth0UserDto) {
+    let user = await this.findByEmail(auth0User.email);
+
+    if (!user) {
+      user = await this.createUser({
+        email: auth0User.email,
+        password: '',
+        name:
+          auth0User.name || `${auth0User.given_name} ${auth0User.family_name}`,
+        address: '',
+        phone: '',
+        profilePicture: auth0User.picture
+      });
+    }
+
+    return user;
   }
 
   async makeAdmin(email: string) {
