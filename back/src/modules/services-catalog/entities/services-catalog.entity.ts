@@ -19,6 +19,6 @@ export class ServicesCatalog {
   @Column({ length: 50 })
   employee: string;
 
-  @OneToMany(() => Post, (post) => post.service)
-  posts: Post[];
+  // @OneToMany(() => Post, (post) => post.service)
+  // posts: Post[];
 }
