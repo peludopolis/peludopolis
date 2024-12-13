@@ -2,14 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-
-interface Appointment {
-  name: string;
-  petName: string;
-  service: string;
-  date: string;
-  time: string;
-}
+import { Appointment } from '../../interfaces/index';
 
 const PaymentPage: React.FC = () => {
   const searchParams = useSearchParams();
@@ -21,6 +14,13 @@ const PaymentPage: React.FC = () => {
 
       if (rawAppointments) {
         const parsedAppointments: Appointment[] = JSON.parse(rawAppointments);
+        parsedAppointments.sort((a, b) => {
+          const dateA = Date.parse(a.date);
+          const dateB = Date.parse(b.date);
+          
+          return dateA - dateB;
+        });
+
         setAppointments(parsedAppointments);
       } else {
         const name = searchParams.get('name');
