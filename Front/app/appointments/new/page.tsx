@@ -1,25 +1,25 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { format, addWeeks, startOfWeek, addDays } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { Slot, AvailableSlots } from '../../interfaces/index';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { format, addWeeks, startOfWeek, addDays } from "date-fns";
+import { es } from "date-fns/locale";
+import { Slot, AvailableSlots } from "../../interfaces/index";
 
 const NewAppointmentPage: React.FC = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    petName: '',
-    service: '',
-    date: '',
-    time: '',
+    name: "",
+    petName: "",
+    service: "",
+    date: "",
+    time: "",
   });
 
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [availableSlots, setAvailableSlots] = useState<AvailableSlots>({});
-  const [appointments, setAppointments] = useState<Slot[]>([]); // Para almacenar múltiples citas
+  const [appointments, setAppointments] = useState<Slot[]>([]);
   const router = useRouter();
-  const services = ['Elija un servicio ', 'Baño', 'Corte de pelo', 'Corte de uña'];
+  const services = ["Elija un servicio", "Baño", "Corte de pelo", "Corte de uña"];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
@@ -31,16 +31,19 @@ const NewAppointmentPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = { ok: true };
-      if (response.ok) {
+      if (appointments.length === 0) {
         router.push(
           `/appointments/payment?${new URLSearchParams(formData).toString()}`
         );
       } else {
-        alert('Hubo un problema al crear la cita. Por favor, inténtalo de nuevo.');
+        const citas = [selectedSlot, ...appointments].filter(Boolean);
+        const queryString = new URLSearchParams({
+          appointments: JSON.stringify(citas),
+        }).toString();
+        router.push(`/appointments/payment?${queryString}`);
       }
     } catch (error) {
-      alert('Error al enviar la cita. Por favor, verifica la conexión al servidor.');
+      alert("Error al enviar la cita. Por favor, verifica la conexión al servidor.");
     }
   };
 
@@ -48,15 +51,15 @@ const NewAppointmentPage: React.FC = () => {
     if (selectedSlot) {
       setAppointments((prevAppointments) => [...prevAppointments, selectedSlot]);
     }
+
     setFormData({
-      name: '',
-      petName: '',
-      service: '',
-      date: '',
-      time: '',
+      ...formData,
+      service: "",
+      date: "",
+      time: "",
     });
     setSelectedSlot(null);
-    alert('Puedes agregar otro servicio ahora.');
+    alert("Puedes agregar otro servicio ahora.");
   };
 
   const generateDates = () => {
@@ -65,7 +68,7 @@ const NewAppointmentPage: React.FC = () => {
     const week1 = addWeeks(startOfCurrentWeek, 1);
     const week2 = addWeeks(startOfCurrentWeek, 2);
 
-    const daysOfWeek = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'];
+    const daysOfWeek = ["lunes", "martes", "miércoles", "jueves", "viernes"];
 
     const generateWeek = (startDate: Date) => {
       return daysOfWeek.map((day, index) => {
@@ -81,7 +84,7 @@ const NewAppointmentPage: React.FC = () => {
   };
 
   const { week1, week2 } = generateDates();
-  const [selectedDay, setSelectedDay] = useState<string>('lunes');
+  const [selectedDay, setSelectedDay] = useState<string>("lunes");
 
   const handleDayClick = (day: string) => {
     setSelectedDay(day);
@@ -100,14 +103,14 @@ const NewAppointmentPage: React.FC = () => {
         const previousSlotKey = `${selectedSlot.date} ${selectedSlot.time}`;
         return {
           ...prevSlots,
-          [previousSlotKey]: 'available',
-          [slotKey]: 'occupied',
+          [previousSlotKey]: "available",
+          [slotKey]: "occupied",
         };
       }
 
       return {
         ...prevSlots,
-        [slotKey]: 'occupied',
+        [slotKey]: "occupied",
       };
     });
 
@@ -127,10 +130,14 @@ const NewAppointmentPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-black text-3xl text-center font-bold mb-6 mt-4">Agendar Nueva Cita</h1>
+      <h1 className="text-black text-3xl text-center font-bold mb-6 mt-4">
+        Nueva Cita
+      </h1>
       <form className="max-w-md mx-auto space-y-4" onSubmit={handleSubmit}>
         <div>
-          <label className="text-black block mb-2 text-sm font-medium">Nombre del Cliente</label>
+          <label className="text-black block mb-2 text-sm font-medium">
+            Nombre del Cliente
+          </label>
           <input
             type="text"
             name="name"
@@ -142,7 +149,9 @@ const NewAppointmentPage: React.FC = () => {
           />
         </div>
         <div>
-          <label className="text-black block mb-2 text-sm font-medium">Nombre de la Mascota</label>
+          <label className="text-black block mb-2 text-sm font-medium">
+            Nombre de la Mascota
+          </label>
           <input
             type="text"
             name="petName"
@@ -171,15 +180,17 @@ const NewAppointmentPage: React.FC = () => {
         </div>
 
         <div className="mb-4">
-          <label className="block text-lg font-semibold text-black">Selecciona el día y horario:</label>
-          <div className="flex space-x-4 mb-4">
-            {['lunes', 'martes', 'miércoles', 'jueves', 'viernes'].map((day, index) => (
+          <label className="block text-lg font-semibold text-black">
+            Selecciona el día y horario:
+          </label>
+          <div className="flex justify-between mb-4 gap-2 -ml-2">
+            {["lunes", "martes", "miércoles", "jueves", "viernes"].map((day, index) => (
               <button
                 key={index}
                 type="button"
                 onClick={() => handleDayClick(day)}
                 className={`${
-                  selectedDay === day ? 'bg-blue-500' : 'bg-gray-200'
+                  selectedDay === day ? "bg-blue-500" : "bg-gray-200"
                 } text-black px-4 py-2 rounded-md w-full`}
               >
                 {day.charAt(0).toUpperCase() + day.slice(1)}
@@ -191,16 +202,16 @@ const NewAppointmentPage: React.FC = () => {
             {getDatesForDay(selectedDay).map((d, index) => (
               <div key={index} className="border border-gray-300 p-4 rounded-md">
                 <h3 className="text-black text-xl font-bold">{`${d.day.charAt(0).toUpperCase() + d.day.slice(1)} ${format(new Date(d.date), 'd MMMM yyyy', { locale: es })}`}</h3>
-                {['9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00'].map((time, timeIndex) => {
+                {["9:00", "9:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00"].map((time, timeIndex) => {
                   const slotKey = `${format(new Date(d.date), 'd MMMM yyyy', { locale: es })} ${time}`;
-                  const isOccupied = availableSlots[slotKey] === 'occupied';
+                  const isOccupied = availableSlots[slotKey] === "occupied";
                   return (
                     <button
                       key={timeIndex}
                       type="button"
                       onClick={() => handleSelectSlot(format(new Date(d.date), 'd MMMM yyyy', { locale: es }), time)}
                       className={`${
-                        isOccupied ? 'bg-red-500' : 'bg-green-500'
+                        isOccupied ? "bg-red-500" : "bg-green-500"
                       } text-white p-2 rounded-md w-full mt-2`}
                       disabled={isOccupied}
                     >
@@ -218,31 +229,30 @@ const NewAppointmentPage: React.FC = () => {
             <h3 className="text-lg font-bold text-black">Detalles de las Citas:</h3>
             {appointments.map((appointment, index) => (
               <div key={index} className="mb-4">
-                <p className="text-black"><strong>Cliente:</strong> {appointment.name}</p>
-                <p className="text-black"><strong>Mascota:</strong> {appointment.petName}</p>
-                <p className="text-black"><strong>Servicio:</strong> {appointment.service}</p>
-                <p className="text-black"><strong>Fecha:</strong> {appointment.date}</p>
-                <p className="text-black"><strong>Hora:</strong> {appointment.time}</p>
+                <p className="text-black">
+                  <strong>Cliente:</strong> {appointment.name} <br />
+                  <strong>Servicio:</strong> {appointment.service} <br />
+                  <strong>Fecha:</strong> {appointment.date} <br />
+                  <strong>Hora:</strong> {appointment.time} <br />
+                </p>
               </div>
             ))}
           </div>
         )}
 
-        <div className="mt-6 flex justify-between items-center space-x-4">
+        <div className="flex justify-between mt-4 gap-2">
           <button
             type="button"
             onClick={handleAddAnotherService}
-            className="flex-1 bg-green-400 text-black p-3 rounded-lg hover:bg-green-500"
+            className="bg-blue-500 text-white py-2 px-4 rounded-md w-full"
           >
-            Agregar Otro Servicio
+            Agendar otro servicio
           </button>
-
           <button
             type="submit"
-            className="flex-1 bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600"
-            disabled={appointments.length === 0}
+            className="bg-green-500 text-white py-2 px-4 rounded-md w-full"
           >
-            Agendar Cita
+            Finalizar
           </button>
         </div>
       </form>
@@ -251,3 +261,6 @@ const NewAppointmentPage: React.FC = () => {
 };
 
 export default NewAppointmentPage;
+
+
+// 

@@ -28,9 +28,10 @@ const Slider = () => {
     const intervalId = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
     }, 5000);
-
+  
     return () => clearInterval(intervalId);
-  }, []);
+  }, [images.length]);
+  
 
   return (
     <div
