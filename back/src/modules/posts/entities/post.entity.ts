@@ -25,10 +25,11 @@ export class Post {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => ServicesCatalog, (service) => service.posts)
-  @JoinColumn({ name: 'serviceId' })
-  service: ServicesCatalog;
-
   @OneToMany(() => Comment, (comment) => comment.post, { eager: true })
   comments: Comment[];
+  
+  // @ManyToOne(() => ServicesCatalog, (service) => service.posts)
+  // @JoinColumn({ name: 'serviceId' })
+  // service: ServicesCatalog;
+
 }

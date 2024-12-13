@@ -69,3 +69,11 @@ export interface Slot {
 export interface AvailableSlots {
   [key: string]: 'available' | 'occupied';
 }
+
+export interface Appointment {
+  name: string;
+  petName: string;
+  service: string;
+  date: string;
+  time: string;
+}

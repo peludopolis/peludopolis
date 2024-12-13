@@ -13,7 +13,7 @@ export class CreatePostDto {
   @IsNotEmpty()
   userId: string;
 
-  @IsUUID()
-  @IsNotEmpty()
-  serviceId: string;
+  // @IsUUID()
+  // @IsNotEmpty()
+  // serviceId: string;
 }
