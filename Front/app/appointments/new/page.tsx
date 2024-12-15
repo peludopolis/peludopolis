@@ -1,8 +1,8 @@
-'use client';
+"use client"
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { format, addWeeks, startOfWeek, addDays } from "date-fns";
+import { format, addWeeks, startOfWeek, addDays, isBefore, isToday } from "date-fns";
 import { es } from "date-fns/locale";
 import { Slot, AvailableSlots } from "../../interfaces/index";
 
@@ -97,6 +97,16 @@ const NewAppointmentPage: React.FC = () => {
 
   const handleSelectSlot = (date: string, time: string) => {
     const slotKey = `${date} ${time}`;
+
+    const currentTime = new Date();
+    const selectedDate = new Date(date);
+    const [hour, minute] = time.split(":");
+    selectedDate.setHours(parseInt(hour), parseInt(minute));
+
+    if (isBefore(selectedDate, currentTime)) {
+      alert("El horario seleccionado ya pasó. Por favor elige otro.");
+      return;
+    }
 
     setAvailableSlots((prevSlots) => {
       if (selectedSlot) {
@@ -212,7 +222,7 @@ const NewAppointmentPage: React.FC = () => {
                       onClick={() => handleSelectSlot(format(new Date(d.date), 'd MMMM yyyy', { locale: es }), time)}
                       className={`${
                         isOccupied ? "bg-red-500" : "bg-green-500"
-                      } text-white p-2 rounded-md w-full mt-2`}
+                      } text-white p-2 w-full rounded-md mt-2`}
                       disabled={isOccupied}
                     >
                       {time}
@@ -224,33 +234,17 @@ const NewAppointmentPage: React.FC = () => {
           </div>
         </div>
 
-        {appointments.length > 0 && (
-          <div className="mt-6 border p-4 rounded-lg bg-gray-50">
-            <h3 className="text-lg font-bold text-black">Detalles de las Citas:</h3>
-            {appointments.map((appointment, index) => (
-              <div key={index} className="mb-4">
-                <p className="text-black">
-                  <strong>Cliente:</strong> {appointment.name} <br />
-                  <strong>Servicio:</strong> {appointment.service} <br />
-                  <strong>Fecha:</strong> {appointment.date} <br />
-                  <strong>Hora:</strong> {appointment.time} <br />
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className="flex justify-between mt-4 gap-2">
+        <div className="mt-4 flex justify-between gap-4">
           <button
             type="button"
+            className="bg-gray-300 text-black px-4 py-2 rounded-md"
             onClick={handleAddAnotherService}
-            className="bg-blue-500 text-white py-2 px-4 rounded-md w-full"
           >
             Agendar otro servicio
           </button>
           <button
             type="submit"
-            className="bg-green-500 text-white py-2 px-4 rounded-md w-full"
+            className="bg-blue-500 text-white px-6 py-3 rounded-md"
           >
             Finalizar
           </button>
@@ -261,6 +255,3 @@ const NewAppointmentPage: React.FC = () => {
 };
 
 export default NewAppointmentPage;
-
-
-// 
