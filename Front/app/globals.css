@@ -36,3 +36,21 @@ body {
 html {
   scroll-behavior: smooth;
 }
+
+html, body {
+  height: 100%;
+  margin: 0; /* Sin márgenes extra */
+  display: flex;
+  flex-direction: column; /* Alineación vertical */
+}
+
+#__next {
+  display: flex;
+  flex-direction: column; /* Asegura que el footer esté en el flujo */
+  min-height: 100%; /* Ocupa toda la altura */
+}
+
+footer {
+  margin-top: auto; /* Empuja el footer al final */
+}
+
