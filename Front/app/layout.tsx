@@ -34,11 +34,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <Navbar />
-          <main>
-            {children}
+          <div className="flex flex-col min-h-screen">
+            <Navbar />
+            <main className="flex-grow">{children}</main>
             <Footer />
-          </main>
+          </div>
           <BadgeWhatsapp />
           <Chatbot />
         </AuthProvider>
@@ -46,4 +46,3 @@ export default function RootLayout({
     </html>
   );
 }
-

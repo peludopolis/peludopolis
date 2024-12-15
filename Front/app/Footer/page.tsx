@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { FaWhatsapp, FaPhone, FaLightbulb, FaNewspaper, FaRegFileAlt } from "react-icons/fa";
 
+
 const Footer = () => {
   const [popupContent, setPopupContent] = useState<null | string>(null);
 
