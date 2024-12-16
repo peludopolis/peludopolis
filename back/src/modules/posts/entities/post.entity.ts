@@ -27,9 +27,4 @@ export class Post {
 
   @OneToMany(() => Comment, (comment) => comment.post, { eager: true })
   comments: Comment[];
-  
-  // @ManyToOne(() => ServicesCatalog, (service) => service.posts)
-  // @JoinColumn({ name: 'serviceId' })
-  // service: ServicesCatalog;
-
 }
