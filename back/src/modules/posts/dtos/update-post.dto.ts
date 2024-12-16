@@ -8,8 +8,4 @@ export class UpdatePostDto {
   @IsOptional()
   @IsString()
   image?: string;
-
-  // @IsOptional()
-  // @IsUUID()
-  // serviceId?: string;
 }

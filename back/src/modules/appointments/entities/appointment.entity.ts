@@ -4,12 +4,13 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  OneToMany,
   ManyToOne,
   ManyToMany,
   JoinTable,
+  OneToOne,
 } from 'typeorm';
 import { StatusAppointment } from '../enum/status-appointment.enum';
+import { PaymentsDetail } from '../paymentsDetail.entity';
 
 @Entity()
 export class Appointment {
@@ -49,6 +50,6 @@ export class Appointment {
   })
   status: StatusAppointment;
 
-  //OneToOne(() => PaymentDetail)
-  // paymentDetail: PaymentDetail;
+  @OneToOne(() => PaymentsDetail, (paymentDetail) => paymentDetail.appointment)
+  paymentDetail: PaymentsDetail;
 }

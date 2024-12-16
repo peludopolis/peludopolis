@@ -1,5 +1,5 @@
 import {
-  BadRequestException,
+
   Body,
   Controller,
   Delete,
@@ -17,14 +17,13 @@ import { UpdateCommentDto } from '../dtos/update-comment.dto';
 import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
 
 @Controller('comments')
-@UseGuards(AuthGuard) 
+
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
   @Post()
-  async create(@Body() createCommentDto: CreateCommentDto, @Request() req: any) {
-    const user = req.user;// El usuario autenticado
-    return this.commentsService.create(createCommentDto, user);//pasamos el usuario al servicio
+  async create(@Body() createCommentDto: CreateCommentDto) {
+    return this.commentsService.create(createCommentDto);
   }
 
   @Get('post/:postId')
