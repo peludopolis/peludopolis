@@ -11,29 +11,25 @@ const PaymentPage: React.FC = () => {
   const [total, setTotal] = useState<number>(0);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
 
-
   useEffect(() => {
-    if (searchParams) {
-      const rawAppointments = searchParams.get('appointments');
+    const rawAppointments = searchParams.get('appointments');
 
-      if (rawAppointments) {
-        const parsedAppointments: Appointment[] = JSON.parse(rawAppointments);
-        parsedAppointments.sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
-        setAppointments(parsedAppointments);
-      } else {
-        const name = searchParams.get('name');
-        const petName = searchParams.get('petName');
-        const service = searchParams.get('service');
-        const date = searchParams.get('date');
-        const time = searchParams.get('time');
+    if (rawAppointments) {
+      const parsedAppointments: Appointment[] = JSON.parse(rawAppointments);
+      parsedAppointments.sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
+      setAppointments(parsedAppointments);
+    } else {
+      const name = searchParams.get('name');
+      const petName = searchParams.get('petName');
+      const service = searchParams.get('service');
+      const date = searchParams.get('date');
+      const time = searchParams.get('time');
 
-        if (name && petName && service && date && time) {
-          setAppointments([{ name, petName, service, date, time }]);
-        }
+      if (name && petName && service && date && time) {
+        setAppointments([{ name, petName, service, date, time }]);
       }
     }
   }, [searchParams]);
-
 
   useEffect(() => {
     const totalPrice = appointments.reduce((sum, appointment) => {
@@ -53,6 +49,8 @@ const PaymentPage: React.FC = () => {
         return;
       }
 
+      const ngrokUrl = 'https://c1fa-186-158-144-211.ngrok-free.app';
+
       const preference = {
         items: appointments.map((appointment) => {
           const service = services.find((s) => s.name === appointment.service);
@@ -65,14 +63,13 @@ const PaymentPage: React.FC = () => {
           };
         }),
         back_urls: {
-          success: 'https://c1fa-186-158-144-211.ngrok-free.app/success',
-          failure: 'https://c1fa-186-158-144-211.ngrok-free.app/failure',
-          pending: 'https://c1fa-186-158-144-211.ngrok-free.app/pending',
+          success: `${ngrokUrl}/payment-result?status=approved`,
+          failure: `${ngrokUrl}/payment-result?status=failure`,
+          pending: `${ngrokUrl}/payment-result?status=pending`,
         },
         auto_return: 'approved',
       };
 
-   
       const response = await fetch(
         'https://api.mercadopago.com/checkout/preferences',
         {

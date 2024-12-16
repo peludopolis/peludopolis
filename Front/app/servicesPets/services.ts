@@ -49,7 +49,7 @@ interface Service {
       id: 5,
       name: "Baño",
       description: "Baño completo con productos específicos para el cuidado del pelaje.",
-      price: 4500,
+      price: 1,
       duration: 30,
       type: "perro",
       category: "adulto",
