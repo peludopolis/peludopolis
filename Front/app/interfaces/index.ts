@@ -30,6 +30,7 @@ export interface UserData {
 }
 
 export interface UserSession {
+  id: any;
   login: boolean;
   token: string;
   user: UserSessionData;
