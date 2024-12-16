@@ -1,6 +1,6 @@
 const page = () => {
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen text-center -mt-20">
+        <div className="flex flex-col items-center justify-center min-h-screen text-center">
             <h1 className="text-2xl font-bold mb-4 text-black">Ubicación</h1>
             <p className="text-lg mb-2 text-black">Visítanos en nuestra dirección ficticia:</p>
             <p className="text-lg font-semibold mb-6 text-black">
