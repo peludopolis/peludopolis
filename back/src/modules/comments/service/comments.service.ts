@@ -15,12 +15,20 @@ export class CommentsService {
     private readonly commentRepository: Repository<Comment>,
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createCommentDto: CreateCommentDto, user: User): Promise<{ message: string; comment: Comment}> {
+  async create(createCommentDto: CreateCommentDto): Promise<{ message: string; comment: Comment}> {
+    console.log('DTO recibido en el servicio:', createCommentDto);
+
     if (!isUUID(createCommentDto.postId)) {
       throw new BadRequestException('Invalid UUID format for postId');
     }
+
+    if (!isUUID(createCommentDto.userId)) {
+      throw new BadRequestException('Invalid UUID format for userId');
+    }  
     
     //cargamos el post relacionado
     const post = await this.postRepository.findOne({ where: { id: createCommentDto.postId }})
@@ -28,13 +36,20 @@ export class CommentsService {
       throw new NotFoundException('Post not found');
     }
 
+    //buscar el usuario relacionado
+    const user = await this.userRepository.findOne({ where: { id: createCommentDto.userId} })
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
     // creamos el comentario
     const comment = this.commentRepository.create({
       ...createCommentDto,
       post,
-      user,//asociamos el user al comment
+      user, 
     });
     await this.commentRepository.save(comment);
+    console.log('Comentario guardado en la base de datos');
 
     //recargamos el comentario con las relaciones necesarias
     const fullComment = await this.commentRepository.findOne({
@@ -45,7 +60,7 @@ export class CommentsService {
     if (!fullComment) {
       throw new NotFoundException('Comment could not be retrieved')
     }
-
+    console.log('Comentario creado exitosamente:', fullComment);
     return {
       message: 'Comment successfully created',
       comment: fullComment,

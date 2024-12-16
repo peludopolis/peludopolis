@@ -15,19 +15,27 @@ export class ServicesCatalogService {
   private services = [
     {
       id: uuidv4(),
-      name: 'Revisión general',
-      description: 'Un chequeo completo para tu mascota',
+      name: 'Consulta veterinaria',
+      description: 'Consulta general con un veterinario profesional.',
     },
-    { id: uuidv4(), name: 'Peinar', description: 'Estilismo para tu mascota' },
-    {
-      id: uuidv4(),
-      name: 'Bañar',
-      description: 'Un baño refrescante y relajante',
+    { id: uuidv4(), 
+      name: 'Corte de pelo', 
+      description: 'Un corte de pelo especializado para cachorros, suave y seguro.' 
     },
     {
       id: uuidv4(),
-      name: 'Cortar uñas',
-      description: 'Corte y cuidado de uñas',
+      name: 'Baño',
+      description: 'Baño completo con productos específicos para el cuidado del pelaje.',
+    },
+    {
+      id: uuidv4(),
+      name: 'Corte de uñas',
+      description: 'Corte y limado de uñas para mantenerlas en una longitud saludable.',
+    },
+    {
+      id: uuidv4(),
+      name: 'Spa',
+      description: 'Experiencia relajante con masajes, baño especial y cuidado del pelaje.',
     },
   ];
 
