@@ -1,51 +1,34 @@
-"use client"
-
-// pages/dashboard.tsx
-import { useEffect, useState } from 'react';
+"use client";
+import { useContext, useEffect } from "react";
+import { useRouter } from "next/navigation"; // Importamos el hook para redirigir
+import { AuthContext } from "../../contexts/authContext";
 
 const Dashboard = () => {
-  interface UserData {
-    name: string;
-    email: string;
-    appointments: { id: number; date: string; service: string; payment: string }[];
-  }
-  
-  const [userData, setUserData] = useState<UserData | null>(null);
+    const { user } = useContext(AuthContext); // Accedemos al user desde el contexto
+    const router = useRouter(); // Usamos el hook de router
 
-  useEffect(() => {
-    // Simula la carga de datos del usuario (puedes reemplazar esto más tarde)
-    setUserData({
-      name: 'Simula Dashboard Peludopolis',
-      email: 'peludopolis@gmail.com',
-      appointments: [
-        { id: 1, date: '2024-12-15', service: 'Corte de cabello', payment: 'Visa' },
-        { id: 2, date: '2024-12-20', service: 'Baño', payment: 'Amex' },
-      ],
-    });
-  }, []);
+    // Si no hay usuario, redirigimos al home
+    useEffect(() => {
+        if (!user?.user) {
+            router.push("/"); // Redirige al home
+        }
+    }, [user, router]);
 
-  if (!userData) {
-    return <div className='text-black'>Cargando...</div>;
-  }
+    if (!user?.user) {
+        // Mientras se verifica, puedes mostrar un "loading" o nada
+        return <div className="text-black">Cargando...</div>;
+    }
 
-  return (
-    <div className="p-4">
-      <h1 className="text-black text-2xl font-bold mb-4">Bienvenido, {userData.name}</h1>
-      <section>
-        <h2 className="text-black text-xl font-semibold mb-2">Mis citas</h2>
-        <ul className="space-y-2">
-          {userData.appointments.map((appointment) => (
-            <li key={appointment.id} className="text-black p-4 border rounded-lg shadow-sm">
-              <p><strong>Fecha:</strong> {appointment.date}</p>
-              <p><strong>Servicio:</strong> {appointment.service}</p>
-              <p><strong>Metodo de Pago:</strong> {appointment.payment}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </div>
-  );
+    return (
+        <div>
+            <h1>Bienvenido, {user.user.name}</h1>
+            <img src={user.user.picture} alt="Profile" />
+            <p>Email: {user.user.email}</p>
+        </div>
+    );
 };
 
 export default Dashboard;
+
+
 

@@ -3,16 +3,15 @@
 import { ServicePet, UserSession } from "../app/interfaces";
 import { createContext, useEffect, useState } from "react";
 
-// Creo la interfaz del contexto
+// Actualiza la interfaz para reflejar la nueva estructura del estado 'user'
 interface AuthContextProps {
-    user: UserSession | null;
-    setUser: (user: UserSession | null) => void;
+    user: { user: UserSession | null; login: boolean } | null; // Nueva estructura
+    setUser: (user: { user: UserSession | null; login: boolean } | null) => void;  // Actualiza el tipo
     logout: () => void;
     services: ServicePet[];
     setServices: (services: ServicePet[]) => void;
 }
 
-// Creo el contexto, aquí voy a guardar los datos
 export const AuthContext = createContext<AuthContextProps>({
     user: null,
     services: [],
@@ -21,18 +20,16 @@ export const AuthContext = createContext<AuthContextProps>({
     setServices: () => {},
 });
 
-// Aquí voy a crear el provider que va a tener el contexto de autenticación
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<UserSession | null>(null);
+    const [user, setUser] = useState<{ user: UserSession | null; login: boolean } | null>(null);  // Actualiza el tipo de 'user'
     const [services, setServices] = useState<ServicePet[]>([]);
 
     // Guardamos el estado del usuario y de las órdenes en localStorage
     useEffect(() => {
         if (user) {
             localStorage.setItem("user", JSON.stringify(user));
-            setServices(user?.user.services || []);
-            // Guardamos las órdenes también en localStorage
-            localStorage.setItem("services", JSON.stringify(user?.user.services || []));
+            setServices(user?.user?.services || []);
+            localStorage.setItem("services", JSON.stringify(user?.user?.services || []));
         }
     }, [user]);
 
@@ -51,9 +48,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Función para cerrar sesión
     const logout = () => {
         localStorage.removeItem("user");
-        localStorage.removeItem("services");  // Eliminar también las órdenes
+        localStorage.removeItem("services");
         setUser(null);
-        setServices([]);  // Limpiar las órdenes en el estado
+        setServices([]);
     };
 
     return (
