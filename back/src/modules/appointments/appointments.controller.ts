@@ -20,7 +20,7 @@ export class AppointmentsController {
     const availableSlots =
       await this.appointmentsService.obtenerHorariosDisponibles(
         date,
-        serviceIds,
+        serviceIds
       );
 
     return availableSlots;

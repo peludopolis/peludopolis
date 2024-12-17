@@ -6,10 +6,10 @@ import {
   IsString,
   IsUUID,
   Matches,
-  ValidateNested,
+  ValidateNested
 } from 'class-validator';
 import { ServiceAppointmentDto } from './service-appointment.dto';
-import { StatusAppointment } from '../enum/status-appointment.enum';
+// import { StatusAppointment } from '../enum/status-appointment.enum';
 
 export class CreateAppointmentDto {
   @IsNotEmpty()
@@ -22,7 +22,7 @@ export class CreateAppointmentDto {
 
   @Matches(/^([01]\d|2[0-3]):([03]0)$/, {
     message:
-      'El campo "startTime" debe estar en formato 24 horas y tener la estructura HH:mm, en bloques de 30 minutos',
+      'El campo "startTime" debe estar en formato 24 horas y tener la estructura HH:mm, en bloques de 30 minutos'
   })
   startTime: string;
 

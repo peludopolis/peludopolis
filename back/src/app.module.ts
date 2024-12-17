@@ -13,6 +13,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import typeOrmConfig from './config/typeOrm.config';
 import { UploadImageModule } from './modules/image-upload/image-upload.module';
 import { JwtModule } from '@nestjs/jwt';
+import { CommentsModule } from './modules/comments/comments.module';
 // import { AppointmentsModule } from './modules/appointments/appointments.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { PaymentsController } from './modules/payments/payments.controller';
@@ -39,6 +40,7 @@ import { PaymentsController } from './modules/payments/payments.controller';
     }),
     UsersModule,
     PostsModule,
+    CommentsModule,
     AppointmentsModule,
     ServicesCatalogModule,
     TipsModule,

@@ -39,8 +39,8 @@ const ServiciosMascota = () => {
               <Image
                 src={servicio.imagen}
                 alt={servicio.titulo}
-                layout="fill" // Hace que la imagen llene el contenedor
-                objectFit="cover" // Ajusta la imagen dentro del espacio
+                width={300}
+                height={300}
               />
             </div>
             <div className="p-4">

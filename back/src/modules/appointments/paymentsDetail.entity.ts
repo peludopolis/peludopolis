@@ -1,4 +1,5 @@
-import { Column, Entity, JoinColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Appointment } from './entities/appointment.entity';
 
 @Entity('payments_details')
 export class PaymentsDetail {
@@ -8,6 +9,7 @@ export class PaymentsDetail {
   @Column('decimal', { precision: 10, scale: 2 })
   totalPrice: number;
 
-  // OneToOne(() => Appointment, (appointment) => appointment.paymentDetail)
-  // @JoinColumn({ name: 'appointment_id'})
+  @OneToOne(() => Appointment, (appointment) => appointment.paymentDetail)
+  @JoinColumn({ name: 'appointment_id'})
+  appointment: Appointment;
 }
