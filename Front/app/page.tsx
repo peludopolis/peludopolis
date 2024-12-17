@@ -10,6 +10,9 @@ export default function Home() {
       <Hero />
       <Slider />
       <ServicesPets />
+      <h1 className="text-center font-title text-primary text-2xl font-extrabold sm:text-3xl m-4">
+        Experiencias de nuestros clientes
+      </h1>
       <PostMocks />
       <PostButtons />
     </>

@@ -26,7 +26,7 @@ const ServiciosMascota = () => {
 
   return (
     <div className="py-8 mx-8">
-      <h2 className="text-2xl font-semibold text-center mb-6 text-black">
+      <h2 className="text-center font-title text-primary text-2xl font-extrabold sm:text-3xl m-4">
         Servicios para tu mascota
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
