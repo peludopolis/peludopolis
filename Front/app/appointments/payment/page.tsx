@@ -104,25 +104,49 @@ const PaymentPage: React.FC = () => {
 
   const handleSendAppointment = async () => {
     try {
+      // Obtener el primer appointment para la cita
+      const appointment = appointments[0];
+
+      // Obtener el usuario de la sesión, asumiendo que ya tienes esta información
+      const user = "7afcb4c1-e695-4bbe-afcd-0559df568d54"; // Cambiar por el valor adecuado, por ejemplo, desde la sesión
+
+      // Buscar el servicio por nombre
+      const service = services.find((s) => s.name === appointment.service);
+
+      // Verificar que se encontró el servicio
+      if (!service) {
+        alert('Servicio no encontrado.');
+        return;
+      }
+
+      // Crear el objeto con la estructura adecuada
+      const appointmentData = {
+        date: appointment.date,
+        namePet: appointment.petName,
+        startTime: appointment.time,
+        user: user, // Asume que el `user` es dinámico, como se mencionó antes
+        services: [
+          {
+            id: service.id, // Asumiendo que el servicio tiene un campo `id`
+          }
+        ],
+      };
+
+      // Hacer la petición POST al backend
       const response = await fetch('http://localhost:3001/appointments/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          date: appointments[0].date,
-          namePet: appointments[0].petName,
-          startTime: appointments[0].time,
-          user: '29bd6879-16eb-4cd5-b071-633b1959f932',
-          services: [{ id: '412ab873-5428-45ee-8205-ff905db3508b' }],
-        }),
+        body: JSON.stringify(appointmentData), // Pasar los datos adecuados
       });
 
       const data = await response.json();
 
+      // Comprobar si la cita se agendó correctamente
       if (response.ok) {
         alert('Cita agendada correctamente');
-        router.push('/');
+        router.push('/'); // Redirigir al home
       } else {
         console.error('Error al enviar la cita:', data);
         alert('No se pudo agendar la cita, intente nuevamente.');
