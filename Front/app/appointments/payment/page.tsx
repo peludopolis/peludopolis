@@ -44,22 +44,24 @@ const PaymentPage: React.FC = () => {
     const status = searchParams.get('status');
     if (status) {
       setPaymentStatus(status);
+
+      if (status === 'approved') {
+        handleSendAppointment();
+      }
     }
   }, [searchParams]);
 
+  // Genera un orderId único basado en fecha y hora
+  const generateOrderId = () => {
+    return `order_${new Date().getTime()}`;
+  };
+
   const handlePayment = async () => {
     try {
-      const accessToken = process.env.NEXT_PUBLIC_MERCADOPAGO_ACCESS_TOKEN;
+      const localUrl = 'http://localhost:3000';
 
-      if (!accessToken) {
-        console.error('Error: Falta configurar la clave de Mercado Pago.');
-        alert('Error en la configuración de Mercado Pago. Contacte con soporte.');
-        return;
-      }
-
-      const localUrl = 'http://localhost:3000'; // Cambia aquí la URL de redirección a tu localhost
-
-      const preference = {
+      const preferenceData = {
+        orderId: generateOrderId(), // Nuevo orderId único
         items: appointments.map((appointment) => {
           const service = services.find((s) => s.name === appointment.service);
           return {
@@ -71,24 +73,20 @@ const PaymentPage: React.FC = () => {
           };
         }),
         back_urls: {
-          success: `${localUrl}/appointments/payment?status=approved`, // Cambia a localhost
-          failure: `${localUrl}/appointments/payment?status=failure`, // Cambia a localhost
-          pending: `${localUrl}/appointments/payment?status=pending`, // Cambia a localhost
+          success: `${localUrl}/appointments/payment?status=approved`,
+          failure: `${localUrl}/appointments/payment?status=failure`,
+          pending: `${localUrl}/appointments/payment?status=pending`,
         },
-        auto_return: 'approved',
       };
 
-      const response = await fetch(
-        'https://api.mercadopago.com/checkout/preferences',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify(preference),
-        }
-      );
+      // Llamada a tu endpoint en /api/mercadopago
+      const response = await fetch('/api/mercadopago', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(preferenceData),
+      });
 
       const data = await response.json();
 
@@ -101,6 +99,37 @@ const PaymentPage: React.FC = () => {
     } catch (error) {
       console.error('Error al generar la preferencia de pago:', error);
       alert('Ocurrió un error inesperado.');
+    }
+  };
+
+  const handleSendAppointment = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/appointments/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          date: appointments[0].date,
+          namePet: appointments[0].petName,
+          startTime: appointments[0].time,
+          user: '29bd6879-16eb-4cd5-b071-633b1959f932',
+          services: [{ id: '412ab873-5428-45ee-8205-ff905db3508b' }],
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Cita agendada correctamente');
+        router.push('/');
+      } else {
+        console.error('Error al enviar la cita:', data);
+        alert('No se pudo agendar la cita, intente nuevamente.');
+      }
+    } catch (error) {
+      console.error('Error en la petición al backend:', error);
+      alert('Error en la conexión con el servidor.');
     }
   };
 
@@ -121,31 +150,18 @@ const PaymentPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-black text-3xl font-bold mb-6">
-        Confirmación de Cita y Pago
-      </h1>
-
+      <h1 className="text-black text-3xl font-bold mb-6">Confirmación de Cita y Pago</h1>
       {appointments.length > 0 ? (
         <div className="text-black mb-6 border p-4 rounded-md bg-gray-50">
           <h2 className="text-lg font-bold mb-4">Detalles de la Cita</h2>
-          <p>
-            <strong>Cliente:</strong> {appointments[0]?.name}
-          </p>
-          <p>
-            <strong>Mascota:</strong> {appointments[0]?.petName}
-          </p>
+          <p><strong>Cliente:</strong> {appointments[0]?.name}</p>
+          <p><strong>Mascota:</strong> {appointments[0]?.petName}</p>
           <div className="mt-4">
             {appointments.map((appointment, index) => (
               <div key={index} className="mb-4">
-                <p>
-                  <strong>Servicio:</strong> {appointment.service}
-                </p>
-                <p>
-                  <strong>Fecha:</strong> {appointment.date}
-                </p>
-                <p>
-                  <strong>Hora:</strong> {appointment.time}
-                </p>
+                <p><strong>Servicio:</strong> {appointment.service}</p>
+                <p><strong>Fecha:</strong> {appointment.date}</p>
+                <p><strong>Hora:</strong> {appointment.time}</p>
               </div>
             ))}
           </div>
@@ -154,7 +170,6 @@ const PaymentPage: React.FC = () => {
       ) : (
         <p className="text-black">Cargando información de la cita...</p>
       )}
-
       {checkoutUrl ? (
         <iframe
           src={checkoutUrl}
