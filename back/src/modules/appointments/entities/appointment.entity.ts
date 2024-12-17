@@ -5,17 +5,18 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  ManyToMany,
   JoinTable,
   OneToOne,
+  OneToMany,
 } from 'typeorm';
 import { StatusAppointment } from '../enum/status-appointment.enum';
-import { PaymentsDetail } from '../paymentsDetail.entity';
+import { PaymentsDetail } from './paymentsDetail.entity';
+
 
 @Entity()
 export class Appointment {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column({ type: 'date' })
   date: Date;
@@ -38,7 +39,9 @@ export class Appointment {
   @ManyToOne(() => User, (user) => user.appointments)
   user: User;
 
-  @ManyToMany(() => ServicesCatalog)
+  @OneToMany(() => ServicesCatalog, (service) => service.appointment, {
+    cascade: true,
+  })
   @JoinTable()
   services: ServicesCatalog[];
 

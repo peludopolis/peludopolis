@@ -11,10 +11,10 @@ export class Comment {
   content: string;
 
   @ManyToOne(() => User, (user) => user.comments)
-  user: User;
+  user: User; //string uuid
 
   @ManyToOne(() => Post, (post) => post.comments)
-  post: Post;
+  post: Post; //string uuid
 
   @CreateDateColumn()
   createdAt: Date;

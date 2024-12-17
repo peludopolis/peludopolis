@@ -201,6 +201,15 @@ export class AppointmentsService {
     return await this.appointmentRepository.createAppointment(appointment);
   }
 
+  async getAppointmentWithServices(appointmentId: string): Promise<Appointment> {
+    // Consulta la cita incluyendo la relación con los servicios asociados
+    const appointment = await this.appointmentRepository.findOne(appointmentId);
+    if (!appointment) {
+      throw new BadRequestException(`No se encontró una cita con ID: ${appointmentId}`);
+    }
+    return appointment;
+  }
+
   async getAll() {
     const allAppointments: Appointment[] =
       await this.appointmentRepository.getAllAppointments();
