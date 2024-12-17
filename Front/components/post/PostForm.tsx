@@ -7,11 +7,13 @@ import Compressor from "compressorjs";
 import { ImagePlus, PawPrint, Send, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 
 const PostForm: React.FC = () => {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // Estado para el mensaje
   const { user } = useContext(AuthContext);
   const router = useRouter();
 
@@ -64,6 +66,7 @@ const PostForm: React.FC = () => {
           };
 
           await PostService.createPost(postData);
+          setSuccessMessage("¡Tu experiencia se ha creado con éxito! 🎉");
           setDescription("");
           setImage(null);
           setImagePreview(null);
@@ -71,7 +74,6 @@ const PostForm: React.FC = () => {
           setTimeout(() => {
             router.push("/comunity");
           }, 2000);
-
         };
       } else {
         const postData = {
@@ -80,7 +82,12 @@ const PostForm: React.FC = () => {
         };
 
         await PostService.createPost(postData);
+        setSuccessMessage("¡Tu experiencia se ha creado con éxito! 🎉");
         setDescription("");
+
+        setTimeout(() => {
+          router.push("/comunity");
+        }, 2000);
       }
     } catch (error) {
       console.error("Error creando post", error);
@@ -88,10 +95,32 @@ const PostForm: React.FC = () => {
     }
   };
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <div className="text-center p-6 bg-red-100 border border-red-400 text-red-700 rounded-md">
+        <p>Debes estar logueado para compartir tu experiencia.</p>
+        <p>
+          Por favor,{" "}
+          <Link href="/login" className="text-blue-600 underline">
+            inicia sesión
+          </Link>{" "}
+          o{" "}
+          <Link href="/register" className="text-blue-600 underline">
+            regístrate
+          </Link>.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className=" my-10 bg-gradient-to-br from-cyan-400 to-blue-500 p-6 rounded-2xl shadow-2xl max-w-xl mx-auto transform transition-all duration-300 hover:scale-[1.02]">
+    <div className="my-10 bg-gradient-to-br from-cyan-400 to-blue-500 p-6 rounded-2xl shadow-2xl max-w-xl mx-auto transform transition-all duration-300 hover:scale-[1.02]">
+      {successMessage && ( // Mostrar mensaje de éxito
+        <div className="mb-4 text-green-600 bg-green-100 p-3 rounded-md text-center">
+          {successMessage}
+        </div>
+      )}
+
       <div className="flex items-center mb-6 space-x-3">
         <PawPrint className="text-white w-10 h-10" />
         <h2 className="text-3xl font-extrabold text-white tracking-tight">
@@ -155,6 +184,7 @@ const PostForm: React.FC = () => {
 };
 
 export default PostForm;
+
 
 
 

@@ -55,8 +55,8 @@ const PostList: React.FC = () => {
                 src={post.image} 
                 alt="Post imagen" 
                 className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-110"
-                width={300}
-                height={300}
+                width={100}
+                height={100}
               />
             </div>
           )}

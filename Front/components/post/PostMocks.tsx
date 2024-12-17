@@ -49,9 +49,6 @@ const PostMocks: React.FC = () => {
 
     return (
         <div>
-            <h1 className="text-center font-title text-primary text-2xl font-extrabold sm:text-3xl m-4">
-                Conoce la experiencia de nuestros clientes
-            </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6 bg-muted">
                 {MOCK_POSTS.map(post => (
                     <div
