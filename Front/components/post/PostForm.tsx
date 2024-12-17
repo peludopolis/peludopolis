@@ -6,6 +6,7 @@ import { PostService } from "./service";
 import Compressor from "compressorjs";
 import { ImagePlus, PawPrint, Send, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const PostForm: React.FC = () => {
   const [description, setDescription] = useState("");
@@ -124,10 +125,12 @@ const PostForm: React.FC = () => {
 
         {imagePreview && (
           <div className="relative">
-            <img
+            <Image
               src={imagePreview}
               alt="Vista previa"
               className="w-24 h-24 object-cover rounded-xl shadow-lg border-2 border-white"
+              width={96}
+              height={96}
             />
             <button
               onClick={handleRemoveImage}

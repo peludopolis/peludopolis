@@ -5,6 +5,7 @@ import { AuthContext } from '../../contexts/authContext';
 import { PostService } from './service';
 import { Post } from './type';
 import { Trash2, User as UserIcon } from 'lucide-react';
+import Image from 'next/image';
 
 const PostList: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -50,10 +51,12 @@ const PostList: React.FC = () => {
         >
           {post.image && (
             <div className="h-48 w-full overflow-hidden">
-              <img 
+              <Image
                 src={post.image} 
                 alt="Post imagen" 
                 className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-110"
+                width={300}
+                height={300}
               />
             </div>
           )}
