@@ -59,4 +59,11 @@ export class AppointmentsRepository {
   async getAllAppointments(): Promise<Appointment[]> {
     return await this.appointmentRepository.find();
   }
+
+  async findOne(appointmentId: string): Promise<Appointment | null> {
+    return await this.appointmentRepository.findOne({
+      where: { id: appointmentId },
+      relations: ['services'], 
+    });
+  }
 }

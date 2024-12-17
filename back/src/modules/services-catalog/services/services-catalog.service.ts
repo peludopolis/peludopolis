@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
 import { CreateServicesCatalogDto } from '../dtos/create-services-catalog.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ServicesCatalog } from '../entities/services-catalog.entity';
+import { AnimalType, ServiceCategory, ServicesCatalog } from '../entities/services-catalog.entity';
 import { In, Repository } from 'typeorm';
 import { UpdateServicesCatalogDto } from '../dtos/update-services-catalog.dto';
+import { serviceData } from '../service-data';
 
 @Injectable()
 export class ServicesCatalogService {
@@ -12,39 +12,52 @@ export class ServicesCatalogService {
     @InjectRepository(ServicesCatalog)
     private readonly serviceCatalogRepository: Repository<ServicesCatalog>,
   ) {}
-  private services = [
-    {
-      id: uuidv4(),
-      name: 'Consulta veterinaria',
-      description: 'Consulta general con un veterinario profesional.',
-    },
-    { id: uuidv4(), 
-      name: 'Corte de pelo', 
-      description: 'Un corte de pelo especializado para cachorros, suave y seguro.' 
-    },
-    {
-      id: uuidv4(),
-      name: 'Baño',
-      description: 'Baño completo con productos específicos para el cuidado del pelaje.',
-    },
-    {
-      id: uuidv4(),
-      name: 'Corte de uñas',
-      description: 'Corte y limado de uñas para mantenerlas en una longitud saludable.',
-    },
-    {
-      id: uuidv4(),
-      name: 'Spa',
-      description: 'Experiencia relajante con masajes, baño especial y cuidado del pelaje.',
-    },
-  ];
+  
+  async onModuleInit() {
+    console.log('Checking and preloading services into the database...');
 
-  findAll() {
-    return this.services;
+    for (const service of serviceData) {
+      const existingService = await this.serviceCatalogRepository.findOne({
+        where: { 
+          name: service.name,
+          type: service.type,  
+          category: service.category, 
+          stage: service.stage,
+        },
+      });
+      
+      if (!existingService) {
+        const serviceToSave = this.serviceCatalogRepository.create({
+          name: service.name,
+          description: service.description,
+          price: service.price,
+          employeeName: service.employeeName,
+          type: service.type,  
+          category: service.category,
+          stage: service.stage,
+          duration: service.duration,
+        });
+        await this.serviceCatalogRepository.save(serviceToSave);
+        console.log(`Service "${service.name}" added to the database.`);
+      } else {
+        console.log(`Service "${service.name}" already exists. Skipping.`);
+      }
+    }
   }
 
-  findOne(id: string) {
-    return this.services.find((service) => service.id === id);
+  async findAll(): Promise<ServicesCatalog[]> {
+    return await this.serviceCatalogRepository.find();
+  }
+
+  async findOne(id: string): Promise<ServicesCatalog> {
+    const service = await this.serviceCatalogRepository.findOne({
+      where: { id },
+      relations: ['appointments'],
+    });
+    if (!service) {
+      throw new NotFoundException(`Service with ID ${id} not found`);
+    }
+    return service;
   }
 
   async findManyByIds(ids: string[]): Promise<ServicesCatalog[]> {
@@ -55,11 +68,12 @@ export class ServicesCatalogService {
     });
   }
 
-  create(createServicesCatalogDto: CreateServicesCatalogDto) {
-    const service = this.serviceCatalogRepository.create(
-      createServicesCatalogDto,
-    );
-    return this.serviceCatalogRepository.save(service);
+  async create(data: CreateServicesCatalogDto): Promise<ServicesCatalog> {
+    console.log('Creando servicio:', data)
+    const service = this.serviceCatalogRepository.create(data);
+    const savedService = await this.serviceCatalogRepository.save(service);
+    console.log('Servicio creado:', savedService); 
+    return savedService;
   }
 
   async update(id: string, updateServiceCatalogDto: UpdateServicesCatalogDto) {

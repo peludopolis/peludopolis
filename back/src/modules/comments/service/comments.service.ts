@@ -69,7 +69,7 @@ export class CommentsService {
 
   async findByPost(postId: string): Promise<Comment[]> {
     return this.commentRepository.find({
-      where: { post: { id: postId } },
+      where: { post: this.postRepository.create({ id: postId }) },
       relations: ['post', 'user'],
     });
   }
