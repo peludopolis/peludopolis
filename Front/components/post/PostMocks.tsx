@@ -3,6 +3,7 @@
 import React from 'react';
 import { Trash2, User as UserIcon } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 // Datos mockeados de posts
 const MOCK_POSTS = [
@@ -59,10 +60,12 @@ const PostMocks: React.FC = () => {
                     >
                         {post.image && (
                             <div className="h-48 w-full overflow-hidden">
-                                <img
+                                <Image
                                     src={post.image}
                                     alt="Post imagen"
                                     className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-110"
+                                    width={300}
+                                    height={300}
                                 />
                             </div>
                         )}
