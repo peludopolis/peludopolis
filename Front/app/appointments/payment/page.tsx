@@ -11,18 +11,10 @@ const PaymentPage: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    const status = searchParams.get('status');
-    if (status === 'approved') {
-      alert('Pago realizado');
-      router.push('http://localhost:3000');
-    }
-  }, [searchParams, router]);
+  const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
 
   useEffect(() => {
     const rawAppointments = searchParams.get('appointments');
-
     if (rawAppointments) {
       const parsedAppointments: Appointment[] = JSON.parse(rawAppointments);
       parsedAppointments.sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
@@ -48,6 +40,13 @@ const PaymentPage: React.FC = () => {
     setTotal(totalPrice);
   }, [appointments]);
 
+  useEffect(() => {
+    const status = searchParams.get('status');
+    if (status) {
+      setPaymentStatus(status);
+    }
+  }, [searchParams]);
+
   const handlePayment = async () => {
     try {
       const accessToken = process.env.NEXT_PUBLIC_MERCADOPAGO_ACCESS_TOKEN;
@@ -58,7 +57,7 @@ const PaymentPage: React.FC = () => {
         return;
       }
 
-      const ngrokUrl = 'https://c1fa-186-158-144-211.ngrok-free.app';
+      const localUrl = 'http://localhost:3000'; // Cambia aquí la URL de redirección a tu localhost
 
       const preference = {
         items: appointments.map((appointment) => {
@@ -72,9 +71,9 @@ const PaymentPage: React.FC = () => {
           };
         }),
         back_urls: {
-          success: `${ngrokUrl}/payment-result?status=approved`,
-          failure: `${ngrokUrl}/payment-result?status=failure`,
-          pending: `${ngrokUrl}/payment-result?status=pending`,
+          success: `${localUrl}/appointments/payment?status=approved`, // Cambia a localhost
+          failure: `${localUrl}/appointments/payment?status=failure`, // Cambia a localhost
+          pending: `${localUrl}/appointments/payment?status=pending`, // Cambia a localhost
         },
         auto_return: 'approved',
       };
@@ -104,6 +103,21 @@ const PaymentPage: React.FC = () => {
       alert('Ocurrió un error inesperado.');
     }
   };
+
+  if (paymentStatus === 'failure') {
+    return (
+      <div className="container mx-auto px-4">
+        <h1 className="text-black text-3xl font-bold mb-6">Pago Fallido</h1>
+        <p className="text-red-600">El pago no se pudo completar. Intenta nuevamente.</p>
+        <button
+          onClick={() => router.push('/appointments')}
+          className="text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded mt-4"
+        >
+          Volver a la página de citas
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4">
@@ -150,12 +164,14 @@ const PaymentPage: React.FC = () => {
           title="Mercado Pago Checkout"
         />
       ) : (
-        <button
-          onClick={handlePayment}
-          className="text-white bg-green-500 hover:bg-green-600 px-4 py-2 rounded"
-        >
-          Realizar Pago
-        </button>
+        <div className="flex gap-4 mt-4">
+          <button
+            onClick={handlePayment}
+            className="text-white bg-green-500 hover:bg-green-600 px-4 py-2 rounded"
+          >
+            Realizar Pago
+          </button>
+        </div>
       )}
     </div>
   );
