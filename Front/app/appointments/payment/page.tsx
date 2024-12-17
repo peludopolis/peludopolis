@@ -1,15 +1,24 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Appointment } from '../../interfaces/index';
 import services from '../../servicesPets/services';
 
 const PaymentPage: React.FC = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const status = searchParams.get('status');
+    if (status === 'approved') {
+      alert('Pago realizado');
+      router.push('http://localhost:3000');
+    }
+  }, [searchParams, router]);
 
   useEffect(() => {
     const rawAppointments = searchParams.get('appointments');
