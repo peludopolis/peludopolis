@@ -7,7 +7,7 @@ const page = () => {
     return (
         <div >
             <Link href='/post' className='flex justify-center'>
-                <button className='bg-cyan-600 text-white py-2 px-4 rounded-full font-bold text-lg hover:bg-cyan-700 transition flex items-center justify-center space-x-2 group'>
+                <button className='bg-dark text-white py-2 px-4 rounded-full font-bold text-lg hover:bg-primary transition flex items-center justify-center space-x-2 group'>
                     Dejar mi experiencia
                 </button>
             </Link>
@@ -17,7 +17,7 @@ const page = () => {
             <PostList />
             <PostMocks />
             <h1 className="text-center font-title text-primary text-2xl font-extrabold sm:text-3xl m-4">
-                Comparte y comenta
+                Comenta y comparte
             </h1>
         </div>
     )
