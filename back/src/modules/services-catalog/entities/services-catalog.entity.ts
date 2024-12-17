@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Post } from "../../posts/entities/post.entity";
+import { Payment } from "src/modules/payments/entities/payment.entity";
 
 
 @Entity('services_catalog')
@@ -18,6 +19,9 @@ export class ServicesCatalog {
 
   @Column({ length: 50 })
   employee: string;
+
+  @OneToMany(() => Payment, (payment) => payment.ServicesCatalog)
+  payments: Payment[];
 
   // @OneToMany(() => Post, (post) => post.service)
   // posts: Post[];

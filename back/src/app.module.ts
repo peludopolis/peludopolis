@@ -14,6 +14,8 @@ import typeOrmConfig from './config/typeOrm.config';
 import { UploadImageModule } from './modules/image-upload/image-upload.module';
 import { JwtModule } from '@nestjs/jwt';
 // import { AppointmentsModule } from './modules/appointments/appointments.module';
+import { PaymentsModule } from './modules/payments/payments.module';
+import { PaymentsController } from './modules/payments/payments.controller';
 
 @Module({
   imports: [
@@ -42,8 +44,9 @@ import { JwtModule } from '@nestjs/jwt';
     TipsModule,
     EmailModule,
     UploadImageModule,
+    PaymentsModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, PaymentsController],
   providers: [AppService],
 })
 export class AppModule {}

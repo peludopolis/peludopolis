@@ -8,8 +8,10 @@ import {
   ManyToOne,
   ManyToMany,
   JoinTable,
+  OneToOne
 } from 'typeorm';
 import { StatusAppointment } from '../enum/status-appointment.enum';
+import { Payment } from 'src/modules/payments/entities/payment.entity';
 
 @Entity()
 export class Appointment {
@@ -45,9 +47,12 @@ export class Appointment {
   @Column({
     type: 'enum',
     enum: StatusAppointment,
-    default: StatusAppointment.Confirmed,
+    default: StatusAppointment.Confirmed
   })
   status: StatusAppointment;
+
+  @OneToOne(() => Payment, (payment) => payment.appointment, { nullable: true })
+  payment: Payment;
 
   //OneToOne(() => PaymentDetail)
   // paymentDetail: PaymentDetail;
