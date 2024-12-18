@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  InternalServerErrorException
+} from '@nestjs/common';
 import { PaymentsRepository } from './payments.repository';
 import { CreatePaymentDto } from './dtos/create-payment.dto';
 import { Payment } from './entities/payment.entity';
@@ -9,15 +14,22 @@ export class PaymentsService {
   constructor(private readonly paymentsRepository: PaymentsRepository) {}
 
   async createPayment(data: CreatePaymentDto): Promise<Payment> {
-    const payment = this.paymentsRepository.create(data);
-    return await this.paymentsRepository.save(payment);
+    try {
+      const payment = this.paymentsRepository.create(data);
+      return await this.paymentsRepository.save(payment);
+    } catch (error) {
+      console.error('Error al crear un pago:', error.message);
+      throw new InternalServerErrorException('Failed to create payment');
+    }
   }
 
-  async processWebhook(paymentData: any) {
+  async processWebhook(paymentData: any): Promise<Payment | void> {
     const paymentId = paymentData?.data?.id;
 
     if (!paymentId) {
-      throw new Error('Invalid payment data: missing Mercado Pago ID');
+      throw new BadRequestException(
+        'Invalid payment data: missing Mercado Pago ID'
+      );
     }
 
     try {
@@ -57,7 +69,9 @@ export class PaymentsService {
       return payment;
     } catch (error) {
       console.error('Error al procesar el webhook:', error.message);
-      throw new Error('Failed to process Mercado Pago webhook');
+      throw new InternalServerErrorException(
+        'Failed to process Mercado Pago webhook'
+      );
     }
   }
 
@@ -79,32 +93,52 @@ export class PaymentsService {
         'Error al obtener detalles del pago desde Mercado Pago:',
         error.response?.data || error.message
       );
-      throw new Error('Failed to fetch payment details from Mercado Pago');
+      throw new InternalServerErrorException(
+        'Failed to fetch payment details from Mercado Pago'
+      );
     }
   }
 
   async updatePaymentStatus(id: string, status: string): Promise<Payment> {
-    const payment = await this.paymentsRepository.findBasicById(id);
+    try {
+      const payment = await this.paymentsRepository.findBasicById(id);
 
-    if (!payment) {
-      throw new Error(`Payment with ID ${id} not found`);
+      if (!payment) {
+        throw new NotFoundException(`Payment with ID ${id} not found`);
+      }
+
+      payment.status = status;
+      return await this.paymentsRepository.save(payment);
+    } catch (error) {
+      console.error(
+        `Error al actualizar el estado del pago con ID ${id}:`,
+        error.message
+      );
+      throw new InternalServerErrorException('Failed to update payment status');
     }
-
-    payment.status = status;
-    return await this.paymentsRepository.save(payment);
   }
 
   async getAllPayments(): Promise<Payment[]> {
-    return await this.paymentsRepository.findAllWithRelations();
+    try {
+      return await this.paymentsRepository.findAllWithRelations();
+    } catch (error) {
+      console.error('Error al obtener todos los pagos:', error.message);
+      throw new InternalServerErrorException('Failed to fetch payments');
+    }
   }
 
   async getPaymentById(id: string): Promise<Payment> {
-    const payment = await this.paymentsRepository.findByIdWithRelations(id);
+    try {
+      const payment = await this.paymentsRepository.findByIdWithRelations(id);
 
-    if (!payment) {
-      throw new Error(`Payment with ID ${id} not found`);
+      if (!payment) {
+        throw new NotFoundException(`Payment with ID ${id} not found`);
+      }
+
+      return payment;
+    } catch (error) {
+      console.error(`Error al obtener el pago con ID ${id}:`, error.message);
+      throw new InternalServerErrorException('Failed to fetch payment by ID');
     }
-
-    return payment;
   }
 }

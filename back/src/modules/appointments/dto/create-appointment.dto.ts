@@ -36,6 +36,10 @@ export class CreateAppointmentDto {
   @Type(() => ServiceAppointmentDto)
   services: ServiceAppointmentDto[];
 
+  @IsNotEmpty()
+  @IsUUID()
+  payment_id: string;
+
   //OneToOne(() => PaymentDetail)
   // paymentDetail: PaymentDetail;
 }

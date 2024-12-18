@@ -7,7 +7,8 @@ import {
   ManyToOne,
   JoinTable,
   OneToOne,
-  OneToMany
+  OneToMany,
+  JoinColumn
 } from 'typeorm';
 import { StatusAppointment } from '../enum/status-appointment.enum';
 import { PaymentsDetail } from './paymentsDetail.entity';
@@ -57,6 +58,7 @@ export class Appointment {
     nullable: true,
     onDelete: 'SET NULL'
   })
+  @JoinColumn({ name: 'payment_id' })
   payment: Payment;
 
   @OneToOne(() => PaymentsDetail, (paymentDetail) => paymentDetail.appointment)

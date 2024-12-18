@@ -7,14 +7,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from '../users/users.module';
 import { AppointmentsRepository } from './appointments.repository';
 import { ServicesCatalogModule } from '../services-catalog/services-catalog.module';
+import { PaymentsModule } from '../payments/payments.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Appointment, PaymentsDetail]),
     UsersModule,
     ServicesCatalogModule,
+    PaymentsModule
   ],
   controllers: [AppointmentsController],
-  providers: [AppointmentsService, AppointmentsRepository],
+  providers: [AppointmentsService, AppointmentsRepository]
 })
 export class AppointmentsModule {}
