@@ -1,13 +1,13 @@
-'use client';
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Appointment } from '../../interfaces/index';
+import { Appointment } from '../../interfaces';
 import services from '../../servicesPets/services';
+import { useUser } from '../../../contexts/UserContext'; 
 
 const PaymentPage: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { userSession } = useUser();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
@@ -51,17 +51,19 @@ const PaymentPage: React.FC = () => {
     }
   }, [searchParams]);
 
-  // Genera un orderId único basado en fecha y hora
-  const generateOrderId = () => {
-    return `order_${new Date().getTime()}`;
-  };
-
   const handlePayment = async () => {
     try {
+      const accessToken = process.env.NEXT_PUBLIC_MERCADOPAGO_ACCESS_TOKEN;
+
+      if (!accessToken) {
+        console.error('Error: Falta configurar la clave de Mercado Pago.');
+        alert('Error en la configuración de Mercado Pago. Contacte con soporte.');
+        return;
+      }
+
       const localUrl = 'http://localhost:3000';
 
-      const preferenceData = {
-        orderId: generateOrderId(), // Nuevo orderId único
+      const preference = {
         items: appointments.map((appointment) => {
           const service = services.find((s) => s.name === appointment.service);
           return {
@@ -77,15 +79,16 @@ const PaymentPage: React.FC = () => {
           failure: `${localUrl}/appointments/payment?status=failure`,
           pending: `${localUrl}/appointments/payment?status=pending`,
         },
+        auto_return: 'approved',
       };
 
-      // Llamada a tu endpoint en /api/mercadopago
-      const response = await fetch('/api/mercadopago', {
+      const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify(preferenceData),
+        body: JSON.stringify(preference),
       });
 
       const data = await response.json();
@@ -103,50 +106,33 @@ const PaymentPage: React.FC = () => {
   };
 
   const handleSendAppointment = async () => {
+    if (!userSession || !userSession.user) {
+      alert('No hay usuario logueado.');
+      return;
+    }
+
     try {
-      // Obtener el primer appointment para la cita
-      const appointment = appointments[0];
-
-      // Obtener el usuario de la sesión, asumiendo que ya tienes esta información
-      const user = "7afcb4c1-e695-4bbe-afcd-0559df568d54"; // Cambiar por el valor adecuado, por ejemplo, desde la sesión
-
-      // Buscar el servicio por nombre
-      const service = services.find((s) => s.name === appointment.service);
-
-      // Verificar que se encontró el servicio
-      if (!service) {
-        alert('Servicio no encontrado.');
-        return;
-      }
-
-      // Crear el objeto con la estructura adecuada
       const appointmentData = {
-        date: appointment.date,
-        namePet: appointment.petName,
-        startTime: appointment.time,
-        user: user, // Asume que el `user` es dinámico, como se mencionó antes
-        services: [
-          {
-            id: service.id, // Asumiendo que el servicio tiene un campo `id`
-          }
-        ],
+        date: appointments[0].date,
+        namePet: appointments[0].petName,
+        startTime: appointments[0].time,
+        user: userSession.user.id,
+        services: [{ id: 'someServiceId' }], 
       };
 
-      // Hacer la petición POST al backend
       const response = await fetch('http://localhost:3001/appointments/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(appointmentData), // Pasar los datos adecuados
+        body: JSON.stringify(appointmentData),
       });
 
       const data = await response.json();
 
-      // Comprobar si la cita se agendó correctamente
       if (response.ok) {
         alert('Cita agendada correctamente');
-        router.push('/'); // Redirigir al home
+        router.push('/');
       } else {
         console.error('Error al enviar la cita:', data);
         alert('No se pudo agendar la cita, intente nuevamente.');
@@ -180,37 +166,34 @@ const PaymentPage: React.FC = () => {
           <h2 className="text-lg font-bold mb-4">Detalles de la Cita</h2>
           <p><strong>Cliente:</strong> {appointments[0]?.name}</p>
           <p><strong>Mascota:</strong> {appointments[0]?.petName}</p>
-          <div className="mt-4">
-            {appointments.map((appointment, index) => (
-              <div key={index} className="mb-4">
-                <p><strong>Servicio:</strong> {appointment.service}</p>
-                <p><strong>Fecha:</strong> {appointment.date}</p>
-                <p><strong>Hora:</strong> {appointment.time}</p>
-              </div>
-            ))}
-          </div>
-          <p className="text-lg font-bold mt-4">Total: ${total}</p>
+          <p><strong>Servicio:</strong> {appointments[0]?.service}</p>
+          <p><strong>Fecha:</strong> {appointments[0]?.date}</p>
+          <p><strong>Hora:</strong> {appointments[0]?.time}</p>
         </div>
       ) : (
-        <p className="text-black">Cargando información de la cita...</p>
+        <p>No hay citas para mostrar.</p>
       )}
+
+      <h2 className="text-lg font-bold">Total: ${total}</h2>
+
       {checkoutUrl ? (
-        <iframe
-          src={checkoutUrl}
-          width="100%"
-          height="650"
-          style={{ border: 'none' }}
-          title="Mercado Pago Checkout"
-        />
-      ) : (
-        <div className="flex gap-4 mt-4">
-          <button
-            onClick={handlePayment}
-            className="text-white bg-green-500 hover:bg-green-600 px-4 py-2 rounded"
-          >
-            Realizar Pago
-          </button>
+        <div className="mt-4">
+          <a href={checkoutUrl} target="_blank" rel="noopener noreferrer">
+            <button
+              onClick={handlePayment}
+              className="text-white bg-green-500 hover:bg-green-600 px-4 py-2 rounded"
+            >
+              Realizar Pago
+            </button>
+          </a>
         </div>
+      ) : (
+        <button
+          onClick={handlePayment}
+          className="text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded mt-4"
+        >
+          Generar Pago
+        </button>
       )}
     </div>
   );
