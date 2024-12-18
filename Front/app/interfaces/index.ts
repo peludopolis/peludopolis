@@ -30,7 +30,8 @@ export interface UserData {
 }
 
 export interface UserSession {
-  id: any;
+  picture: string | undefined;
+  id: unknown;
   login: boolean;
   token: string;
   user: UserSessionData;
