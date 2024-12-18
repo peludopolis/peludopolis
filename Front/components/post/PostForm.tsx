@@ -62,7 +62,7 @@ const PostForm: React.FC = () => {
           const postData = {
             description,
             image: imageString,
-            userId: user.user.id.toString(),
+            userId: user?.user?.id?.toString() || "",
           };
 
           await PostService.createPost(postData);
@@ -78,7 +78,7 @@ const PostForm: React.FC = () => {
       } else {
         const postData = {
           description,
-          userId: user.user.id.toString(),
+          userId: user?.user?.id?.toString() || "",
         };
 
         await PostService.createPost(postData);
