@@ -5,7 +5,9 @@ import { createContext, useEffect, useState } from "react";
 
 // Actualiza la interfaz para reflejar la nueva estructura del estado 'user'
 interface AuthContextProps {
-    user: { user: UserSession | null; login: boolean } | null; // Nueva estructura
+    user: {
+      id: string; user: UserSession | null; login: boolean 
+} | null; // Nueva estructura
     setUser: (user: { user: UserSession | null; login: boolean } | null) => void;  // Actualiza el tipo
     logout: () => void;
     services: ServicePet[];
