@@ -16,7 +16,7 @@ import { PaymentsDetail } from '../paymentsDetail.entity';
 @Entity()
 export class Appointment {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column({ type: 'date' })
   date: Date;
@@ -51,7 +51,10 @@ export class Appointment {
   })
   status: StatusAppointment;
 
-  @OneToOne(() => Payment, (payment) => payment.appointment, { nullable: true })
+  @OneToOne(() => Payment, (payment) => payment.appointment, {
+    nullable: true,
+    onDelete: 'SET NULL'
+  })
   payment: Payment;
 
   @OneToOne(() => PaymentsDetail, (paymentDetail) => paymentDetail.appointment)

@@ -4,10 +4,10 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
+  OneToOne
 } from 'typeorm';
 import { User } from 'src/modules/users/entities/user.entity';
-import { ServicesCatalog } from 'src/modules/services-catalog/entities/services-catalog.entity';
 import { Appointment } from 'src/modules/appointments/entities/appointment.entity';
 
 @Entity('payments')
@@ -16,7 +16,7 @@ export class Payment {
   id: string;
 
   @Column({ type: 'varchar', nullable: true, unique: true })
-  mp_id: string;
+  mp_id: string; // ID de Mercado Pago
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   amount: number;
@@ -30,13 +30,8 @@ export class Payment {
   @ManyToOne(() => User, (user) => user.payments, { onDelete: 'CASCADE' })
   user: User;
 
-  @ManyToOne(() => ServicesCatalog, (service) => service.payments, {
-    nullable: true,
-    onDelete: 'SET NULL'
-  })
-  ServicesCatalog: ServicesCatalog;
-
-  @ManyToOne(() => Appointment, (appointment) => appointment.payment, {
+  // El pago se asocia con varios servicios a través de la cita
+  @OneToOne(() => Appointment, (appointment) => appointment.payment, {
     nullable: true,
     onDelete: 'SET NULL'
   })

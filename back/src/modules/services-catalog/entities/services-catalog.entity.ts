@@ -1,6 +1,5 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 // import { Post } from '../../posts/entities/post.entity';
-import { Payment } from 'src/modules/payments/entities/payment.entity';
 
 export enum AnimalType {
   GATO = 'gato',
@@ -34,9 +33,6 @@ export class ServicesCatalog {
 
   @Column({ length: 100, nullable: true })
   employeeName: string;
-
-  @OneToMany(() => Payment, (payment) => payment.ServicesCatalog)
-  payments: Payment[];
 
   // @OneToMany(() => Post, (post) => post.service)
   // posts: Post[];

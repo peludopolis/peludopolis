@@ -8,61 +8,59 @@ import axios from 'axios';
 export class PaymentsService {
   constructor(private readonly paymentsRepository: PaymentsRepository) {}
 
-  // Crear un nuevo registro de pago
   async createPayment(data: CreatePaymentDto): Promise<Payment> {
     const payment = this.paymentsRepository.create(data);
     return await this.paymentsRepository.save(payment);
   }
 
-  // Procesar notificaciones de Mercado Pago vía webhook
-  async processWebhook(paymentData: any): Promise<void> {
-    if (!paymentData?.data?.id) {
+  async processWebhook(paymentData: any) {
+    const paymentId = paymentData?.data?.id;
+
+    if (!paymentId) {
       throw new Error('Invalid payment data: missing Mercado Pago ID');
     }
 
-    const paymentId = paymentData.data.id;
-
     try {
-      // Consultar detalles del pago en Mercado Pago
       const paymentDetails =
         await this.getPaymentDetailsFromMercadoPago(paymentId);
 
       const {
         id: mp_id,
         status,
-        payment_method_id,
-        transaction_amount
+        payment_method_id: method,
+        transaction_amount: amount
       } = paymentDetails;
 
-      // Buscar el pago en la base de datos usando el mp_id
-      let payment = await this.paymentsRepository.findByMercadoPagoId(mp_id);
-
-      if (!payment) {
-        // Si no existe, crearlo
-        payment = this.paymentsRepository.create({
-          mp_id,
-          status,
-          method: payment_method_id,
-          amount: transaction_amount
-        });
-      } else {
-        // Si existe, actualizar su estado
-        payment.status = status;
+      if (status !== 'approved') {
+        console.log(`Pago con ID ${mp_id} no aprobado. Estado: ${status}`);
+        return;
       }
 
-      // Guardar cambios en la base de datos
+      const existingPayment = await this.paymentsRepository.findByMpId(mp_id);
+
+      if (existingPayment) {
+        console.log(
+          `El pago con ID ${mp_id} ya existe. No se creará nuevamente.`
+        );
+        return;
+      }
+
+      const payment = this.paymentsRepository.create({
+        mp_id,
+        status,
+        method,
+        amount
+      });
       await this.paymentsRepository.save(payment);
 
-      console.log(
-        `Pago procesado: Mercado Pago ID ${mp_id}, Estado: ${status}`
-      );
+      console.log(`Pago procesado exitosamente: ${mp_id}`);
+      return payment;
     } catch (error) {
-      console.error('Error processing webhook:', error.message);
+      console.error('Error al procesar el webhook:', error.message);
       throw new Error('Failed to process Mercado Pago webhook');
     }
   }
 
-  // Método privado para obtener detalles del pago desde Mercado Pago
   private async getPaymentDetailsFromMercadoPago(
     paymentId: string
   ): Promise<any> {
@@ -78,30 +76,35 @@ export class PaymentsService {
       return response.data;
     } catch (error) {
       console.error(
-        'Error fetching payment details from Mercado Pago:',
+        'Error al obtener detalles del pago desde Mercado Pago:',
         error.response?.data || error.message
       );
-      throw new Error('Failed to fetch payment details');
+      throw new Error('Failed to fetch payment details from Mercado Pago');
     }
   }
 
-  // Actualizar el estado de un pago existente
   async updatePaymentStatus(id: string, status: string): Promise<Payment> {
     const payment = await this.paymentsRepository.findBasicById(id);
+
     if (!payment) {
       throw new Error(`Payment with ID ${id} not found`);
     }
+
     payment.status = status;
     return await this.paymentsRepository.save(payment);
   }
 
-  // Obtener todos los pagos con sus relaciones
   async getAllPayments(): Promise<Payment[]> {
     return await this.paymentsRepository.findAllWithRelations();
   }
 
-  // Obtener un pago por su ID con relaciones
   async getPaymentById(id: string): Promise<Payment> {
-    return await this.paymentsRepository.findByIdWithRelations(id);
+    const payment = await this.paymentsRepository.findByIdWithRelations(id);
+
+    if (!payment) {
+      throw new Error(`Payment with ID ${id} not found`);
+    }
+
+    return payment;
   }
 }
