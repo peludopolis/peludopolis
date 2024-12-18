@@ -1,5 +1,11 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Appointment } from './entities/appointment.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn
+} from 'typeorm';
+import { Appointment } from './appointment.entity';
 
 @Entity('payments_details')
 export class PaymentsDetail {
@@ -10,6 +16,6 @@ export class PaymentsDetail {
   totalPrice: number;
 
   @OneToOne(() => Appointment, (appointment) => appointment.paymentDetail)
-  @JoinColumn({ name: 'appointment_id'})
+  @JoinColumn({ name: 'appointment_id' })
   appointment: Appointment;
 }

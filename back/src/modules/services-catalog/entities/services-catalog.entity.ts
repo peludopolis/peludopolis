@@ -1,5 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-// import { Post } from '../../posts/entities/post.entity';
+import { Appointment } from 'src/modules/appointments/entities/appointment.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum AnimalType {
   GATO = 'gato',
@@ -14,6 +14,11 @@ export enum ServiceCategory {
   SPA = 'Spa'
 }
 
+export enum Stage {
+  Cachorro = 'Cachorro',
+  Adulto = 'Adulto'
+}
+
 @Entity('services_catalog')
 export class ServicesCatalog {
   @PrimaryGeneratedColumn('uuid')
@@ -22,17 +27,14 @@ export class ServicesCatalog {
   @Column({ length: 50 })
   name: string;
 
-  @Column('text')
+  @Column({ type: 'text' })
   description: string;
-
-  @Column()
-  duration: number;
 
   @Column('decimal', { precision: 10, scale: 2 })
   price: number;
 
-  @Column({ length: 100, nullable: true })
-  employeeName: string;
+  @Column({ nullable: true })
+  employeeName?: string;
 
   // @OneToMany(() => Post, (post) => post.service)
   // posts: Post[];
@@ -48,4 +50,16 @@ export class ServicesCatalog {
     enum: ServiceCategory
   })
   category: ServiceCategory;
+
+  @Column({
+    type: 'enum',
+    enum: Stage
+  })
+  stage: Stage;
+
+  @Column('int')
+  duration: number;
+
+  @ManyToOne(() => Appointment, (appointment) => appointment.services)
+  appointment: Appointment;
 }

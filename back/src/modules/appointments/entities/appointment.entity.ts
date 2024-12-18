@@ -5,13 +5,13 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  ManyToMany,
   JoinTable,
-  OneToOne
+  OneToOne,
+  OneToMany
 } from 'typeorm';
 import { StatusAppointment } from '../enum/status-appointment.enum';
+import { PaymentsDetail } from './paymentsDetail.entity';
 import { Payment } from 'src/modules/payments/entities/payment.entity';
-import { PaymentsDetail } from '../paymentsDetail.entity';
 
 @Entity()
 export class Appointment {
@@ -39,7 +39,9 @@ export class Appointment {
   @ManyToOne(() => User, (user) => user.appointments)
   user: User;
 
-  @ManyToMany(() => ServicesCatalog)
+  @OneToMany(() => ServicesCatalog, (service) => service.appointment, {
+    cascade: true
+  })
   @JoinTable()
   services: ServicesCatalog[];
 
