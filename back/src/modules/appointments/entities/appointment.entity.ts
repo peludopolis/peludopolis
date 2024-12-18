@@ -7,11 +7,11 @@ import {
   ManyToOne,
   JoinTable,
   OneToOne,
-  OneToMany,
+  OneToMany
 } from 'typeorm';
 import { StatusAppointment } from '../enum/status-appointment.enum';
 import { PaymentsDetail } from './paymentsDetail.entity';
-
+import { Payment } from 'src/modules/payments/entities/payment.entity';
 
 @Entity()
 export class Appointment {
@@ -40,7 +40,7 @@ export class Appointment {
   user: User;
 
   @OneToMany(() => ServicesCatalog, (service) => service.appointment, {
-    cascade: true,
+    cascade: true
   })
   @JoinTable()
   services: ServicesCatalog[];
@@ -49,9 +49,15 @@ export class Appointment {
   @Column({
     type: 'enum',
     enum: StatusAppointment,
-    default: StatusAppointment.Confirmed,
+    default: StatusAppointment.Confirmed
   })
   status: StatusAppointment;
+
+  @OneToOne(() => Payment, (payment) => payment.appointment, {
+    nullable: true,
+    onDelete: 'SET NULL'
+  })
+  payment: Payment;
 
   @OneToOne(() => PaymentsDetail, (paymentDetail) => paymentDetail.appointment)
   paymentDetail: PaymentsDetail;

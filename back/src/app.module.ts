@@ -15,6 +15,8 @@ import { UploadImageModule } from './modules/image-upload/image-upload.module';
 import { JwtModule } from '@nestjs/jwt';
 import { CommentsModule } from './modules/comments/comments.module';
 // import { AppointmentsModule } from './modules/appointments/appointments.module';
+import { PaymentsModule } from './modules/payments/payments.module';
+import { PaymentsController } from './modules/payments/payments.controller';
 
 @Module({
   imports: [
@@ -44,8 +46,9 @@ import { CommentsModule } from './modules/comments/comments.module';
     TipsModule,
     EmailModule,
     UploadImageModule,
+    PaymentsModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, PaymentsController],
   providers: [AppService],
 })
 export class AppModule {}

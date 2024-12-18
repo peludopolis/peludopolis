@@ -1,9 +1,9 @@
-import { Appointment } from "src/modules/appointments/entities/appointment.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Appointment } from 'src/modules/appointments/entities/appointment.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum AnimalType {
   GATO = 'gato',
-  PERRO = 'perro',
+  PERRO = 'perro'
 }
 
 export enum ServiceCategory {
@@ -11,12 +11,12 @@ export enum ServiceCategory {
   CORTEDEPELO = 'Corte de pelo',
   BAÑO = 'Baño',
   CORTEUÑAS = 'Corte de uñas',
-  SPA = 'Spa',
+  SPA = 'Spa'
 }
 
 export enum Stage {
-  Cachorro = "Cachorro",
-  Adulto = "Adulto"
+  Cachorro = 'Cachorro',
+  Adulto = 'Adulto'
 }
 
 @Entity('services_catalog')
@@ -27,33 +27,36 @@ export class ServicesCatalog {
   @Column({ length: 50 })
   name: string;
 
-  @Column({ type: 'text'})
-  description: string; 
+  @Column({ type: 'text' })
+  description: string;
 
-  @Column('decimal', { precision: 10, scale: 2})
-  price: number; 
+  @Column('decimal', { precision: 10, scale: 2 })
+  price: number;
 
   @Column({ nullable: true })
   employeeName?: string;
 
+  // @OneToMany(() => Post, (post) => post.service)
+  // posts: Post[];
+
   @Column({
     type: 'enum',
-    enum: AnimalType,
+    enum: AnimalType
   })
   type: AnimalType;
 
   @Column({
     type: 'enum',
-    enum: ServiceCategory,
+    enum: ServiceCategory
   })
   category: ServiceCategory;
 
   @Column({
     type: 'enum',
-    enum: Stage,
+    enum: Stage
   })
   stage: Stage;
-  
+
   @Column('int')
   duration: number;
 
