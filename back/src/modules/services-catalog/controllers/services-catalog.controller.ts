@@ -5,7 +5,7 @@ import {
   NotFoundException,
   Param,
   Patch,
-  Post,
+  Post
 } from '@nestjs/common';
 import { ServicesCatalogService } from '../services/services-catalog.service';
 import { CreateServicesCatalogDto } from '../dtos/create-services-catalog.dto';
@@ -14,7 +14,7 @@ import { UpdateServicesCatalogDto } from '../dtos/update-services-catalog.dto';
 @Controller('services-catalog')
 export class ServicesCatalogController {
   constructor(
-    private readonly servicesCatalogService: ServicesCatalogService,
+    private readonly servicesCatalogService: ServicesCatalogService
   ) {}
 
   @Get()
@@ -39,7 +39,7 @@ export class ServicesCatalogController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateServiceCatalogDto: UpdateServicesCatalogDto,
+    @Body() updateServiceCatalogDto: UpdateServicesCatalogDto
   ) {
     return this.servicesCatalogService.update(id, updateServiceCatalogDto);
   }

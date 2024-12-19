@@ -9,11 +9,12 @@ import { User } from '../users/entities/user.entity';
 import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Comment, Post, User]), 
-  PostsModule,
-  UsersModule,
-],
+  imports: [
+    TypeOrmModule.forFeature([Comment, Post, User]),
+    PostsModule,
+    UsersModule
+  ],
   controllers: [CommentsController],
-  providers: [CommentsService],
+  providers: [CommentsService]
 })
 export class CommentsModule {}

@@ -1,6 +1,12 @@
 import { Post } from 'src/modules/posts/entities/post.entity';
 import { User } from 'src/modules/users/entities/user.entity';
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn
+} from 'typeorm';
 
 @Entity('comments')
 export class Comment {

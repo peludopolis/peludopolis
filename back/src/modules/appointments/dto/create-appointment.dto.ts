@@ -12,11 +12,16 @@ import { ServiceAppointmentDto } from './service-appointment.dto';
 // import { StatusAppointment } from '../enum/status-appointment.enum';
 
 export class CreateAppointmentDto {
-  @IsNotEmpty()
-  @IsDateString()
+  @IsNotEmpty({ message: 'El parámetro "date" es obligatorio.' })
+  @IsDateString(
+    {},
+    { message: 'El parámetro "date" debe tener el formato ISO (YYYY-MM-DD).' }
+  )
   date: Date;
 
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message: 'El parámetro "Nombre de la Mascota" es obligatorio.'
+  })
   @IsString()
   namePet: string;
 
@@ -30,8 +35,8 @@ export class CreateAppointmentDto {
   @IsNotEmpty()
   user: string;
 
-  @IsNotEmpty()
-  @IsArray()
+  @IsNotEmpty({ message: 'El campo "Servicio" no puede estar vacío.' })
+  @IsArray({ message: 'El campo "Servicio" debe ser un arreglo.' })
   @ValidateNested({ each: true })
   @Type(() => ServiceAppointmentDto)
   services: ServiceAppointmentDto[];
