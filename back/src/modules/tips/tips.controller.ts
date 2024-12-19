@@ -4,7 +4,7 @@ import {
   Post,
   Body,
   UseInterceptors,
-  UploadedFile,
+  UploadedFile
 } from '@nestjs/common';
 import { TipsService } from './tips.service';
 import { CreateTipDto } from './dto/create-tips.dto';
@@ -21,9 +21,9 @@ export class TipsController {
     @Body() dataTip: CreateTipDto,
     @UploadedFile(
       // Por el momento las imágenes deben tener un tamaño máxim de 2MB
-      new FileValidationPipe(200000, ['image/jpeg', 'image/png', 'image/webp']),
+      new FileValidationPipe(200000, ['image/jpeg', 'image/png', 'image/webp'])
     )
-    file: Express.Multer.File,
+    file: Express.Multer.File
   ) {
     return this.tipsService.create(dataTip, file);
   }

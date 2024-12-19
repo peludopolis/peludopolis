@@ -22,7 +22,7 @@ import { PaymentsController } from './modules/payments/payments.controller';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [typeOrmConfig],
+      load: [typeOrmConfig]
     }),
 
     TypeOrmModule.forRootAsync({
@@ -34,9 +34,9 @@ import { PaymentsController } from './modules/payments/payments.controller';
     JwtModule.register({
       global: true,
       signOptions: {
-        expiresIn: '1h',
+        expiresIn: '1h'
       },
-      secret: process.env.JWT_SECRET,
+      secret: process.env.JWT_SECRET
     }),
     UsersModule,
     PostsModule,

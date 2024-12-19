@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from '../entities/post.entity';
 import { Repository } from 'typeorm';
@@ -18,7 +22,7 @@ export class PostsService {
   async create(createPostDto: CreatePostDto) {
     //se verifica la existencia del user
     const user = await this.userRepository.findOne({
-      where: { id: createPostDto.userId },
+      where: { id: createPostDto.userId }
     });
     if (!user) {
       throw new NotFoundException('User not found');
@@ -28,7 +32,7 @@ export class PostsService {
     const post = this.postRepository.create({
       description: createPostDto.description,
       image: createPostDto.image,
-      user: user, //asignamos el user al post
+      user: user //asignamos el user al post
     });
     //guardamos el post en DB
     return this.postRepository.save(post);
@@ -39,9 +43,9 @@ export class PostsService {
   }
 
   async findOne(id: string): Promise<Post> {
-    const post = await this.postRepository.findOne({ 
-      where: { id }, 
-      relations: ['comments'],
+    const post = await this.postRepository.findOne({
+      where: { id },
+      relations: ['comments']
     });
 
     if (!post) {
@@ -54,10 +58,10 @@ export class PostsService {
   async update(id: string, updatePostDto: UpdatePostDto) {
     // Preload carga el post con el ID proporcionado y actualiza las propiedades
     const post = await this.postRepository.preload({
-      id: id, 
-      ...updatePostDto,//Asignamos lso valores del dto al post
+      id: id,
+      ...updatePostDto //Asignamos lso valores del dto al post
     });
-    
+
     if (!post) {
       throw new NotFoundException('Post not found');
     }

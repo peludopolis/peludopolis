@@ -9,7 +9,10 @@ export class UploadImageService {
       const uploadImage = await this.fileRepository.upload(file);
       return uploadImage.secure_url;
     } catch (error) {
-      throw new InternalServerErrorException('Error al guardar la imagen');
+      throw new InternalServerErrorException(
+        'Error al guardar la imagen',
+        error
+      );
     }
   }
 }

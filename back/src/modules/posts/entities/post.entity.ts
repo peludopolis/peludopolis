@@ -1,5 +1,4 @@
 import { Comment } from 'src/modules/comments/entities/comment.entity';
-import { ServicesCatalog } from 'src/modules/services-catalog/entities/services-catalog.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import {
   Column,
@@ -7,7 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm';
 
 @Entity('posts')

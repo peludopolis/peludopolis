@@ -1,6 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException
+} from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
-import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { AppointmentsRepository } from './appointments.repository';
 import { Appointment } from './entities/appointment.entity';
 import { schedule } from './schedule/schedule';
@@ -52,6 +55,7 @@ export class AppointmentsService {
 
     // console.log(horariosOcupados);
     // Calcular bloques consecutivos libres para los servicios solicitados
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const bloquesRequeridos = serviciosSolicitados.length;
     const horariosDisponibles: Record<string, string[]> = {};
 
@@ -81,6 +85,8 @@ export class AppointmentsService {
 
   async obtenerHorariosOcupados(
     date: Date,
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     serviciosSolicitados: string[]
   ): Promise<Record<string, Set<string>>> {
     const reservedAppointments: Appointment[] =
@@ -217,11 +223,20 @@ export class AppointmentsService {
   }
 
   async getAll() {
-    const allAppointments: Appointment[] =
-      await this.appointmentRepository.getAllAppointments();
-    if (allAppointments.length === 0) {
-      return { message: 'Aún no hay citas registradas' };
-    } else return allAppointments;
+    try {
+      const allAppointments: Appointment[] =
+        await this.appointmentRepository.getAllAppointments();
+      if (allAppointments.length === 0) {
+        return { message: 'Aún no hay citas registradas' };
+      }
+
+      return allAppointments;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Error al obtener las citas desde la base de datos.',
+        error.message
+      );
+    }
   }
 
   private isRangeAvailable(

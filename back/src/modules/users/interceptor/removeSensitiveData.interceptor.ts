@@ -2,7 +2,7 @@ import {
   Injectable,
   NestInterceptor,
   ExecutionContext,
-  CallHandler,
+  CallHandler
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -18,7 +18,7 @@ export class RemoveSensitiveFieldsInterceptor implements NestInterceptor {
           return this.removeSensitiveFields(data);
         }
         return data;
-      }),
+      })
     );
   }
 

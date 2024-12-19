@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Appointment } from './entities/appointment.entity';
-import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { StatusAppointment } from './enum/status-appointment.enum';
 import { SaveAppointment } from './dto/save-appointment.dto';
 
@@ -10,7 +9,7 @@ import { SaveAppointment } from './dto/save-appointment.dto';
 export class AppointmentsRepository {
   constructor(
     @InjectRepository(Appointment)
-    private readonly appointmentRepository: Repository<Appointment>,
+    private readonly appointmentRepository: Repository<Appointment>
   ) {}
 
   async getReservedAppointments(date: Date): Promise<Appointment[]> {
@@ -20,7 +19,7 @@ export class AppointmentsRepository {
       .select(['appointment.startTime', 'appointment.endTime', 'service.id'])
       .where('appointment.date = :date', { date })
       .andWhere('appointment.status = :status', {
-        status: StatusAppointment.Confirmed,
+        status: StatusAppointment.Confirmed
       })
       .getMany();
     return reservedAppointments;
@@ -29,12 +28,12 @@ export class AppointmentsRepository {
   async createAppointment(dataAppointment: SaveAppointment) {
     const appointmentCreated: Appointment = this.appointmentRepository.create({
       ...dataAppointment,
-      createdAt: new Date(),
+      createdAt: new Date()
     });
     await this.appointmentRepository.save(appointmentCreated);
     return {
       message: 'Cita agendada correctamente',
-      appointment: appointmentCreated,
+      appointment: appointmentCreated
     };
   }
 
@@ -47,11 +46,11 @@ export class AppointmentsRepository {
         'appointment.endTime',
         'appointment.date',
         'appointment.id',
-        'service.id',
+        'service.id'
       ])
       .where('appointment.date = :date', { date })
       .andWhere('appointment.status = :status', {
-        status: StatusAppointment.Confirmed,
+        status: StatusAppointment.Confirmed
       })
       .getMany();
   }
@@ -63,7 +62,7 @@ export class AppointmentsRepository {
   async findOne(appointmentId: string): Promise<Appointment | null> {
     return await this.appointmentRepository.findOne({
       where: { id: appointmentId },
-      relations: ['services'], 
+      relations: ['services']
     });
   }
 }
