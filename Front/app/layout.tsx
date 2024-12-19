@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar/Navbar";
 import BadgeWhatsapp from "../components/badgeWhatsapp/BadgeWhatsapp";
 import Chatbot from "../components/Chatbot/Chatbot";
 import { AuthProvider } from "../contexts/authContext";
+import { UserProvider } from "../contexts/UserContext"; // Importa el UserProvider
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const geistSans = localFont({
@@ -30,13 +31,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <GoogleOAuthProvider clientId={"428954429923-bicutvc9ci34rlq7c1pdv7kivd3n87c7.apps.googleusercontent.com"}>
           <AuthProvider>
-            <div className="flex flex-col min-h-screen">
-              <Navbar />
-              <main className="flex-grow">{children}</main>
-              <Footer />
-            </div>
-            <BadgeWhatsapp />
-            <Chatbot />
+            <UserProvider> {/* Envuelve todo dentro del UserProvider */}
+              <div className="flex flex-col min-h-screen">
+                <Navbar />
+                <main className="flex-grow">{children}</main>
+                <Footer />
+              </div>
+              <BadgeWhatsapp />
+              <Chatbot />
+            </UserProvider>
           </AuthProvider>
         </GoogleOAuthProvider>
       </body>

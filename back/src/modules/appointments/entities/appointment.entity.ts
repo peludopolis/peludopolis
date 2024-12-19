@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { StatusAppointment } from '../enum/status-appointment.enum';
 import { PaymentsDetail } from './paymentsDetail.entity';
+import { Payment } from 'src/modules/payments/entities/payment.entity';
 
 @Entity()
 export class Appointment {
@@ -51,6 +52,12 @@ export class Appointment {
     default: StatusAppointment.Confirmed
   })
   status: StatusAppointment;
+
+  @OneToOne(() => Payment, (payment) => payment.appointment, {
+    nullable: true,
+    onDelete: 'SET NULL'
+  })
+  payment: Payment;
 
   @OneToOne(() => PaymentsDetail, (paymentDetail) => paymentDetail.appointment)
   paymentDetail: PaymentsDetail;

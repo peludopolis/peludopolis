@@ -36,6 +36,9 @@ export class ServicesCatalog {
   @Column({ nullable: true })
   employeeName?: string;
 
+  // @OneToMany(() => Post, (post) => post.service)
+  // posts: Post[];
+
   @Column({
     type: 'enum',
     enum: AnimalType

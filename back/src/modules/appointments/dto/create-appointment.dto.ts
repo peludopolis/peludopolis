@@ -9,6 +9,7 @@ import {
   ValidateNested
 } from 'class-validator';
 import { ServiceAppointmentDto } from './service-appointment.dto';
+// import { StatusAppointment } from '../enum/status-appointment.enum';
 
 export class CreateAppointmentDto {
   @IsNotEmpty({ message: 'El parámetro "date" es obligatorio.' })
