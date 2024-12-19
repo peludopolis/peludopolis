@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Query,
+  NotFoundException,
+  InternalServerErrorException
+} from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { QueryValidationDto } from './dto/queryValidationDto.dto';
@@ -20,7 +28,7 @@ export class AppointmentsController {
     const availableSlots =
       await this.appointmentsService.obtenerHorariosDisponibles(
         date,
-        serviceIds,
+        serviceIds
       );
 
     return availableSlots;
@@ -28,6 +36,17 @@ export class AppointmentsController {
 
   @Get('all')
   async getAllAvailability() {
-    return await this.appointmentsService.getAll();
+    try {
+      const allAppointments = await this.appointmentsService.getAll();
+      if (Array.isArray(allAppointments) && allAppointments.length === 0) {
+        throw new NotFoundException('Aún no hay citas registradas.');
+      }
+      return allAppointments;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Error al obtener las citas.',
+        error.message
+      );
+    }
   }
 }

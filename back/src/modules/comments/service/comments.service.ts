@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Comment } from '../entities/comment.entity';
 import { UpdateCommentDto } from '../dtos/update-comment.dto';
@@ -16,10 +20,12 @@ export class CommentsService {
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>
   ) {}
 
-  async create(createCommentDto: CreateCommentDto): Promise<{ message: string; comment: Comment}> {
+  async create(
+    createCommentDto: CreateCommentDto
+  ): Promise<{ message: string; comment: Comment }> {
     console.log('DTO recibido en el servicio:', createCommentDto);
 
     if (!isUUID(createCommentDto.postId)) {
@@ -28,16 +34,19 @@ export class CommentsService {
 
     if (!isUUID(createCommentDto.userId)) {
       throw new BadRequestException('Invalid UUID format for userId');
-    }  
-    
+    }
     //cargamos el post relacionado
-    const post = await this.postRepository.findOne({ where: { id: createCommentDto.postId }})
+    const post = await this.postRepository.findOne({
+      where: { id: createCommentDto.postId }
+    });
     if (!post) {
       throw new NotFoundException('Post not found');
     }
 
     //buscar el usuario relacionado
-    const user = await this.userRepository.findOne({ where: { id: createCommentDto.userId} })
+    const user = await this.userRepository.findOne({
+      where: { id: createCommentDto.userId }
+    });
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -46,7 +55,7 @@ export class CommentsService {
     const comment = this.commentRepository.create({
       ...createCommentDto,
       post,
-      user, 
+      user
     });
     await this.commentRepository.save(comment);
     console.log('Comentario guardado en la base de datos');
@@ -58,26 +67,49 @@ export class CommentsService {
     });
 
     if (!fullComment) {
-      throw new NotFoundException('Comment could not be retrieved')
+      throw new NotFoundException('Comment could not be retrieved');
     }
     console.log('Comentario creado exitosamente:', fullComment);
     return {
       message: 'Comment successfully created',
-      comment: fullComment,
+      comment: fullComment
     };
   }
 
+  async findAll(): Promise<Comment[]> {
+    try {
+      return await this.commentRepository.find();
+    } catch (error) {
+      throw new NotFoundException(error.message || 'Error fetching comments');
+    }
+  }
+
   async findByPost(postId: string): Promise<Comment[]> {
-    return this.commentRepository.find({
-      where: { post: this.postRepository.create({ id: postId }) },
-      relations: ['post', 'user'],
-    });
+    try {
+      if (!isUUID(postId)) {
+        throw new BadRequestException('Invalid postId format');
+      }
+      const comments = await this.commentRepository.find({
+        where: { post: { id: postId } },
+        relations: ['post', 'user']
+      });
+
+      if (!comments || comments.length === 0) {
+        throw new NotFoundException('No comments found for this post');
+      }
+
+      return comments;
+    } catch (error) {
+      throw new Error(
+        `An error occurred while fetching comments: ${error.message}`
+      );
+    }
   }
 
   async findOne(id: string): Promise<Comment> {
     const comment = this.commentRepository.findOne({
       where: { id },
-      relations: ['post', 'user'],
+      relations: ['post', 'user']
     });
 
     if (!comment) {
@@ -86,13 +118,17 @@ export class CommentsService {
     return comment;
   }
 
-  async update(id: string, updateCommentDto: UpdateCommentDto): Promise<Comment> {
+  async update(
+    id: string,
+    updateCommentDto: UpdateCommentDto
+  ): Promise<Comment> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const comment = await this.findOne(id);
     await this.commentRepository.update(id, updateCommentDto);
-    
+
     const updatedComment = await this.commentRepository.findOne({
       where: { id },
-      relations: ['post', 'user'],
+      relations: ['post', 'user']
     });
 
     if (!updatedComment) {
@@ -104,7 +140,7 @@ export class CommentsService {
   async remove(id: string): Promise<Comment> {
     const comment = await this.findOne(id);
     await this.commentRepository.delete(id);
-    
+
     return comment;
   }
 }

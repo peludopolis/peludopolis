@@ -11,7 +11,7 @@ export class UploadImageRepository {
         (error, result) => {
           if (error) reject(error);
           else resolve(result);
-        },
+        }
       );
       bufferToStream(file.buffer).pipe(stream);
     });

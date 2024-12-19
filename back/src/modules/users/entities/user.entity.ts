@@ -1,4 +1,3 @@
-
 import { Appointment } from 'src/modules/appointments/entities/appointment.entity';
 import { Comment } from 'src/modules/comments/entities/comment.entity';
 import { Post } from 'src/modules/posts/entities/post.entity';
@@ -42,8 +41,8 @@ export class User {
   @OneToMany(() => Post, (post) => post.user)
   posts: Post[];
 
-  @OneToMany(() => Comment, (comment) => comment.user) 
-  comments: Comment[]; 
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 
   @Column({ nullable: true })
   profilePicture: string;

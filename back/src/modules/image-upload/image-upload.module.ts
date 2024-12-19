@@ -5,6 +5,6 @@ import { UploadImageRepository } from './image-upload.repository';
 
 @Module({
   providers: [UploadImageService, CloudinaryConfig, UploadImageRepository],
-  exports: [UploadImageService],
+  exports: [UploadImageService]
 })
 export class UploadImageModule {}

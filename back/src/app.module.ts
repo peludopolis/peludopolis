@@ -14,13 +14,12 @@ import typeOrmConfig from './config/typeOrm.config';
 import { UploadImageModule } from './modules/image-upload/image-upload.module';
 import { JwtModule } from '@nestjs/jwt';
 import { CommentsModule } from './modules/comments/comments.module';
-// import { AppointmentsModule } from './modules/appointments/appointments.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [typeOrmConfig],
+      load: [typeOrmConfig]
     }),
 
     TypeOrmModule.forRootAsync({
@@ -32,9 +31,9 @@ import { CommentsModule } from './modules/comments/comments.module';
     JwtModule.register({
       global: true,
       signOptions: {
-        expiresIn: '1h',
+        expiresIn: '1h'
       },
-      secret: process.env.JWT_SECRET,
+      secret: process.env.JWT_SECRET
     }),
     UsersModule,
     PostsModule,
@@ -43,9 +42,9 @@ import { CommentsModule } from './modules/comments/comments.module';
     ServicesCatalogModule,
     TipsModule,
     EmailModule,
-    UploadImageModule,
+    UploadImageModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService]
 })
 export class AppModule {}

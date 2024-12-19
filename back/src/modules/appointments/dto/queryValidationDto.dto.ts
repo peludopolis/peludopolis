@@ -4,14 +4,14 @@ import {
   IsArray,
   IsDateString,
   IsNotEmpty,
-  IsUUID,
+  IsUUID
 } from 'class-validator';
 
 export class QueryValidationDto {
   @IsNotEmpty({ message: 'El parámetro "date" es obligatorio.' })
   @IsDateString(
     {},
-    { message: 'El parámetro "date" debe tener el formato ISO (YYYY-MM-DD).' },
+    { message: 'El parámetro "date" debe tener el formato ISO (YYYY-MM-DD).' }
   )
   date: string;
 
@@ -19,12 +19,12 @@ export class QueryValidationDto {
   @Transform(({ value }) => value.split(',').map((s: string) => s.trim()))
   @IsArray({
     message:
-      'El parámetro "services" debe ser una lista de UUIDs separados por comas.',
+      'El parámetro "services" debe ser una lista de UUIDs separados por comas.'
   })
   @ArrayNotEmpty({ message: 'El parámetro "services" no puede estar vacío.' })
   @IsUUID('all', {
     each: true,
-    message: 'Cada servicio en "services" debe ser un UUID válido.',
+    message: 'Cada servicio en "services" debe ser un UUID válido.'
   })
   services: string[];
 }

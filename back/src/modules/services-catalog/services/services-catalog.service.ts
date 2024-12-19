@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateServicesCatalogDto } from '../dtos/create-services-catalog.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AnimalType, ServiceCategory, ServicesCatalog } from '../entities/services-catalog.entity';
+import { ServicesCatalog } from '../entities/services-catalog.entity';
 import { In, Repository } from 'typeorm';
 import { UpdateServicesCatalogDto } from '../dtos/update-services-catalog.dto';
 import { serviceData } from '../service-data';
@@ -10,32 +10,32 @@ import { serviceData } from '../service-data';
 export class ServicesCatalogService {
   constructor(
     @InjectRepository(ServicesCatalog)
-    private readonly serviceCatalogRepository: Repository<ServicesCatalog>,
+    private readonly serviceCatalogRepository: Repository<ServicesCatalog>
   ) {}
-  
+
   async onModuleInit() {
     console.log('Checking and preloading services into the database...');
 
     for (const service of serviceData) {
       const existingService = await this.serviceCatalogRepository.findOne({
-        where: { 
+        where: {
           name: service.name,
-          type: service.type,  
-          category: service.category, 
-          stage: service.stage,
-        },
+          type: service.type,
+          category: service.category,
+          stage: service.stage
+        }
       });
-      
+
       if (!existingService) {
         const serviceToSave = this.serviceCatalogRepository.create({
           name: service.name,
           description: service.description,
           price: service.price,
           employeeName: service.employeeName,
-          type: service.type,  
+          type: service.type,
           category: service.category,
           stage: service.stage,
-          duration: service.duration,
+          duration: service.duration
         });
         await this.serviceCatalogRepository.save(serviceToSave);
         console.log(`Service "${service.name}" added to the database.`);
@@ -52,7 +52,7 @@ export class ServicesCatalogService {
   async findOne(id: string): Promise<ServicesCatalog> {
     const service = await this.serviceCatalogRepository.findOne({
       where: { id },
-      relations: ['appointments'],
+      relations: ['appointments']
     });
     if (!service) {
       throw new NotFoundException(`Service with ID ${id} not found`);
@@ -63,16 +63,16 @@ export class ServicesCatalogService {
   async findManyByIds(ids: string[]): Promise<ServicesCatalog[]> {
     return await this.serviceCatalogRepository.find({
       where: {
-        id: In(ids),
-      },
+        id: In(ids)
+      }
     });
   }
 
   async create(data: CreateServicesCatalogDto): Promise<ServicesCatalog> {
-    console.log('Creando servicio:', data)
+    console.log('Creando servicio:', data);
     const service = this.serviceCatalogRepository.create(data);
     const savedService = await this.serviceCatalogRepository.save(service);
-    console.log('Servicio creado:', savedService); 
+    console.log('Servicio creado:', savedService);
     return savedService;
   }
 

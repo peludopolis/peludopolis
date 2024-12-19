@@ -1,6 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException
+} from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
-import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { AppointmentsRepository } from './appointments.repository';
 import { Appointment } from './entities/appointment.entity';
 import { schedule } from './schedule/schedule';
@@ -14,12 +17,12 @@ export class AppointmentsService {
   constructor(
     private readonly appointmentRepository: AppointmentsRepository,
     private readonly userService: UsersService,
-    private readonly serviceCatalogService: ServicesCatalogService,
+    private readonly serviceCatalogService: ServicesCatalogService
   ) {}
 
   async obtenerHorariosDisponibles(
     date: string,
-    serviciosSolicitados: string[],
+    serviciosSolicitados: string[]
   ) {
     const reservedAppointments =
       await this.appointmentRepository.getReservedAppointmentsToSend(date);
@@ -35,16 +38,16 @@ export class AppointmentsService {
         }
 
         const indiceInicio = schedule.indexOf(
-          this.formtatTimeAppointments(appointment.startTime),
+          this.formtatTimeAppointments(appointment.startTime)
         );
         const indiceFin = schedule.indexOf(
-          this.formtatTimeAppointments(appointment.endTime),
+          this.formtatTimeAppointments(appointment.endTime)
         );
 
         if (indiceInicio !== -1 && indiceFin !== -1) {
           const horarios = schedule.slice(indiceInicio, indiceFin);
           horarios.forEach((horario) =>
-            horariosOcupados[service.id].add(horario),
+            horariosOcupados[service.id].add(horario)
           );
         }
       });
@@ -52,6 +55,7 @@ export class AppointmentsService {
 
     // console.log(horariosOcupados);
     // Calcular bloques consecutivos libres para los servicios solicitados
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const bloquesRequeridos = serviciosSolicitados.length;
     const horariosDisponibles: Record<string, string[]> = {};
 
@@ -81,7 +85,8 @@ export class AppointmentsService {
 
   async obtenerHorariosOcupados(
     date: Date,
-    serviciosSolicitados: string[],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    serviciosSolicitados: string[]
   ): Promise<Record<string, Set<string>>> {
     const reservedAppointments: Appointment[] =
       await this.appointmentRepository.getReservedAppointments(date);
@@ -120,7 +125,7 @@ export class AppointmentsService {
       namePet,
       startTime,
       user: userId,
-      services: serviceDtos,
+      services: serviceDtos
     } = dataAppointment;
 
     // Paso 1: Validar que la hora esté dentro del horario laboral
@@ -134,7 +139,7 @@ export class AppointmentsService {
 
     if (startMinutes < openingMinutes || endMinutes > closingMinutes) {
       throw new BadRequestException(
-        `El horario debe estar entre ${openingTime} y ${closingTime}.`,
+        `El horario debe estar entre ${openingTime} y ${closingTime}.`
       );
     }
 
@@ -157,19 +162,19 @@ export class AppointmentsService {
 
     if (startIndex === -1 || startIndex + bloquesRequeridos > schedule.length) {
       throw new BadRequestException(
-        'El horario está fuera del rango permitido.',
+        'El horario está fuera del rango permitido.'
       );
     }
 
     const horariosSolicitados = schedule.slice(
       startIndex,
-      startIndex + bloquesRequeridos,
+      startIndex + bloquesRequeridos
     );
 
     // Obtener horarios ocupados para la fecha
     const horariosOcupados = await this.obtenerHorariosOcupados(
       date,
-      serviceIds,
+      serviceIds
     );
 
     // console.log(horariosOcupados);
@@ -178,12 +183,12 @@ export class AppointmentsService {
     const estanDisponibles = this.isRangeAvailable(
       horariosSolicitados,
       serviceIds,
-      horariosOcupados,
+      horariosOcupados
     );
 
     if (!estanDisponibles) {
       throw new BadRequestException(
-        'El horario solicitado no está disponible.',
+        'El horario solicitado no está disponible.'
       );
     }
 
@@ -194,34 +199,47 @@ export class AppointmentsService {
       startTime,
       endTime,
       user,
-      services,
+      services
       // status: 'pending', // Se comenta para pruebas
     };
 
     return await this.appointmentRepository.createAppointment(appointment);
   }
 
-  async getAppointmentWithServices(appointmentId: string): Promise<Appointment> {
+  async getAppointmentWithServices(
+    appointmentId: string
+  ): Promise<Appointment> {
     // Consulta la cita incluyendo la relación con los servicios asociados
     const appointment = await this.appointmentRepository.findOne(appointmentId);
     if (!appointment) {
-      throw new BadRequestException(`No se encontró una cita con ID: ${appointmentId}`);
+      throw new BadRequestException(
+        `No se encontró una cita con ID: ${appointmentId}`
+      );
     }
     return appointment;
   }
 
   async getAll() {
-    const allAppointments: Appointment[] =
-      await this.appointmentRepository.getAllAppointments();
-    if (allAppointments.length === 0) {
-      return { message: 'Aún no hay citas registradas' };
-    } else return allAppointments;
+    try {
+      const allAppointments: Appointment[] =
+        await this.appointmentRepository.getAllAppointments();
+      if (allAppointments.length === 0) {
+        return { message: 'Aún no hay citas registradas' };
+      }
+
+      return allAppointments;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Error al obtener las citas desde la base de datos.',
+        error.message
+      );
+    }
   }
 
   private isRangeAvailable(
     posiblesHorarios: string[],
     serviciosSolicitados: string[],
-    horariosOcupados: Record<string, Set<string>>,
+    horariosOcupados: Record<string, Set<string>>
   ): boolean {
     return serviciosSolicitados.every((servicioId) => {
       const ocupados = horariosOcupados[servicioId] || new Set();

@@ -1,5 +1,15 @@
-import { IsNotEmpty, IsString, IsNumber, IsArray, ValidateNested, IsEnum, IsOptional } from 'class-validator';
-import { AnimalType, ServiceCategory, Stage } from '../entities/services-catalog.entity';
+import {
+  IsNotEmpty,
+  IsString,
+  IsNumber,
+  IsEnum,
+  IsOptional
+} from 'class-validator';
+import {
+  AnimalType,
+  ServiceCategory,
+  Stage
+} from '../entities/services-catalog.entity';
 
 export class CreateServicesCatalogDto {
   @IsNotEmpty()
@@ -8,29 +18,29 @@ export class CreateServicesCatalogDto {
 
   @IsNotEmpty()
   @IsString()
-  description: string; 
+  description: string;
 
   @IsNotEmpty()
   @IsNumber()
-  price: number; 
+  price: number;
 
   @IsOptional()
   @IsString()
-  employeeName: string; 
+  employeeName: string;
 
   @IsNotEmpty()
   @IsEnum(ServiceCategory)
-  category: ServiceCategory;  
-  
+  category: ServiceCategory;
+
   @IsNotEmpty()
   @IsEnum(AnimalType)
   type: AnimalType;
 
   @IsNotEmpty()
-  @IsEnum(Stage) 
+  @IsEnum(Stage)
   stage: Stage;
-  
+
   @IsNotEmpty()
   @IsNumber()
-  duration: number; 
+  duration: number;
 }

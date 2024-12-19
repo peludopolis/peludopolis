@@ -9,6 +9,6 @@ import { TipsRepository } from './tips.repository';
 @Module({
   imports: [UploadImageModule, TypeOrmModule.forFeature([Tip])],
   controllers: [TipsController],
-  providers: [TipsService, TipsRepository],
+  providers: [TipsService, TipsRepository]
 })
 export class TipsModule {}
