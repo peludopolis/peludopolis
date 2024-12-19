@@ -8,5 +8,6 @@ export class SaveAppointment {
   endTime: string;
   user: User;
   services: ServicesCatalog[];
+  payment_id: string;
   // status: string; // Se comenta para pruebas
 }

@@ -30,10 +30,8 @@ export class Payment {
   @ManyToOne(() => User, (user) => user.payments, { onDelete: 'CASCADE' })
   user: User;
 
-  // El pago se asocia con varios servicios a través de la cita
   @OneToOne(() => Appointment, (appointment) => appointment.payment, {
-    nullable: true,
-    onDelete: 'SET NULL'
+    onDelete: 'CASCADE'
   })
   appointment: Appointment;
 

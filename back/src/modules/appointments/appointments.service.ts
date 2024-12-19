@@ -85,6 +85,7 @@ export class AppointmentsService {
 
   async obtenerHorariosOcupados(
     date: Date,
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     serviciosSolicitados: string[]
   ): Promise<Record<string, Set<string>>> {
@@ -125,7 +126,8 @@ export class AppointmentsService {
       namePet,
       startTime,
       user: userId,
-      services: serviceDtos
+      services: serviceDtos,
+      payment_id
     } = dataAppointment;
 
     // Paso 1: Validar que la hora esté dentro del horario laboral
@@ -199,7 +201,8 @@ export class AppointmentsService {
       startTime,
       endTime,
       user,
-      services
+      services,
+      payment_id
       // status: 'pending', // Se comenta para pruebas
     };
 
