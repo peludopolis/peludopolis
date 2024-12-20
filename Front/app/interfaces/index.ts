@@ -41,7 +41,7 @@ export interface UserSession {
   profilePicture?: string;
   login: boolean;
   token: string;
-  user: UserSessionData;
+  user?: UserSessionData;
   services: ServicePet[];
 }
 
