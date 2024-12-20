@@ -6,6 +6,7 @@ import { login } from "../../service/auth";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import validator from "validator";
+import Image from "next/image";
 
 const LoginForm = () => {
     const { setUser } = useContext(AuthContext);
@@ -54,9 +55,16 @@ const LoginForm = () => {
                 name: payload.name,
                 email: payload.email,
                 picture: payload.picture,
-                id: undefined,
+                id: 0,
+                phone: "",
+                address: "",
+                login: false,
+                token: "",
+                user: undefined,
+                services: []
             },
             login: true,
+            id: ""
         });
     
         alert('Inicio de sesión exitoso');
@@ -101,70 +109,83 @@ const LoginForm = () => {
     }, [data]);
 
     return (
-        <form className="max-w-sm mx-auto flex flex-col gap-3 m-20" onSubmit={(e) => handleSubmit(e)}>
-            <div>
-                <h1 className="m-5 text-center font-bold text-black">Soy Cliente</h1>
-                <h3 className="text-black">
-                    Si ya eres parte de Peludópolis, inicia sesión con tu correo electrónico y contraseña o utiliza Google.
-                </h3>
+        <div className="flex items-center justify-center h-96 bg-gray-100">
 
-                {/* Formulario con usuario y contraseña */}
+            {/* Imagen del perro */}
+            <div className="relative w-1/2 h-full bg-primary hidden lg:flex items-center justify-center">
+                <Image
+                    src="/images/perro2.png"
+                    alt="Perro asomándose"
+                    width={300}
+                    height={400}
+                    className="absolute bottom-0 right-0 object-contain"
+                />
+            </div>
+
+            {/* Formulario */}
+            <form
+                className="flex flex-col justify-center p-8 bg-white shadow-lg rounded-lg w-full max-w-md mx-auto lg:w-1/2 lg:max-w-none"
+                onSubmit={(e) => handleSubmit(e)}
+            >
+                <h1 className="text-2xl font-bold text-center mb-4">¡Bienvenido a Peludópolis!</h1>
+                <p className="text-center text-gray-600 mb-6">
+                    Inicia sesión con tu correo electrónico y contraseña o utiliza Google.
+                </p>
+
                 {!isLoginWithGoogle ? (
                     <>
-                        <label className="block mb-2 text-sm font-medium mt-4 text-black" htmlFor="email">
-                            Usuario
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                            Correo electrónico
                         </label>
                         <input
-                            type="text"
-                            className="bg-white border border-gray-300 text-black-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 text-black"
-                            placeholder="name@email.com"
+                            type="email"
                             name="email"
-                            onChange={(e) => handleChange(e)}
+                            placeholder="tu@email.com"
+                            className="block w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring focus:ring-primary"
+                            onChange={handleChange}
                             value={data.email}
-                            onBlur={(e) => handleBlur(e)}
+                            onBlur={handleBlur}
                         />
-                        {touched.email && <p className="text-black">{errors.email}</p>}
+                        {touched.email && errors.email && (
+                            <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                        )}
 
-                        <label className="block mb-2 text-sm font-medium text-black" htmlFor="password">
+                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mt-4 mb-1">
                             Contraseña
                         </label>
                         <input
                             type="password"
-                            className="bg-white border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                            placeholder="********"
                             name="password"
-                            onChange={(e) => handleChange(e)}
+                            placeholder="********"
+                            className="block w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring focus:ring-primary"
+                            onChange={handleChange}
                             value={data.password}
-                            onBlur={(e) => handleBlur(e)}
+                            onBlur={handleBlur}
                         />
-                        {touched.password && <p className="text-black">{errors.password}</p>}
+                        {touched.password && errors.password && (
+                            <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                        )}
 
                         <button
                             type="submit"
-                            className="text-white bg-primary hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mt-3"
+                            className="mt-6 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-dark focus:outline-none"
                         >
-                            Iniciar Sesión
+                            Iniciar sesión
                         </button>
                     </>
                 ) : (
-                    // Login con Google
-                    <GoogleLogin
-                        onSuccess={handleGoogleSuccess}
-                        onError={handleGoogleFailure}
-                    />
+                    <GoogleLogin onSuccess={handleGoogleSuccess} onError={handleGoogleFailure} />
                 )}
 
-                <div className="flex gap-3 mt-3">
-                    <button
-                        type="button"
-                        onClick={() => setIsLoginWithGoogle(!isLoginWithGoogle)} // Cambia entre los dos métodos de login
-                        className="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                    >
-                        {isLoginWithGoogle ? "Usar correo y contraseña" : "Iniciar sesión con Google"}
-                    </button>
-                </div>
-            </div>
-        </form>
+                <button
+                    type="button"
+                    onClick={() => setIsLoginWithGoogle(!isLoginWithGoogle)}
+                    className="mt-4 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 focus:outline-none"
+                >
+                    {isLoginWithGoogle ? "Usar correo y contraseña" : "Iniciar sesión con Google"}
+                </button>
+            </form>
+        </div>
     );
 };
 
