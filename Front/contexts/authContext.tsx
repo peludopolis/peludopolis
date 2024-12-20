@@ -3,51 +3,65 @@
 import { ServicePet, UserSession } from "../app/interfaces";
 import { createContext, useEffect, useState } from "react";
 
-// Actualiza la interfaz para reflejar la nueva estructura del estado 'user'
+
+
 interface AuthContextProps {
     user: {
-      id: string; user: UserSession | null; login: boolean 
-} | null; // Nueva estructura
-    setUser: (user: { user: UserSession | null; login: boolean } | null) => void;  // Actualiza el tipo
+        id: string;
+        user: UserSession | null;
+        login: boolean;
+    } | null;
+    setUser: (user: { id: string; user: UserSession | null; login: boolean } | null) => void;
     logout: () => void;
     services: ServicePet[];
     setServices: (services: ServicePet[]) => void;
+    isLoading: boolean;
 }
 
 export const AuthContext = createContext<AuthContextProps>({
     user: null,
     services: [],
-    setUser: () => {},
-    logout: () => {},
-    setServices: () => {},
+    setUser: () => { },
+    logout: () => { },
+    setServices: () => { },
+    isLoading: false
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<{ user: UserSession | null; login: boolean } | null>(null);  // Actualiza el tipo de 'user'
+    const [user, setUser] = useState<{ id: string; user: UserSession | null; login: boolean } | null>(null);
     const [services, setServices] = useState<ServicePet[]>([]);
 
-    // Guardamos el estado del usuario y de las órdenes en localStorage
     useEffect(() => {
         if (user) {
+            if (!user.id) {
+                user.id = "default-id"; // Generar ID si falta
+            }
             localStorage.setItem("user", JSON.stringify(user));
             setServices(user?.user?.services || []);
             localStorage.setItem("services", JSON.stringify(user?.user?.services || []));
         }
     }, [user]);
 
-    // Cargamos el usuario y las órdenes de localStorage al iniciar
+    const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() => {
         const localUser = JSON.parse(localStorage.getItem("user")!);
         const localServices = JSON.parse(localStorage.getItem("services")!);
+    
         if (localUser) {
+            if (!localUser.id) {
+                localUser.id = "default-id"; // Generar ID si falta
+            }
             setUser(localUser);
         }
         if (localServices) {
             setServices(localServices);
         }
+    
+        setIsLoading(false); // Marcamos que ya se cargó
     }, []);
 
-    // Función para cerrar sesión
+    
     const logout = () => {
         localStorage.removeItem("user");
         localStorage.removeItem("services");
@@ -56,8 +70,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, setUser, logout, services, setServices }}>
+        <AuthContext.Provider value={{ user, setUser, logout, services, setServices, isLoading }}>
             {children}
         </AuthContext.Provider>
     );
 };
+

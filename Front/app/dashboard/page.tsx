@@ -5,17 +5,21 @@ import { AuthContext } from "../../contexts/authContext";
 import Image from "next/image";
 
 const Dashboard = () => {
-    const { user } = useContext(AuthContext);
+    const { user, isLoading } = useContext(AuthContext);
     const router = useRouter();
 
     useEffect(() => {
-        if (!user?.user) {
-            router.push("/"); // Redirige al home si no hay usuario
+        if (!isLoading && !user?.user) {
+            router.push("/"); // Redirige solo si no hay usuario y terminó de cargar
         }
-    }, [user, router]);
-
-    if (!user?.user) {
+    }, [user, isLoading, router]);
+    
+    if (isLoading) {
         return <div className="text-black text-center mt-10">Cargando...</div>;
+    }
+    
+    if (!user?.user) {
+        return null; // Previene errores visuales mientras redirige
     }
 
     // Determinar la imagen a usar
