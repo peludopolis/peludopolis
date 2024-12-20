@@ -30,6 +30,7 @@ export interface UserData {
 }
 
 export interface UserSession {
+  name: ReactNode;
   picture: string | undefined;
   id: unknown;
   login: boolean;
