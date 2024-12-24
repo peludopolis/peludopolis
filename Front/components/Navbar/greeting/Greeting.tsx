@@ -15,13 +15,13 @@ const Greeting = () => {
 
     return (
         <div className="flex items-center">
-            <Link href="/dashboard">
+            <Link href="/dashboard" className='hover:transform hover:scale-110'>
                 <Image
                     src={user.user.picture || "/images/predeterminada.jpg"}
                     alt="User Profile"
                     width={40}
                     height={40}
-                    className="rounded-full mr-3"
+                    className="rounded-full mr-3 "
                 />
             </Link>
             <h1 className="ml-2 text-danger">
