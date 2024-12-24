@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "../../contexts/authContext";
 import Image from "next/image";
@@ -7,17 +7,26 @@ import Image from "next/image";
 const Dashboard = () => {
     const { user, isLoading } = useContext(AuthContext);
     const router = useRouter();
+    const [posts, setPosts] = useState<any[]>([]);
 
     useEffect(() => {
         if (!isLoading && !user?.user) {
             router.push("/"); // Redirige solo si no hay usuario y terminó de cargar
         }
     }, [user, isLoading, router]);
-    
+
+    useEffect(() => {
+        if (user?.user) {
+            // Accede a los posts del usuario desde el localStorage
+            const storedUser = JSON.parse(localStorage.getItem("user")!);
+            setPosts(storedUser?.user?.posts || []);
+        }
+    }, [user]);
+
     if (isLoading) {
         return <div className="text-black text-center mt-10">Cargando...</div>;
     }
-    
+
     if (!user?.user) {
         return null; // Previene errores visuales mientras redirige
     }
@@ -33,7 +42,7 @@ const Dashboard = () => {
             <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
                 <div className="flex items-center p-6 bg-gray-800 text-white">
                     <Image
-                        src={profilePicture.startsWith("/") ? profilePicture : user.user.picture || "/images/predeterminada.jpg"} 
+                        src={profilePicture.startsWith("/") ? profilePicture : user.user.picture || "/images/predeterminada.jpg"}
                         alt="User Profile"
                         width={100}
                         height={100}
@@ -66,6 +75,29 @@ const Dashboard = () => {
                             <p className="text-gray-500">No hay información adicional disponible.</p>
                         )}
                     </div>
+                    <h1 className="text-lg text-primary my-5">Mis experiencias</h1>
+                    <div className="space-y-4 flex gap-6">
+                        {posts.length > 0 ? (
+                            posts.map((post) => (
+                                <div key={post.id} className="bg-gray-200 p-4 rounded-lg">
+                                    {post.image && (
+                                        <Image
+                                            src={post.image}
+                                            alt="Post image"
+                                            width={50}
+                                            height={50}
+                                            className="rounded-lg mt-2"
+                                        />
+                                    )}
+                                    <p className="text-tertiary">{post.description}</p>
+
+                                    {/* Aquí podrías agregar más detalles o acciones, como editar o eliminar */}
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-gray-500">No tienes experiencias registradas.</p>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
@@ -73,6 +105,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 
 
