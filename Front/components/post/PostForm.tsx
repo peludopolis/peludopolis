@@ -8,12 +8,13 @@ import { ImagePlus, PawPrint, Send, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const PostForm: React.FC = () => {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null); // Estado para el mensaje
   const { user } = useContext(AuthContext);
   const router = useRouter();
 
@@ -33,6 +34,7 @@ const PostForm: React.FC = () => {
         },
         error(err) {
           console.error("Error al comprimir la imagen:", err);
+          toast.error("Error al procesar la imagen");
         },
       });
     }
@@ -47,7 +49,7 @@ const PostForm: React.FC = () => {
     e.preventDefault();
 
     if (!user) {
-      alert("Debes estar logueado para crear un post");
+      toast.error("Debes estar logueado para crear un post");
       return;
     }
 
@@ -66,7 +68,10 @@ const PostForm: React.FC = () => {
           };
 
           await PostService.createPost(postData);
-          setSuccessMessage("¡Tu experiencia se ha creado con éxito! 🎉");
+          toast.success("¡Tu experiencia se ha creado con éxito! 🎉", {
+            position: "top-right",
+            autoClose: 2000,
+          });
           setDescription("");
           setImage(null);
           setImagePreview(null);
@@ -82,7 +87,10 @@ const PostForm: React.FC = () => {
         };
 
         await PostService.createPost(postData);
-        setSuccessMessage("¡Tu experiencia se ha creado con éxito! 🎉");
+        toast.success("¡Tu experiencia se ha creado con éxito! 🎉", {
+          position: "top-right",
+          autoClose: 2000,
+        });
         setDescription("");
 
         setTimeout(() => {
@@ -91,7 +99,7 @@ const PostForm: React.FC = () => {
       }
     } catch (error) {
       console.error("Error creando post", error);
-      alert("Hubo un error al crear el post");
+      toast.error("Hubo un error al crear el post");
     }
   };
 
@@ -115,12 +123,7 @@ const PostForm: React.FC = () => {
 
   return (
     <div className="my-10 bg-gradient-to-br from-cyan-400 to-blue-500 p-6 rounded-2xl shadow-2xl max-w-xl mx-auto transform transition-all duration-300 hover:scale-[1.02]">
-      {successMessage && ( // Mostrar mensaje de éxito
-        <div className="mb-4 text-green-600 bg-green-100 p-3 rounded-md text-center">
-          {successMessage}
-        </div>
-      )}
-
+      <ToastContainer />
       <div className="flex items-center mb-6 space-x-3">
         <PawPrint className="text-white w-10 h-10" />
         <h2 className="text-3xl font-extrabold text-white tracking-tight">
