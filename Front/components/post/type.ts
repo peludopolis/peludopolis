@@ -1,10 +1,22 @@
 export interface Post {
-  createdAt: string;
+  user: any;
   id: string;
   description: string;
-  image?: string;
+  image: string;
   userId: string;
-  comments?: Comment[];
+  comments: Comment[];  // No permite undefined, siempre es un arreglo
+  createdAt: string;
+}
+
+export interface User {
+  id: string;
+  username: string;
+  avatar: string;
+}
+
+export interface Comment {
+  id: string;  // Agregar la propiedad 'id' aquí
+  content: string;
 }
 
 export interface CreatePostDto {
@@ -17,3 +29,4 @@ export interface UpdatePostDto {
   description?: string;
   image?: string;
 }
+

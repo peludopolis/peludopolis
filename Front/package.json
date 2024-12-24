@@ -13,6 +13,7 @@
     "@fontsource/poppins": "^5.1.0",
     "@fontsource/roboto": "^5.1.0",
     "@react-oauth/google": "^0.12.1",
+    "@tanstack/react-query": "^5.62.8",
     "compressorjs": "^1.2.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^11.14.1",
