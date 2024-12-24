@@ -103,20 +103,20 @@ const Experiences = ({
         {/* ... Tu tabla existente ... */}
         <table className="min-w-full table-auto bg-white">
           <thead>
-            <tr className="bg-gradient-to-r from-purple-100 to-pink-100">
-              <th className="px-6 py-4 text-purple-700 font-semibold rounded-tl-xl">
+            <tr className="bg-dark">
+              <th className="px-6 py-4 text-white font-semibold rounded-tl-xl">
                 <div className="flex items-center gap-2">
                   <Camera className="w-5 h-5" />
                   Imagen
                 </div>
               </th>
-              <th className="px-6 py-4 text-purple-700 font-semibold">
+              <th className="px-6 py-4 text-white font-semibold">
                 <div className="flex items-center gap-2">
                   <PawPrint className="w-5 h-5" />
                   Descripción
                 </div>
               </th>
-              <th className="px-6 py-4 text-purple-700 font-semibold rounded-tr-xl">Acciones</th>
+              <th className="px-6 py-4 text-white font-semibold rounded-tr-xl">Acciones</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-purple-100">
