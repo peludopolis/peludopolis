@@ -6,7 +6,8 @@ import Navbar from "../components/Navbar/Navbar";
 import BadgeWhatsapp from "../components/badgeWhatsapp/BadgeWhatsapp";
 import Chatbot from "../components/Chatbot/Chatbot";
 import { AuthProvider } from "../contexts/authContext";
-import { UserProvider } from "../contexts/UserContext"; // Importa el UserProvider
+import { UserProvider } from "../contexts/UserContext";
+import QueryProvider from "../contexts/PostContext/QueryClientProvider";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const geistSans = localFont({
@@ -29,18 +30,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <GoogleOAuthProvider clientId={"428954429923-bicutvc9ci34rlq7c1pdv7kivd3n87c7.apps.googleusercontent.com"}>
-          <AuthProvider>
-            <UserProvider> {/* Envuelve todo dentro del UserProvider */}
-              <div className="flex flex-col min-h-screen">
-                <Navbar />
-                <main className="flex-grow">{children}</main>
-                <Footer />
-              </div>
-              <BadgeWhatsapp />
-              <Chatbot />
-            </UserProvider>
-          </AuthProvider>
+        <GoogleOAuthProvider clientId="428954429923-bicutvc9ci34rlq7c1pdv7kivd3n87c7.apps.googleusercontent.com">
+          <QueryProvider>
+            <AuthProvider>
+              <UserProvider>
+                <div className="flex flex-col min-h-screen">
+                  <Navbar />
+                  <main className="flex-grow">{children}</main>
+                  <Footer />
+                </div>
+                <BadgeWhatsapp />
+                <Chatbot />
+              </UserProvider>
+            </AuthProvider>
+          </QueryProvider>
         </GoogleOAuthProvider>
       </body>
     </html>
