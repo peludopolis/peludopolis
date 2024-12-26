@@ -1,31 +1,41 @@
+//components/post/type.ts
+
 export interface Post {
-  user: any;
   id: string;
+  title: string;
   description: string;
-  image: string;
+  image?: string;
+  author: string;
   userId: string;
-  comments: Comment[];  // No permite undefined, siempre es un arreglo
-  createdAt: string;
+  created_at: string;
+  comments?: Comment[];
 }
 
 export interface User {
   id: string;
   username: string;
-  avatar: string;
+  avatar?: string;
 }
 
 export interface Comment {
-  id: string;  // Agregar la propiedad 'id' aquí
+  id: string;
   content: string;
+  createdAt: string;
+  user: { id: string };
+  post: { id: string };
 }
 
 export interface CreatePostDto {
+  title: string;
   description: string;
   image?: string;
   userId: string;
+  author: string;
+  created_at: string;
 }
 
 export interface UpdatePostDto {
+  title?: string;
   description?: string;
   image?: string;
 }

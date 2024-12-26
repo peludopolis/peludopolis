@@ -1,3 +1,5 @@
+//components/post/PostList.tsx
+
 "use client";
 
 import React, { useState, useEffect, useContext } from 'react';
@@ -10,7 +12,7 @@ import Image from 'next/image';
 const PostList: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [selectedPost, setSelectedPost] = useState<string | null>(null);
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentsByPostId, setCommentsByPostId] = useState<Record<string, Comment[]>>({});
   const [newComment, setNewComment] = useState('');
   const { user } = useContext(AuthContext);
 
@@ -26,7 +28,10 @@ const PostList: React.FC = () => {
   const fetchComments = async (postId: string) => {
     try {
       const comments = await CommentService.getComments(postId);
-      setComments(comments);
+      setCommentsByPostId((prev) => ({
+        ...prev,
+        [postId]: comments,
+      }));
     } catch (error) {
       console.error('Error fetching comments', error);
     }
@@ -47,15 +52,26 @@ const PostList: React.FC = () => {
 
   const handleCommentSubmit = async (postId: string) => {
     if (!user || !newComment.trim()) return;
-    
+
+    console.log("Datos enviados al backend:", {
+      content: newComment,
+      postId,
+      userId: user.id,
+    });
+
     try {
-      await CommentService.createComment({
+      const newCommentData = await CommentService.createComment({
         content: newComment,
-        postId: postId,
-        userId: user.id
+        postId,
+        userId: user.id,
       });
+
+      setCommentsByPostId((prev) => ({
+        ...prev,
+        [postId]: [...(prev[postId] || []), newCommentData],
+      }));
+
       setNewComment('');
-      fetchComments(postId);
     } catch (error) {
       console.error('Error creating comment', error);
     }
@@ -63,7 +79,7 @@ const PostList: React.FC = () => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6 bg-muted">
-      {posts.map(post => (
+      {posts.map((post) => (
         <div
           key={post.id}
           className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-[1.05] hover:shadow-2xl relative group"
@@ -85,14 +101,12 @@ const PostList: React.FC = () => {
               <UserIcon className="text-cyan-500 w-8 h-8" />
               <div>
                 <h3 className="text-xs text-gray-600">
-                  <span className='font-bold'>User:</span> {post.userId}
+                  <span className="font-bold">User:</span> {post.userId}
                 </h3>
               </div>
             </div>
 
-            <p className="text-gray-700 mb-4 line-clamp-3">
-              {post.description}
-            </p>
+            <p className="text-gray-700 mb-4 line-clamp-3">{post.description}</p>
 
             <div className="border-t pt-4">
               <button
@@ -111,7 +125,7 @@ const PostList: React.FC = () => {
               {selectedPost === post.id && (
                 <div className="mt-4">
                   <div className="max-h-40 overflow-y-auto mb-4">
-                    {comments.map((comment) => (
+                    {commentsByPostId[post.id]?.map((comment) => (
                       <div key={comment.id} className="bg-gray-50 p-3 rounded-lg mb-2">
                         <p className="text-sm text-gray-700">{comment.content}</p>
                       </div>

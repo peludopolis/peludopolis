@@ -1,3 +1,5 @@
+//components/post/PostForm.tsx
+
 "use client";
 
 import React, { useState, FormEvent, ChangeEvent, useContext } from "react";
@@ -12,6 +14,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const PostForm: React.FC = () => {
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -53,6 +56,11 @@ const PostForm: React.FC = () => {
       return;
     }
 
+    if (!title.trim()) {
+      toast.error("El título es obligatorio");
+      return;
+    }
+
     try {
       let imageString = null;
       if (image) {
@@ -62,16 +70,22 @@ const PostForm: React.FC = () => {
           imageString = reader.result as string;
 
           const postData = {
+            title,
             description,
             image: imageString,
             userId: user?.user?.id?.toString() || "",
+            author: user?.user?.name || "Anónimo", // Agregar el autor
+            created_at: new Date().toISOString(),
           };
+
+          console.log("Datos enviados al backend:", postData);
 
           await PostService.createPost(postData);
           toast.success("¡Tu experiencia se ha creado con éxito! 🎉", {
             position: "top-right",
             autoClose: 2000,
           });
+          setTitle("");
           setDescription("");
           setImage(null);
           setImagePreview(null);
@@ -82,15 +96,21 @@ const PostForm: React.FC = () => {
         };
       } else {
         const postData = {
+          title,
           description,
           userId: user?.user?.id?.toString() || "",
+          author: user?.user?.name || "Anónimo", // Agregar el autor
+          created_at: new Date().toISOString(),
         };
+
+        console.log("Datos enviados al backend:", postData);
 
         await PostService.createPost(postData);
         toast.success("¡Tu experiencia se ha creado con éxito! 🎉", {
           position: "top-right",
           autoClose: 2000,
         });
+        setTitle("");
         setDescription("");
 
         setTimeout(() => {
@@ -108,11 +128,11 @@ const PostForm: React.FC = () => {
       <div className="text-center p-6 bg-red-100 border border-red-400 text-red-700 rounded-md">
         <p>Debes estar logueado para compartir tu experiencia.</p>
         <p>
-          Por favor,{" "}
+          Por favor, {" "}
           <Link href="/login" className="text-blue-600 underline">
             inicia sesión
           </Link>{" "}
-          o{" "}
+          o {" "}
           <Link href="/register" className="text-blue-600 underline">
             regístrate
           </Link>.
@@ -130,6 +150,15 @@ const PostForm: React.FC = () => {
           Comparte tu experiencia
         </h2>
       </div>
+
+      <input
+        type="text"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Título de tu experiencia"
+        className="w-full p-4 bg-white/20 backdrop-blur-sm text-white placeholder-white/70 border-2 border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/50 transition duration-300 mb-4"
+        required
+      />
 
       <textarea
         value={description}
@@ -187,6 +216,7 @@ const PostForm: React.FC = () => {
 };
 
 export default PostForm;
+
 
 
 
