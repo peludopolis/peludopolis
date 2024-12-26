@@ -12,7 +12,10 @@ import { AppointmentsService } from './appointments.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { QueryValidationDto } from './dto/queryValidationDto.dto';
 import { PaymentsService } from '../payments/payments.service';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { SaveAppointment } from './dto/save-appointment.dto';
 
+@ApiTags('Appointments')
 @Controller('appointments')
 export class AppointmentsController {
   constructor(
@@ -21,6 +24,16 @@ export class AppointmentsController {
   ) {}
 
   @Post('create')
+  @ApiOperation({ summary: 'Crear una nueva cita' })
+  @ApiResponse({
+    status: 201,
+    description: 'Cita creada exitosamente.',
+    type: SaveAppointment
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Pago no aprobado o inválido.'
+  })
   async createAppointment(@Body() createAppointmentDto: CreateAppointmentDto) {
     const { payment_id, ...appointmentData } = createAppointmentDto;
 
@@ -39,6 +52,22 @@ export class AppointmentsController {
   }
 
   @Get('availabilityByServices')
+  @ApiOperation({ summary: 'Obtener horarios disponibles por servicios' })
+  @ApiResponse({
+    status: 200,
+    description: 'Horarios disponibles por servicio.',
+    schema: {
+      type: 'object',
+      additionalProperties: {
+        type: 'array',
+        items: { type: 'string' }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Error en los parámetros de entrada.'
+  })
   async getAvailableTimes(@Query() query: QueryValidationDto) {
     const serviceIds: string[] = query.services;
     const date: string = query.date;
@@ -53,6 +82,21 @@ export class AppointmentsController {
   }
 
   @Get('all')
+  @ApiOperation({ summary: 'Obtener todas las citas disponibles' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de todas las citas disponibles.',
+    isArray: true,
+    type: SaveAppointment
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No se encontraron citas.'
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Error en el servidor al obtener las citas.'
+  })
   async getAllAvailability() {
     try {
       const allAppointments = await this.appointmentsService.getAll();

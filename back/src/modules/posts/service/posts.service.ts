@@ -34,12 +34,20 @@ export class PostsService {
       image: createPostDto.image,
       user: user //asignamos el user al post
     });
-    //guardamos el post en DB
-    return this.postRepository.save(post);
+
+    try {
+      //guardamos el post en DB
+      return await this.postRepository.save(post);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to create post');
+    }
   }
 
-  findAll() {
-    return this.postRepository.find();
+  async findAll() {
+    return await this.postRepository.find({
+      relations: ['comments']
+    });
   }
 
   async findOne(id: string): Promise<Post> {
