@@ -30,14 +30,23 @@ export class PostsService {
 
     //crear el post con el user asociado
     const post = this.postRepository.create({
+      title: createPostDto.title,
       description: createPostDto.description,
       image: createPostDto.image,
       user: user //asignamos el user al post
     });
 
     try {
-      //guardamos el post en DB
-      return await this.postRepository.save(post);
+      const savedPost = await this.postRepository.save(post);
+
+      return {
+        ...savedPost,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email
+        }
+      };
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       throw new InternalServerErrorException('Failed to create post');
@@ -45,9 +54,21 @@ export class PostsService {
   }
 
   async findAll() {
-    return await this.postRepository.find({
-      relations: ['comments']
+    const posts = await this.postRepository.find({
+      relations: ['comments', 'user']
     });
+    return posts.map((post) => ({
+      id: post.id,
+      title: post.title,
+      description: post.description,
+      image: post.image,
+      author: post.user.name,
+      created_at: post.createdAt,
+      comments: post.comments.map((comment) => ({
+        id: comment.id,
+        content: comment.content
+      }))
+    }));
   }
 
   async findOne(id: string): Promise<Post> {
@@ -67,7 +88,7 @@ export class PostsService {
     // Preload carga el post con el ID proporcionado y actualiza las propiedades
     const post = await this.postRepository.preload({
       id: id,
-      ...updatePostDto //Asignamos lso valores del dto al post
+      ...updatePostDto //Asignamos los valores del dto al post
     });
 
     if (!post) {
