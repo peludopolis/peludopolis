@@ -7,7 +7,6 @@ import BadgeWhatsapp from "../components/badgeWhatsapp/BadgeWhatsapp";
 import Chatbot from "../components/Chatbot/Chatbot";
 import { AuthProvider } from "../contexts/authContext";
 import { UserProvider } from "../contexts/UserContext";
-import QueryProvider from "../contexts/PostContext/QueryClientProvider";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const geistSans = localFont({
@@ -31,7 +30,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <GoogleOAuthProvider clientId="428954429923-bicutvc9ci34rlq7c1pdv7kivd3n87c7.apps.googleusercontent.com">
-          <QueryProvider>
             <AuthProvider>
               <UserProvider>
                 <div className="flex flex-col min-h-screen">
@@ -43,7 +41,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Chatbot />
               </UserProvider>
             </AuthProvider>
-          </QueryProvider>
         </GoogleOAuthProvider>
       </body>
     </html>
