@@ -34,10 +34,14 @@ export class PostsController {
       example: {
         id: '1b2f8e67-4a97-4f93-aaa7-9a57b18b8a9e',
         title: 'Título del post',
-        content: 'Contenido del post',
-        author: 'John Doe',
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z'
+        description: 'Descripción del post',
+        image: 'https://example.com/image.png',
+        user: {
+          id: '29bd6879-16eb-4cd5-b071-633b1959f932',
+          name: 'John Doe',
+          email: 'johndoe@example.com'
+        },
+        createdAt: '2024-01-01T00:00:00Z'
       }
     }
   })
@@ -61,10 +65,11 @@ export class PostsController {
         {
           id: '1b2f8e67-4a97-4f93-aaa7-9a57b18b8a9e',
           title: 'Título del post',
-          content: 'Contenido del post',
+          description: 'Descripción del post',
+          image: 'https://example.com/image.png',
           author: 'John Doe',
-          created_at: '2024-01-01T00:00:00Z',
-          updated_at: '2024-01-01T00:00:00Z'
+          createdAt: '2024-01-01T00:00:00Z',
+          comments: []
         }
       ]
     }
@@ -86,10 +91,10 @@ export class PostsController {
       example: {
         id: '1b2f8e67-4a97-4f93-aaa7-9a57b18b8a9e',
         title: 'Título del post',
-        content: 'Contenido del post',
-        author: 'John Doe',
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z'
+        description: 'Descripción del post',
+        image: 'https://example.com/image.png',
+        createdAt: '2024-01-01T00:00:00Z',
+        comments: []
       }
     }
   })
@@ -115,8 +120,8 @@ export class PostsController {
       example: {
         id: '1b2f8e67-4a97-4f93-aaa7-9a57b18b8a9e',
         title: 'Título actualizado',
-        content: 'Contenido actualizado',
-        author: 'John Doe',
+        description: 'Descripción actualizada',
+        image: 'https://example.com/image.png',
         created_at: '2024-01-01T00:00:00Z',
         updated_at: '2024-02-01T00:00:00Z'
       }
