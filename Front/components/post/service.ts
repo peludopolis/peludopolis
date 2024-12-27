@@ -99,6 +99,8 @@ export const CommentService = {
     }
   },
 
+  
+
   async createComment(commentData: { content: string; postId: string; userId: string }): Promise<Comment> {
     
     console.log('Datos enviados al backend:', commentData);
@@ -130,5 +132,26 @@ export const CommentService = {
       },
     };
   },
+
+  deleteComment: async (commentId: string) => {
+    try {
+      const response = await fetch(`/api/comments/${commentId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al eliminar el comentario');
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error en deleteComment:', error);
+      throw error;
+    }
+  }
+
 };
 
