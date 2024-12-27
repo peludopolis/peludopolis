@@ -155,7 +155,7 @@ const PostForm: React.FC = () => {
         type="text"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder="Título de tu experiencia"
+        placeholder="Tipo de servicio"
         className="w-full p-4 bg-white/20 backdrop-blur-sm text-white placeholder-white/70 border-2 border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/50 transition duration-300 mb-4"
         required
       />
@@ -163,7 +163,7 @@ const PostForm: React.FC = () => {
       <textarea
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        placeholder="Describe tu experiencia en el centro de estética de mascotas..."
+        placeholder="Describe tu experiencia con el servicio realizado..."
         className="w-full p-4 bg-white/20 backdrop-blur-sm text-white placeholder-white/70 border-2 border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/50 transition duration-300 min-h-[120px]"
         required
       />

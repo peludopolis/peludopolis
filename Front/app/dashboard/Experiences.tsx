@@ -41,7 +41,6 @@ const Experiences = ({ userId }: { userId: string }) => {
     fetchUserPosts();
   }, [userId]);
 
-  // Establecer valores iniciales del modal de edición
   useEffect(() => {
     if (editingPost) {
       setNewTitle(editingPost.title || "");
@@ -52,21 +51,21 @@ const Experiences = ({ userId }: { userId: string }) => {
 
   const handleEditSubmit = async () => {
     if (!editingPost) return;
-
     try {
       const response = await fetch(`${apiUrl}/posts/${editingPost.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           title: newTitle,
           description: newDescription,
           image: newImage,
         }),
       });
-
       if (response.ok) {
         toast.success("¡Experiencia actualizada exitosamente!");
-        fetchUserPosts(); // Refrescamos la lista
+        fetchUserPosts();
         setEditingPost(null);
       } else {
         toast.error("Error al actualizar la experiencia");
@@ -82,10 +81,9 @@ const Experiences = ({ userId }: { userId: string }) => {
       const response = await fetch(`${apiUrl}/posts/${postId}`, {
         method: "DELETE",
       });
-
       if (response.ok) {
         toast.success("Experiencia eliminada correctamente");
-        fetchUserPosts(); // Refrescamos la lista
+        fetchUserPosts();
       } else {
         toast.error("Error al eliminar la experiencia");
       }
@@ -153,17 +151,22 @@ const Experiences = ({ userId }: { userId: string }) => {
               ))
             ) : (
               <tr>
-                <td colSpan={4} className="text-center py-4">No hay experiencias registradas</td>
+                <td colSpan={4} className="text-center py-4">
+                  No hay experiencias registradas
+                </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
 
+      {/* Modal de edición */}
       {editingPost && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-xl shadow-xl max-w-md w-full">
-            <h3 className="text-2xl font-semibold mb-6 text-purple-700">Editar Experiencia</h3>
+            <h3 className="text-2xl font-semibold mb-6 text-purple-700">
+              Editar Experiencia
+            </h3>
             <div className="space-y-6">
               <div>
                 <label className="block text-gray-700 mb-2 font-medium">Título</label>
@@ -208,6 +211,34 @@ const Experiences = ({ userId }: { userId: string }) => {
                   Guardar Cambios
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmación de eliminación */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-xl max-w-sm w-full">
+            <h3 className="text-xl font-semibold mb-4 text-gray-800">
+              Confirmar eliminación
+            </h3>
+            <p className="text-gray-600 mb-6">
+              ¿Estás seguro de que deseas eliminar esta experiencia? Esta acción no se puede deshacer.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowDeleteConfirm(null)}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => handleDeletePost(showDeleteConfirm)}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+              >
+                Eliminar
+              </button>
             </div>
           </div>
         </div>

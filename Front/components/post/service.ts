@@ -1,9 +1,7 @@
-//components/post/service.ts
-
 import { Post, CreatePostDto, UpdatePostDto, Comment } from './type';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL + '/posts';
-const COMMENT_API_URL = process.env.NEXT_PUBLIC_API_URL + '/comments';
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/posts`;
+const COMMENT_API_URL = `${process.env.NEXT_PUBLIC_API_URL}/comments`;
 
 export const PostService = {
   async createPost(postData: CreatePostDto): Promise<Post> {
@@ -61,31 +59,50 @@ export const PostService = {
 
 export const CommentService = {
   async getComments(postId: string): Promise<Comment[]> {
-    const response = await fetch(`${COMMENT_API_URL}/post/${postId}`); // Usar la ruta específica
+    try {
+      console.log('Fetching comments for post:', postId);
 
-    if (!response.ok) {
-      throw new Error('Error fetching comments');
+      const response = await fetch(`${COMMENT_API_URL}/post/${postId}`);
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          return []; // No comments found
+        }
+
+        if (response.status === 400) {
+          return []; // Treat 400 as no comments
+        }
+
+        throw new Error(`Error fetching comments: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      if (!data) return [];
+
+      const commentsArray = Array.isArray(data) ? data : [data];
+
+      return commentsArray.map(comment => ({
+        id: comment.id || '',
+        author: comment.author || '',
+        content: comment.content || '',
+        createdAt: comment.createdAt || new Date().toISOString(),
+        user: {
+          id: comment.userId || comment.user?.id || '',
+        },
+        post: {
+          id: comment.postId || comment.post?.id || '',
+        },
+      }));
+    } catch (error: any) {
+      console.error('Error in getComments:', error.message || error);
+      return []; // Return an empty array in case of any errors
     }
-
-    const data = await response.json();
-
-    // Mapea los comentarios al formato esperado
-    const comments: Comment[] = data.map((comment: any) => ({
-      id: comment.id,
-      content: comment.content,
-      createdAt: comment.createdAt || '',
-      user: {
-        id: comment.user?.id || '',
-      },
-      post: {
-        id: comment.post?.id || '',
-      },
-    }));
-
-    return comments;
   },
 
   async createComment(commentData: { content: string; postId: string; userId: string }): Promise<Comment> {
+    
+    console.log('Datos enviados al backend:', commentData);
+    
     const response = await fetch(COMMENT_API_URL, {
       method: 'POST',
       headers: {
@@ -98,7 +115,20 @@ export const CommentService = {
       throw new Error('Error creating comment');
     }
 
-    return response.json();
+    const data = await response.json();
+
+    return {
+      id: data.id,
+      author: data.author || '',
+      content: data.content,
+      createdAt: data.createdAt || new Date().toISOString(),
+      user: {
+        id: data.userId || data.user?.id,
+      },
+      post: {
+        id: data.postId || data.post?.id,
+      },
+    };
   },
 };
 
