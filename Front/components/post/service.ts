@@ -61,7 +61,7 @@ export const PostService = {
 
 export const CommentService = {
   async getComments(postId: string): Promise<Comment[]> {
-    const response = await fetch(COMMENT_API_URL);
+    const response = await fetch(`${COMMENT_API_URL}/post/${postId}`); // Usar la ruta específica
 
     if (!response.ok) {
       throw new Error('Error fetching comments');
@@ -69,6 +69,7 @@ export const CommentService = {
 
     const data = await response.json();
 
+    // Mapea los comentarios al formato esperado
     const comments: Comment[] = data.map((comment: any) => ({
       id: comment.id,
       content: comment.content,

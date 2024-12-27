@@ -109,49 +109,54 @@ const PostList: React.FC = () => {
             <p className="text-gray-700 mb-4 line-clamp-3">{post.description}</p>
 
             <div className="border-t pt-4">
-              <button
-                onClick={() => {
-                  setSelectedPost(selectedPost === post.id ? null : post.id);
-                  if (post.id !== selectedPost) {
-                    fetchComments(post.id);
-                  }
-                }}
-                className="flex items-center text-sm text-cyan-600 hover:text-cyan-700"
-              >
-                <MessageSquare className="w-4 h-4 mr-2" />
-                Comentarios
-              </button>
+  <button
+    onClick={() => {
+      setSelectedPost(selectedPost === post.id ? null : post.id);
+      if (post.id !== selectedPost) {
+        fetchComments(post.id);
+      }
+    }}
+    className="flex items-center text-sm text-cyan-600 hover:text-cyan-700"
+  >
+    <MessageSquare className="w-4 h-4 mr-2" />
+    Comentarios
+  </button>
 
-              {selectedPost === post.id && (
-                <div className="mt-4">
-                  <div className="max-h-40 overflow-y-auto mb-4">
-                    {commentsByPostId[post.id]?.map((comment) => (
-                      <div key={comment.id} className="bg-gray-50 p-3 rounded-lg mb-2">
-                        <p className="text-sm text-gray-700">{comment.content}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  {user && (
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        placeholder="Escribe un comentario..."
-                        className="flex-1 px-3 py-2 border rounded-lg text-sm"
-                      />
-                      <button
-                        onClick={() => handleCommentSubmit(post.id)}
-                        className="px-4 py-2 bg-cyan-500 text-white rounded-lg text-sm hover:bg-cyan-600"
-                      >
-                        Enviar
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
+  {selectedPost === post.id && (
+    <div className="mt-4">
+      <div className="max-h-40 overflow-y-auto mb-4">
+        {commentsByPostId[post.id] && commentsByPostId[post.id].length > 0 ? (
+          commentsByPostId[post.id].map((comment) => (
+            <div key={comment.id} className="bg-gray-50 p-3 rounded-lg mb-2">
+              <p className="text-sm text-gray-700">{comment.content}</p>
             </div>
+          ))
+        ) : (
+          <p className="text-sm text-gray-500 italic">Sin comentarios</p>
+        )}
+      </div>
+
+      {user && (
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Escribe un comentario..."
+            className="flex-1 px-3 py-2 border rounded-lg text-sm"
+          />
+          <button
+            onClick={() => handleCommentSubmit(post.id)}
+            className="px-4 py-2 bg-cyan-500 text-white rounded-lg text-sm hover:bg-cyan-600"
+          >
+            Enviar
+          </button>
+        </div>
+      )}
+    </div>
+  )}
+</div>
+
 
             {user && user.id === post.userId && (
               <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
