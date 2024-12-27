@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface ServiceSectionProps {
     title: string;
     description: string;
@@ -30,11 +32,17 @@ export interface UserData {
 }
 
 export interface UserSession {
-  picture: string | undefined;
-  id: unknown;
+  picture: string;
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  profilePicture?: string;
   login: boolean;
   token: string;
-  user: UserSessionData;
+  user?: UserSessionData;
+  services: ServicePet[];
 }
 
 interface UserSessionData {
@@ -43,7 +51,7 @@ interface UserSessionData {
   email: string;
   address: string;
   phone: string;
-  role: string;
+  role: "admin" | "user";
   credential: Credential;
   services: ServicePet[];
 }

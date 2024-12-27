@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import { TIP_CATEGORIES, TIP_CONTENT } from "./constants";
+import Banners from "./Banners";
 
 const PetCareTips = () => {
   const [activeCategory, setActiveCategory] = React.useState<string>("general");
@@ -68,7 +69,7 @@ const PetCareTips = () => {
           ))}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="flex flex-col gap-5 m-20">
           {TIP_CONTENT[activeCategory].map((tip, index) => (
             <div
               key={index}
@@ -86,6 +87,7 @@ const PetCareTips = () => {
           ))}
         </div>
       </div>
+      <Banners />
     </div>
   );
 };

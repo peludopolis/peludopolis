@@ -3,61 +3,78 @@
 import { ServicePet, UserSession } from "../app/interfaces";
 import { createContext, useEffect, useState } from "react";
 
-// Actualiza la interfaz para reflejar la nueva estructura del estado 'user'
 interface AuthContextProps {
-    user: {
-      id: string; user: UserSession | null; login: boolean 
-} | null; // Nueva estructura
-    setUser: (user: { user: UserSession | null; login: boolean } | null) => void;  // Actualiza el tipo
-    logout: () => void;
-    services: ServicePet[];
-    setServices: (services: ServicePet[]) => void;
+  user: {
+    id: string;
+    user: UserSession | null;
+    login: boolean;
+  } | null;
+  setUser: (user: { id: string; user: UserSession | null; login: boolean } | null) => void;
+  logout: () => void;
+  services: ServicePet[];
+  setServices: (services: ServicePet[]) => void;
+  isLoading: boolean;
 }
 
 export const AuthContext = createContext<AuthContextProps>({
-    user: null,
-    services: [],
-    setUser: () => {},
-    logout: () => {},
-    setServices: () => {},
+  user: null,
+  services: [],
+  setUser: () => {},
+  logout: () => {},
+  setServices: () => {},
+  isLoading: false,
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<{ user: UserSession | null; login: boolean } | null>(null);  // Actualiza el tipo de 'user'
-    const [services, setServices] = useState<ServicePet[]>([]);
+  const [user, setUser] = useState<{ id: string; user: UserSession | null; login: boolean } | null>(null);
+  const [services, setServices] = useState<ServicePet[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-    // Guardamos el estado del usuario y de las órdenes en localStorage
-    useEffect(() => {
-        if (user) {
-            localStorage.setItem("user", JSON.stringify(user));
-            setServices(user?.user?.services || []);
-            localStorage.setItem("services", JSON.stringify(user?.user?.services || []));
-        }
-    }, [user]);
+  // Guardar usuario y servicios en localStorage cuando cambian
+  useEffect(() => {
+    if (user) {
+      if (!user.id || user.id === "default-id") {
+        console.warn("El usuario no tiene un ID válido.");
+        return; // No guardamos usuarios inválidos
+      }
+      localStorage.setItem("user", JSON.stringify(user));
+      setServices(user?.user?.services || []);
+      localStorage.setItem("services", JSON.stringify(user?.user?.services || []));
+    }
+  }, [user]);
 
-    // Cargamos el usuario y las órdenes de localStorage al iniciar
-    useEffect(() => {
-        const localUser = JSON.parse(localStorage.getItem("user")!);
-        const localServices = JSON.parse(localStorage.getItem("services")!);
-        if (localUser) {
-            setUser(localUser);
-        }
-        if (localServices) {
-            setServices(localServices);
-        }
-    }, []);
+  // Cargar usuario y servicios desde localStorage al inicializar
+  useEffect(() => {
+    const localUser = JSON.parse(localStorage.getItem("user") || "null");
+    const localServices = JSON.parse(localStorage.getItem("services") || "null");
 
-    // Función para cerrar sesión
-    const logout = () => {
-        localStorage.removeItem("user");
-        localStorage.removeItem("services");
-        setUser(null);
-        setServices([]);
-    };
+    if (localUser) {
+      if (!localUser.id || localUser.id === "default-id") {
+        console.warn("El usuario cargado desde localStorage no tiene un ID válido.");
+        setUser(null); // No cargamos usuarios inválidos
+      } else {
+        setUser(localUser);
+      }
+    }
+    if (localServices) {
+      setServices(localServices);
+    }
 
-    return (
-        <AuthContext.Provider value={{ user, setUser, logout, services, setServices }}>
-            {children}
-        </AuthContext.Provider>
-    );
+    setIsLoading(false); // Marcamos que ya se cargó
+  }, []);
+
+  const logout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("services");
+    setUser(null);
+    setServices([]);
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, setUser, logout, services, setServices, isLoading }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
+
+
