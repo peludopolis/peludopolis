@@ -33,7 +33,8 @@ export class PostsService {
       title: createPostDto.title,
       description: createPostDto.description,
       image: createPostDto.image,
-      user: user //asignamos el user al post
+      user: user,
+      author: user.name
     });
 
     try {

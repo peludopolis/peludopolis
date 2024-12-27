@@ -31,6 +31,9 @@ export class Post {
   })
   id: string;
 
+  @Column({ nullable: true, length: 100 })
+  author?: string;
+
   @ApiProperty({
     description: 'Título del post.',
     example: 'Mi primer post'

@@ -55,7 +55,8 @@ export class CommentsService {
     const comment = this.commentRepository.create({
       ...createCommentDto,
       post,
-      user
+      user,
+      author: user.name
     });
     await this.commentRepository.save(comment);
     console.log('Comentario guardado en la base de datos');
