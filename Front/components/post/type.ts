@@ -1,5 +1,3 @@
-//components/post/type.ts
-
 export interface Post {
   id: string;
   title: string;
@@ -19,6 +17,7 @@ export interface User {
 
 export interface Comment {
   id: string;
+  author: string;
   content: string;
   createdAt: string;
   user: { id: string };
@@ -39,4 +38,3 @@ export interface UpdatePostDto {
   description?: string;
   image?: string;
 }
-
