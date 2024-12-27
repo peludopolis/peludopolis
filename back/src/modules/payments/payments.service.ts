@@ -60,7 +60,7 @@ export class PaymentsService {
       const payment = this.paymentsRepository.create({
         mp_id,
         status,
-        method,
+        payment_method_id: method,
         amount
       });
       await this.paymentsRepository.save(payment);
