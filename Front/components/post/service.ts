@@ -1,3 +1,5 @@
+//components/post/service.ts
+
 import { Post, CreatePostDto, UpdatePostDto, Comment } from './type';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL + '/posts';
@@ -10,7 +12,7 @@ export const PostService = {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(postData)
+      body: JSON.stringify(postData),
     });
 
     if (!response.ok) {
@@ -36,7 +38,7 @@ export const PostService = {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(postData)
+      body: JSON.stringify(postData),
     });
 
     if (!response.ok) {
@@ -48,19 +50,18 @@ export const PostService = {
 
   async deletePost(id: string): Promise<void> {
     const response = await fetch(`${API_URL}/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
 
     if (!response.ok) {
       throw new Error('Error deleting post');
     }
-  }
+  },
 };
 
 export const CommentService = {
-  // Obtener los comentarios de un post
   async getComments(postId: string): Promise<Comment[]> {
-    const response = await fetch(`${COMMENT_API_URL}/post/${postId}`);
+    const response = await fetch(`${COMMENT_API_URL}/post/${postId}`); // Usar la ruta específica
 
     if (!response.ok) {
       throw new Error('Error fetching comments');
@@ -68,23 +69,22 @@ export const CommentService = {
 
     const data = await response.json();
 
-    // Mapea la respuesta de la API a la estructura de Comment
+    // Mapea los comentarios al formato esperado
     const comments: Comment[] = data.map((comment: any) => ({
       id: comment.id,
       content: comment.content,
-      createdAt: comment.createdAt || '', // Asegúrate de manejar el campo createdAt
+      createdAt: comment.createdAt || '',
       user: {
-        id: comment.user?.id || '', // Verifica si el campo user está presente
+        id: comment.user?.id || '',
       },
       post: {
-        id: comment.post?.id || '', // Verifica si el campo post está presente
+        id: comment.post?.id || '',
       },
     }));
 
     return comments;
   },
 
-  // Crear un nuevo comentario
   async createComment(commentData: { content: string; postId: string; userId: string }): Promise<Comment> {
     const response = await fetch(COMMENT_API_URL, {
       method: 'POST',
