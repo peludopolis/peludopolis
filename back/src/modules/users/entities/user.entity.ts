@@ -4,8 +4,8 @@ import {
   IsEmail,
   IsNotEmpty,
   IsOptional,
-  IsPhoneNumber,
-  IsString
+  IsString,
+  Matches
 } from 'class-validator';
 import { Appointment } from 'src/modules/appointments/entities/appointment.entity';
 import { Comment } from 'src/modules/comments/entities/comment.entity';
@@ -64,7 +64,9 @@ export class User {
   })
   @Column()
   @IsNotEmpty({ message: 'El número de teléfono no puede estar vacío.' })
-  @IsPhoneNumber(undefined, { message: 'El número de teléfono no es válido.' })
+  @Matches(/^(\+\d{1,3}[- ]?)?\d{10}$/, {
+    message: 'El número de teléfono no es válido.'
+  })
   phone: string;
 
   @ApiProperty({

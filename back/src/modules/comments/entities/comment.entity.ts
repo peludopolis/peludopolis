@@ -19,6 +19,13 @@ export class Comment {
   id: string;
 
   @ApiProperty({
+    description: 'Nombre del usuario que escribió el comentario',
+    example: 'caro'
+  })
+  @Column()
+  author: string;
+
+  @ApiProperty({
     description: 'Contenido del comentario.',
     example: 'Este es un comentario.',
     minLength: 1,
