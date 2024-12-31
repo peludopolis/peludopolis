@@ -106,12 +106,12 @@ export class User {
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
 
-  @ApiProperty({
-    description: 'Lista de pagos asociados al usuario',
-    type: [Payment]
-  })
-  @OneToMany(() => Payment, (payment) => payment.user)
-  payments: Payment[];
+  // @ApiProperty({
+  //   description: 'Lista de pagos asociados al usuario',
+  //   type: [Payment]
+  // })
+  // @OneToMany(() => Payment, (payment) => payment.user)
+  // payments: Payment[];
 
   @ApiProperty({
     description: 'Imagen de perfil del usuario',
