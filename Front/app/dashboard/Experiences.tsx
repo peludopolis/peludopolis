@@ -1,18 +1,23 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import { Pencil, Trash2, PawPrint, Camera } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { AuthContext } from "../../contexts/authContext";
 
 interface Post {
   id: string;
   title?: string;
   image?: string;
   description: string;
+  author: string;
+  userId: string;
 }
 
-const Experiences = ({ userId }: { userId: string }) => {
+const Experiences = () => {
+  const { user } = useContext(AuthContext);
+
   const [posts, setPosts] = useState<Post[]>([]);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [newTitle, setNewTitle] = useState<string>("");
@@ -22,12 +27,16 @@ const Experiences = ({ userId }: { userId: string }) => {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+
   const fetchUserPosts = async () => {
+    if (!user) return; // Asegúrate de que el usuario esté autenticado
+  
     try {
-      const response = await fetch(`${apiUrl}/posts?userId=${userId}`);
+      const response = await fetch(`${apiUrl}/posts`); // Obtén todos los posts
       if (response.ok) {
         const data = await response.json();
-        setPosts(data);
+        const filteredPosts = data.filter((post: { userId: string; }) => post.userId === user.id); // Filtra por userId
+        setPosts(filteredPosts);
       } else {
         toast.error("Error al obtener las experiencias del usuario");
       }
@@ -36,10 +45,11 @@ const Experiences = ({ userId }: { userId: string }) => {
       toast.error("Error al conectar con el servidor");
     }
   };
-
+  
   useEffect(() => {
     fetchUserPosts();
-  }, [userId]);
+  }, [user]);
+  
 
   useEffect(() => {
     if (editingPost) {
@@ -109,6 +119,8 @@ const Experiences = ({ userId }: { userId: string }) => {
               </th>
               <th className="px-6 py-4 text-white font-semibold">Título</th>
               <th className="px-6 py-4 text-white font-semibold">Descripción</th>
+              <th className="px-6 py-4 text-white font-semibold">Usuario ID</th>
+              <th className="px-6 py-4 text-white font-semibold">Author</th>
               <th className="px-6 py-4 text-white font-semibold rounded-tr-xl">Acciones</th>
             </tr>
           </thead>
@@ -129,6 +141,8 @@ const Experiences = ({ userId }: { userId: string }) => {
                   </td>
                   <td className="px-6 py-4 text-gray-600">{post.title || "Sin título"}</td>
                   <td className="px-6 py-4 text-gray-600">{post.description}</td>
+                  <td className="px-6 py-4 text-gray-600">{post.userId}</td>
+                  <td className="px-6 py-4 text-gray-600">{post.author}</td>
                   <td className="px-6 py-4">
                     <div className="flex gap-3">
                       <button
