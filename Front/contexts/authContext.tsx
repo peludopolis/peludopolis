@@ -33,31 +33,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Guardar usuario y servicios en localStorage cuando cambian
   useEffect(() => {
     if (user) {
-      if (!user.id || user.id === "default-id") {
-        console.warn("El usuario no tiene un ID válido.");
-        return; // No guardamos usuarios inválidos
+      if (!user.id) {
+        user.id = "default-id"; // Generar un ID si falta
       }
       localStorage.setItem("user", JSON.stringify(user));
-      setServices(user?.user?.services || []);
-      localStorage.setItem("services", JSON.stringify(user?.user?.services || []));
+      localStorage.setItem("services", JSON.stringify(user.user?.services || []));
     }
   }, [user]);
 
   // Cargar usuario y servicios desde localStorage al inicializar
   useEffect(() => {
-    const localUser = JSON.parse(localStorage.getItem("user") || "null");
-    const localServices = JSON.parse(localStorage.getItem("services") || "null");
+    const storedUser = localStorage.getItem("user");
+    const storedServices = localStorage.getItem("services");
 
-    if (localUser) {
-      if (!localUser.id || localUser.id === "default-id") {
-        console.warn("El usuario cargado desde localStorage no tiene un ID válido.");
-        setUser(null); // No cargamos usuarios inválidos
-      } else {
-        setUser(localUser);
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      if (!parsedUser.id) {
+        parsedUser.id = "default-id"; // Generar ID si falta
       }
+      setUser(parsedUser);
     }
-    if (localServices) {
-      setServices(localServices);
+
+    if (storedServices) {
+      setServices(JSON.parse(storedServices));
     }
 
     setIsLoading(false); // Marcamos que ya se cargó
@@ -76,5 +74,4 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     </AuthContext.Provider>
   );
 };
-
 
