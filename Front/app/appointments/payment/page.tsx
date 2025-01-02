@@ -81,6 +81,7 @@ const PaymentPage: React.FC = () => {
           failure: `${localUrl}/appointments/payment?status=failure`,
           pending: `${localUrl}/appointments/payment?status=pending`,
         },
+        notification_url: `http://localhost:3001/payments/webhook`,
         auto_return: "approved",
       };
 
