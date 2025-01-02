@@ -45,8 +45,9 @@ export class Comment {
     description: 'Post al que pertenece el comentario.',
     type: () => Post
   })
-  @ManyToOne(() => Post, (post) => post.comments)
-  post: Post; //string uuid
+  @ManyToOne(() => Post, (post) => post.comments, { onDelete: 'CASCADE' })
+post: Post;
+
 
   @ApiProperty({
     description: 'Fecha de creación del comentario.',

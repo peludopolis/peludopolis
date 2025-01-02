@@ -75,8 +75,9 @@ export class Post {
     description: 'Lista de comentarios asociados al post.',
     type: [Comment]
   })
-  @OneToMany(() => Comment, (comment) => comment.post, { eager: true })
-  comments: Comment[];
+  @OneToMany(() => Comment, (comment) => comment.post, { cascade: true, onDelete: 'CASCADE' })
+comments: Comment[];
+
 
   @ApiProperty({
     description: 'Fecha y hora de creación del post.',
