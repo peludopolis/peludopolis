@@ -4,6 +4,7 @@ import { register } from "../../service/auth";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import validator from "validator";
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
 const RegisterForm = () => {
   const router = useRouter();
@@ -58,28 +59,39 @@ const RegisterForm = () => {
   };
 
   const validateName = (n: string) => {
-    return n.length < 3 ? "El nombre debe tener al menos 3 caracteres" : "";
+    return n.trim() === '' ? "El nombre no puede estar vacío." : "";
   };
-
+  
   const validateEmail = (e: string) => {
-    return !validator.isEmail(e) ? "Correo inválido" : "";
+    return !validator.isEmail(e) ? "El correo debe ser un email válido." : "";
   };
-
+  
   const validatePassword = (p: string) => {
-    return !validator.isLength(p, { min: 4, max: 8 }) ? "La contraseña debe tener entre 4 y 8 caracteres" : "";
+    const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return !regex.test(p)
+      ? "La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un carácter especial."
+      : "";
   };
-
+  
   const validateConfirmPassword = (cp: string) => {
-    return cp !== data.password ? "Las contraseñas no coinciden" : "";
+    return cp !== data.password ? "Las contraseñas no coinciden." : "";
   };
-
+  
   const validateAddress = (a: string) => {
-    return a.length < 1 ? "Ingrese una dirección" : "";
+    return a.trim() === '' ? "La dirección no puede estar vacía." : "";
   };
+  
+  const validatePhone = (phone: string) => {
+    if (!phone) return "El número de teléfono es obligatorio";
 
-  const validatePhone = (p: string) => {
-    return !validator.isMobilePhone(p, 'any') ? "Número de teléfono inválido" : "";
-  };
+    const phoneNumber = parsePhoneNumberFromString(phone);
+    if (!phoneNumber || !phoneNumber.isValid()) {
+        return "El número de teléfono no es válido";
+    }
+
+    return ""; // Devuelve una cadena vacía si no hay errores
+};
+  
 
   useEffect(() => {
     setErrors({
@@ -88,9 +100,10 @@ const RegisterForm = () => {
       password: validatePassword(data.password),
       confirmPassword: validateConfirmPassword(data.confirmPassword),
       address: validateAddress(data.address),
-      phone: validatePhone(data.phone)
+      phone: validatePhone(data.phone),
     });
   }, [data]);
+  
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
@@ -109,15 +122,15 @@ const RegisterForm = () => {
         className="flex flex-col justify-center p-8 bg-white shadow-lg rounded-lg w-full max-w-md mx-auto lg:w-1/2 lg:max-w-none h-screen"
         onSubmit={handleSubmit}
       >
-        <h1 className="text-2xl font-bold text-center mb-4">¡Crea tu cuenta en Peludópolis!</h1>
-        <p className="text-center text-gray-600 mb-6">
+        <h1 className="text-black text-2xl font-bold text-center mb-4">¡Crea tu cuenta en Peludópolis!</h1>
+        <p className="text-center text-black mb-6">
           Regístrate para disfrutar de nuestros servicios.
         </p>
 
-        <label className="block mb-1 text-sm font-medium text-gray-700">*Nombre</label>
+        <label className="block mb-1 text-sm font-medium text-black">*Nombre</label>
         <input
           type="text"
-          className={`w-full p-3 border rounded-lg mb-4 text-sm focus:outline-none ${touched.name && errors.name ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
+          className={`text-black w-full p-3 border rounded-lg mb-4 text-sm focus:outline-none ${touched.name && errors.name ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
           placeholder="Nombre"
           name="name"
           onChange={handleChange}
@@ -126,10 +139,10 @@ const RegisterForm = () => {
         />
         {touched.name && errors.name && <p className="text-red-500 text-xs">{errors.name}</p>}
 
-        <label className="block mb-1 text-sm font-medium text-gray-700">*Correo Electrónico</label>
+        <label className="block mb-1 text-sm font-medium text-black">*Correo Electrónico</label>
         <input
           type="text"
-          className={`w-full p-3 border rounded-lg mb-4 text-sm focus:outline-none ${touched.email && errors.email ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
+          className={`text-black w-full p-3 border rounded-lg mb-4 text-sm focus:outline-none ${touched.email && errors.email ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
           placeholder="name@email.com"
           name="email"
           onChange={handleChange}
@@ -138,10 +151,10 @@ const RegisterForm = () => {
         />
         {touched.email && errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
 
-        <label className="block mb-1 text-sm font-medium text-gray-700">*Contraseña</label>
+        <label className="block mb-1 text-sm font-medium text-black">*Contraseña</label>
         <input
           type="password"
-          className={`w-full p-3 border rounded-lg mb-4 text-sm focus:outline-none ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
+          className={`text-black w-full p-3 border rounded-lg mb-4 text-sm focus:outline-none ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
           placeholder="Contraseña"
           name="password"
           onChange={handleChange}
@@ -150,10 +163,10 @@ const RegisterForm = () => {
         />
         {touched.password && errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
 
-        <label className="block mb-1 text-sm font-medium text-gray-700">*Confirmar Contraseña</label>
+        <label className="block mb-1 text-sm font-medium text-black">*Confirmar Contraseña</label>
         <input
           type="password"
-          className={`w-full p-3 border rounded-lg mb-4 text-sm focus:outline-none ${touched.confirmPassword && errors.confirmPassword ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
+          className={`text-black w-full p-3 border rounded-lg mb-4 text-sm focus:outline-none ${touched.confirmPassword && errors.confirmPassword ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
           placeholder="Confirmar contraseña"
           name="confirmPassword"
           onChange={handleChange}
@@ -162,10 +175,10 @@ const RegisterForm = () => {
         />
         {touched.confirmPassword && errors.confirmPassword && <p className="text-red-500 text-xs">{errors.confirmPassword}</p>}
 
-        <label className="block mb-1 text-sm font-medium text-gray-700">*Dirección</label>
+        <label className="block mb-1 text-sm font-medium text-black">*Dirección</label>
         <input
           type="text"
-          className={`w-full p-3 border rounded-lg mb-4 text-sm focus:outline-none ${touched.address && errors.address ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
+          className={`text-black w-full p-3 border rounded-lg mb-4 text-sm focus:outline-none ${touched.address && errors.address ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
           placeholder="Dirección"
           name="address"
           onChange={handleChange}
@@ -174,10 +187,10 @@ const RegisterForm = () => {
         />
         {touched.address && errors.address && <p className="text-red-500 text-xs">{errors.address}</p>}
 
-        <label className="block mb-1 text-sm font-medium text-gray-700">*Teléfono</label>
+        <label className="block mb-1 text-sm font-medium text-black">*Teléfono</label>
         <input
           type="text"
-          className={`w-full p-3 border rounded-lg mb-6 text-sm focus:outline-none ${touched.phone && errors.phone ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
+          className={`text-black w-full p-3 border rounded-lg mb-6 text-sm focus:outline-none ${touched.phone && errors.phone ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
           placeholder="Teléfono"
           name="phone"
           onChange={handleChange}
