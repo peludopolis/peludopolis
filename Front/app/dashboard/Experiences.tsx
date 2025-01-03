@@ -1,7 +1,7 @@
 "use client";
 import { useContext, useEffect, useState } from "react";
 import Image from "next/image";
-import { Pencil, Trash2, PawPrint, Camera } from "lucide-react";
+import { Pencil, Trash2, Camera } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../../contexts/authContext";
@@ -15,7 +15,11 @@ interface Post {
   userId: string;
 }
 
-const Experiences = () => {
+interface ExperiencesProps {
+  userId: string;
+}
+
+const Experiences: React.FC<ExperiencesProps> = () => {
   const { user } = useContext(AuthContext);
 
   const [posts, setPosts] = useState<Post[]>([]);
@@ -27,15 +31,14 @@ const Experiences = () => {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-
   const fetchUserPosts = async () => {
-    if (!user) return; // Asegúrate de que el usuario esté autenticado
+    if (!user) return;
   
     try {
-      const response = await fetch(`${apiUrl}/posts`); // Obtén todos los posts
+      const response = await fetch(`${apiUrl}/posts`);
       if (response.ok) {
         const data = await response.json();
-        const filteredPosts = data.filter((post: { userId: string; }) => post.userId === user.id); // Filtra por userId
+        const filteredPosts = data.filter((post: { userId: string }) => post.userId === user?.user?.id.toString());
         setPosts(filteredPosts);
       } else {
         toast.error("Error al obtener las experiencias del usuario");
@@ -45,11 +48,10 @@ const Experiences = () => {
       toast.error("Error al conectar con el servidor");
     }
   };
-  
+
   useEffect(() => {
     fetchUserPosts();
   }, [user]);
-  
 
   useEffect(() => {
     if (editingPost) {
@@ -119,8 +121,6 @@ const Experiences = () => {
               </th>
               <th className="px-6 py-4 text-white font-semibold">Título</th>
               <th className="px-6 py-4 text-white font-semibold">Descripción</th>
-              <th className="px-6 py-4 text-white font-semibold">Usuario ID</th>
-              <th className="px-6 py-4 text-white font-semibold">Author</th>
               <th className="px-6 py-4 text-white font-semibold rounded-tr-xl">Acciones</th>
             </tr>
           </thead>
@@ -141,31 +141,33 @@ const Experiences = () => {
                   </td>
                   <td className="px-6 py-4 text-gray-600">{post.title || "Sin título"}</td>
                   <td className="px-6 py-4 text-gray-600">{post.description}</td>
-                  <td className="px-6 py-4 text-gray-600">{post.userId}</td>
-                  <td className="px-6 py-4 text-gray-600">{post.author}</td>
                   <td className="px-6 py-4">
                     <div className="flex gap-3">
-                      <button
-                        onClick={() => setEditingPost(post)}
-                        className="flex items-center gap-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-400 transition-colors duration-150 shadow-sm"
-                      >
-                        <Pencil className="w-4 h-4" />
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => setShowDeleteConfirm(post.id)}
-                        className="flex items-center gap-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-400 transition-colors duration-150 shadow-sm"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        Eliminar
-                      </button>
+                      {user?.user?.id?.toString() === post.userId && (
+                        <>
+                          <button
+                            onClick={() => setEditingPost(post)}
+                            className="flex items-center gap-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-400 transition-colors duration-150 shadow-sm"
+                          >
+                            <Pencil className="w-4 h-4" />
+                            Editar
+                          </button>
+                          <button
+                            onClick={() => setShowDeleteConfirm(post.id)}
+                            className="flex items-center gap-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-400 transition-colors duration-150 shadow-sm"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            Eliminar
+                          </button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={4} className="text-center py-4">
+                <td colSpan={6} className="text-center py-4">
                   No hay experiencias registradas
                 </td>
               </tr>
@@ -262,6 +264,7 @@ const Experiences = () => {
 };
 
 export default Experiences;
+
 
 
 

@@ -7,7 +7,7 @@ import {
   InternalServerErrorException,
   Param,
   Post,
-  Put
+  Put,
 } from '@nestjs/common';
 import { PostsService } from '../service/posts.service';
 import { CreatePostDto } from '../dtos/create-post.dto';
@@ -18,7 +18,7 @@ import {
   ApiCreatedResponse,
   ApiOperation,
   ApiResponse,
-  ApiTags
+  ApiTags,
 } from '@nestjs/swagger';
 
 @ApiTags('Posts')
@@ -39,11 +39,11 @@ export class PostsController {
         user: {
           id: '29bd6879-16eb-4cd5-b071-633b1959f932',
           name: 'John Doe',
-          email: 'johndoe@example.com'
+          email: 'johndoe@example.com',
         },
-        createdAt: '2024-01-01T00:00:00Z'
-      }
-    }
+        createdAt: '2024-01-01T00:00:00Z',
+      },
+    },
   })
   @ApiBadRequestResponse({ description: 'Error en los datos enviados.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
@@ -68,11 +68,12 @@ export class PostsController {
           description: 'Descripción del post',
           image: 'https://example.com/image.png',
           author: 'John Doe',
+          userId: 'user123',
           createdAt: '2024-01-01T00:00:00Z',
-          comments: []
-        }
-      ]
-    }
+          comments: [],
+        },
+      ],
+    },
   })
   async findAll() {
     try {
@@ -94,9 +95,9 @@ export class PostsController {
         description: 'Descripción del post',
         image: 'https://example.com/image.png',
         createdAt: '2024-01-01T00:00:00Z',
-        comments: []
-      }
-    }
+        comments: [],
+      },
+    },
   })
   @ApiBadRequestResponse({ description: 'Formato de UUID inválido.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
@@ -122,10 +123,10 @@ export class PostsController {
         title: 'Título actualizado',
         description: 'Descripción actualizada',
         image: 'https://example.com/image.png',
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-02-01T00:00:00Z'
-      }
-    }
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-02-01T00:00:00Z',
+      },
+    },
   })
   @ApiBadRequestResponse({ description: 'Datos inválidos o UUID incorrecto.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
@@ -137,7 +138,7 @@ export class PostsController {
       return await this.postsService.update(id, updatePostDto);
     } catch (error) {
       throw new InternalServerErrorException(
-        'Error al actualizar el post: ' + error.message
+        'Error al actualizar el post: ' + error.message,
       );
     }
   }
@@ -146,7 +147,7 @@ export class PostsController {
   @ApiOperation({ summary: 'Eliminar un post por ID' })
   @ApiResponse({
     status: 200,
-    description: 'El post ha sido eliminado exitosamente.'
+    description: 'El post ha sido eliminado exitosamente.',
   })
   @ApiBadRequestResponse({ description: 'Formato de UUID inválido.' })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
@@ -158,8 +159,9 @@ export class PostsController {
       return await this.postsService.remove(id);
     } catch (error) {
       throw new InternalServerErrorException(
-        'Error al eliminar el post: ' + error.message
+        'Error al eliminar el post: ' + error.message,
       );
     }
   }
 }
+

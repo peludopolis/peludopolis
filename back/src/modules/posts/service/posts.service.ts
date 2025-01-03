@@ -20,7 +20,6 @@ export class PostsService {
   ) {}
 
   async create(createPostDto: CreatePostDto) {
-    //se verifica la existencia del user
     const user = await this.userRepository.findOne({
       where: { id: createPostDto.userId }
     });
@@ -28,7 +27,6 @@ export class PostsService {
       throw new NotFoundException('User not found');
     }
 
-    //crear el post con el user asociado
     const post = this.postRepository.create({
       title: createPostDto.title,
       description: createPostDto.description,
@@ -48,7 +46,6 @@ export class PostsService {
           email: user.email
         }
       };
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       throw new InternalServerErrorException('Failed to create post');
     }
@@ -64,7 +61,8 @@ export class PostsService {
       description: post.description,
       image: post.image,
       author: post.user.name,
-      created_at: post.createdAt,
+      userId: post.userId, // Incluye el userId en la respuesta
+      createdAt: post.createdAt,
       comments: post.comments.map((comment) => ({
         id: comment.id,
         content: comment.content
@@ -75,7 +73,7 @@ export class PostsService {
   async findOne(id: string): Promise<Post> {
     const post = await this.postRepository.findOne({
       where: { id },
-      relations: ['comments']
+      relations: ['comments', 'user']
     });
 
     if (!post) {
@@ -86,10 +84,9 @@ export class PostsService {
   }
 
   async update(id: string, updatePostDto: UpdatePostDto) {
-    // Preload carga el post con el ID proporcionado y actualiza las propiedades
     const post = await this.postRepository.preload({
       id: id,
-      ...updatePostDto //Asignamos los valores del dto al post
+      ...updatePostDto
     });
 
     if (!post) {

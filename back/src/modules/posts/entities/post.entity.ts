@@ -71,13 +71,15 @@ export class Post {
   @IsNotEmpty({ message: 'El usuario no puede estar vacío.' })
   user: User;
 
+  @Column()
+  userId: string; // Asegura que el campo userId esté disponible directamente
+
   @ApiProperty({
     description: 'Lista de comentarios asociados al post.',
     type: [Comment]
   })
   @OneToMany(() => Comment, (comment) => comment.post, { cascade: true, onDelete: 'CASCADE' })
-comments: Comment[];
-
+  comments: Comment[];
 
   @ApiProperty({
     description: 'Fecha y hora de creación del post.',
@@ -90,6 +92,7 @@ comments: Comment[];
     description: 'Fecha y hora de la última actualización del post.',
     example: '2024-12-27T10:15:30.123Z'
   })
-  @UpdateDateColumn({ type: 'timestamp' }) // Nueva columna
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 }
+
