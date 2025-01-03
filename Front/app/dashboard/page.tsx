@@ -1,9 +1,13 @@
 "use client";
 import { useContext, useEffect } from "react";
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 import { useRouter } from "next/navigation";
 import { AuthContext } from "../../contexts/authContext";
 import Image from "next/image";
-import Experiences from "./Experiences"; // Importamos el componente de experiencias
+import Experiences from "./Experiences";
+import UserComments from "./UserComments";
 
 const Dashboard = () => {
   const { user, isLoading } = useContext(AuthContext);
@@ -65,10 +69,12 @@ const Dashboard = () => {
             )}
           </div>
 
-          <h1 className="text-center text-lg text-primary my-5">Mis experiencias</h1>
-
-          {/* Pasamos solo el userId al componente Experiences */}
+          <h1 className="text-center text-lg text-primary my-5">Tus Experiencias</h1>
           <Experiences userId={user.user.id.toString()} />
+
+          <h1 className="text-center text-lg text-primary my-5">Tus Comentarios</h1>
+          <UserComments userId={user.user.id.toString()} apiUrl={apiUrl || ''} />
+
         </div>
       </div>
     </div>
