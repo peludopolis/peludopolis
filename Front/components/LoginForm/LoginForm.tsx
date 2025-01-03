@@ -15,9 +15,8 @@ const LoginForm = () => {
     const [data, setData] = useState({ email: "", password: "" });
     const [errors, setErrors] = useState({ email: "", password: "" });
     const [touched, setTouched] = useState({ email: false, password: false });
-    const [isLoginWithGoogle, setIsLoginWithGoogle] = useState(false); // Estado para cambiar entre login
+    const [isLoginWithGoogle, setIsLoginWithGoogle] = useState(false);
 
-    // Manejador del submit con email y contraseña
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const res = await login(data);
@@ -30,26 +29,22 @@ const LoginForm = () => {
         }
     };
 
-    // Manejador del login con Google
     const handleGoogleSuccess = (credentialResponse: any) => {
         const token = credentialResponse.credential;
-    
-        // Decodifica el token para obtener la información del usuario
-        const payload = JSON.parse(atob(token.split('.')[1]));  // Decodifica el JWT
-    
-        // Guarda la sesión en el localStorage
-        localStorage.setItem('googleToken', token);
-        localStorage.setItem('user', JSON.stringify({
-            user: {
-                name: payload.name,
-                email: payload.email,
-                picture: payload.picture,
-                id: undefined,  // Puedes agregar otros campos si los tienes
-            },
-            login: true,
-        }));
-    
-        // Actualiza el estado global del usuario
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        localStorage.setItem("googleToken", token);
+        localStorage.setItem(
+            "user",
+            JSON.stringify({
+                user: {
+                    name: payload.name,
+                    email: payload.email,
+                    picture: payload.picture,
+                },
+                login: true,
+            })
+        );
+
         setUser({
             user: {
                 name: payload.name,
@@ -60,47 +55,47 @@ const LoginForm = () => {
                 address: "",
                 login: false,
                 token: "",
-                user: undefined,
                 services: []
             },
             login: true,
             id: ""
         });
-    
-        alert('Inicio de sesión exitoso');
-        router.push('/');
+
+        alert("Inicio de sesión exitoso");
+        router.push("/");
     };
-    
 
     const handleGoogleFailure = () => {
         alert("Error al iniciar sesión con Google");
     };
 
-    // Manejador de cambios en los inputs
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setData({ ...data, [e.target.name]: e.target.value });
     };
 
-    // Manejador de onBlur para marcar si el campo fue tocado
     const handleBlur = (e: ChangeEvent<HTMLInputElement>) => {
         setTouched({ ...touched, [e.target.name]: true });
     };
 
-    // Validación de email
-    const validateEmail = (e: string) => {
-        let validation = "";
-        if (!validator.isEmail(e)) validation = "Wrong email address";
-        return validation;
+    const validateEmail = (email: string) => {
+        if (!validator.isEmail(email)) return "Correo electrónico no válido";
+        return "";
     };
 
-    // Validación de contraseña
-    const validatePassword = (p: string) => {
-        let validation = "";
-        if (!validator.isLength(p, { min: 4, max: 8 })) validation = "Min 4, max 8";
-        return validation;
+    const validatePassword = (password: string) => {
+        const hasMinLength = password.length >= 8;
+        const hasUppercase = /[A-Z]/.test(password);
+        const hasNumber = /\d/.test(password);
+        const hasSpecialChar = /[@$!%*?&]/.test(password);
+
+        if (!hasMinLength) return "Debe tener al menos 8 caracteres";
+        if (!hasUppercase) return "Debe incluir al menos una letra mayúscula";
+        if (!hasNumber) return "Debe incluir al menos un número";
+        if (!hasSpecialChar)
+            return "Debe incluir al menos un carácter especial (@, $, !, %, *, ?, &)";
+        return "";
     };
 
-    // Actualización de errores en los campos
     useEffect(() => {
         setErrors({
             email: validateEmail(data.email),
@@ -110,8 +105,6 @@ const LoginForm = () => {
 
     return (
         <div className="flex items-center justify-center h-96 bg-gray-100">
-
-            {/* Imagen del perro */}
             <div className="relative w-1/2 h-full bg-primary hidden lg:flex items-center justify-center">
                 <Image
                     src="/images/perro2.png"
@@ -121,13 +114,13 @@ const LoginForm = () => {
                     className="absolute bottom-0 right-0 object-contain"
                 />
             </div>
-
-            {/* Formulario */}
             <form
                 className="flex flex-col justify-center p-8 bg-white shadow-lg rounded-lg w-full max-w-md mx-auto lg:w-1/2 lg:max-w-none"
                 onSubmit={(e) => handleSubmit(e)}
             >
-                <h1 className="text-2xl font-bold text-center mb-4">¡Bienvenido a Peludópolis!</h1>
+                <h1 className="text-2xl font-bold text-center mb-4">
+                    ¡Bienvenido a Peludópolis!
+                </h1>
                 <p className="text-center text-gray-600 mb-6">
                     Inicia sesión con tu correo electrónico y contraseña o utiliza Google.
                 </p>
@@ -150,7 +143,10 @@ const LoginForm = () => {
                             <p className="text-red-500 text-sm mt-1">{errors.email}</p>
                         )}
 
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mt-4 mb-1">
+                        <label
+                            htmlFor="password"
+                            className="block text-sm font-medium text-gray-700 mt-4 mb-1"
+                        >
                             Contraseña
                         </label>
                         <input
@@ -169,6 +165,7 @@ const LoginForm = () => {
                         <button
                             type="submit"
                             className="mt-6 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-dark focus:outline-none"
+                            disabled={!!errors.email || !!errors.password}
                         >
                             Iniciar sesión
                         </button>
