@@ -52,32 +52,22 @@ const PostList: React.FC = () => {
 
   const handleDelete = async (postId: string) => {
     if (isDeletingPost) return;
-    
+
     setIsDeletingPost(true);
     try {
-      // 1. Primero eliminamos todos los comentarios asociados
-      const comments = commentsByPostId[postId] || [];
-      await Promise.all(
-        comments.map(comment => CommentService.deleteComment(comment.id))
-      );
-
-      // 2. Luego eliminamos el post
       await PostService.deletePost(postId);
-      
-      // 3. Actualizamos el estado local
       setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
       setCommentsByPostId(prev => {
         const updated = { ...prev };
         delete updated[postId];
         return updated;
       });
-      
-      // 4. Si este post estaba seleccionado, lo deseleccionamos
+
       if (selectedPost === postId) {
         setSelectedPost(null);
       }
     } catch (error) {
-      console.error('Error al eliminar post y comentarios:', error);
+      console.error('Error al eliminar post:', error);
       alert('Hubo un error al eliminar el post. Por favor, inténtalo de nuevo.');
     } finally {
       setIsDeletingPost(false);
@@ -88,21 +78,29 @@ const PostList: React.FC = () => {
     if (!user || !newComment.trim() || !postId) return;
 
     try {
-      const newCommentData = await CommentService.createComment({
+      await CommentService.createComment({
         content: newComment.trim(),
         postId,
         userId: String(user?.user?.id) || '',
       });
 
-      if (newCommentData) {
-        setCommentsByPostId(prev => ({
-          ...prev,
-          [postId]: [...(prev[postId] || []), newCommentData],
-        }));
-        setNewComment('');
-      }
+      // Recargar los comentarios después de agregar uno
+      fetchComments(postId);
+      setNewComment('');
     } catch (error) {
       console.error('Error al crear comentario:', error);
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string, postId: string) => {
+    try {
+      await CommentService.deleteComment(commentId);
+
+      // Recargar los comentarios después de eliminar uno
+      fetchComments(postId);
+    } catch (error) {
+      console.error('Error al eliminar comentario:', error);
+      alert('Hubo un error al eliminar el comentario. Por favor, inténtalo de nuevo.');
     }
   };
 
@@ -166,11 +164,21 @@ const PostList: React.FC = () => {
                     {isLoadingComments ? (
                       <p className="text-sm text-gray-500">Cargando comentarios...</p>
                     ) : commentsByPostId[post.id]?.length > 0 ? (
-                      commentsByPostId[post.id].map((comment) => (
+                      commentsByPostId[post.id].map(comment => (
                         <div key={comment.id} className="bg-gray-50 p-3 rounded-lg mb-2">
-                          <p className="text-danger text-xs">{comment.author} <span className="text-xs text-gray-500">dice:</span></p>
+                          <p className="text-danger text-xs">
+                            {comment.author} <span className="text-xs text-gray-500">dice:</span>
+                          </p>
                           <p className="text-xs text-gray-700 italic my-3">{comment.content}</p>
                           <p className="text-xs text-gray-400 italic">{new Date(comment.createdAt).toLocaleDateString()}</p>
+                          {String(user?.user?.id) === String(comment.user?.id) && (
+                            <button
+                              onClick={() => handleDeleteComment(comment.id, post.id)}
+                              className="text-red-500 hover:underline"
+                            >
+                              Eliminar
+                            </button>
+                          )}
                         </div>
                       ))
                     ) : (
@@ -200,20 +208,20 @@ const PostList: React.FC = () => {
               )}
             </div>
 
-            {user && user.id === post.userId && (
-            <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <button
-                onClick={() => handleDelete(post.id)}
-                disabled={isDeletingPost}
-                className={`bg-red-500/20 text-red-600 p-2 rounded-full hover:bg-red-500/40 transition ${
-                  isDeletingPost ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-                title="Eliminar post"
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
-            </div>
-          )}
+            {user && (
+              <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button
+                  onClick={() => handleDelete(post.id)}
+                  disabled={isDeletingPost}
+                  className={`bg-red-500/20 text-red-600 p-2 rounded-full hover:bg-red-500/40 transition ${
+                    isDeletingPost ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  title="Eliminar post"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       ))}
@@ -222,3 +230,4 @@ const PostList: React.FC = () => {
 };
 
 export default PostList;
+
