@@ -64,6 +64,7 @@ const PaymentPage: React.FC = () => {
       }
 
       const localUrl = "http://localhost:3000";
+      const backUrl = "https://a4cf-2800-484-de80-c900-b0b4-7640-964f-b1f.ngrok-free.app";
 
       const preference = {
         items: appointments.map((appointment) => {
@@ -81,7 +82,7 @@ const PaymentPage: React.FC = () => {
           failure: `${localUrl}/appointments/payment?status=failure`,
           pending: `${localUrl}/appointments/payment?status=pending`,
         },
-        notification_url: `http://localhost:3001/payments/webhook`,
+        notification_url: `${backUrl}/payments/webhook`,
         auto_return: "approved",
       };
 
