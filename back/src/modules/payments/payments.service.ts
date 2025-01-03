@@ -25,6 +25,7 @@ export class PaymentsService {
 
   async processWebhook(paymentData: any): Promise<Payment | void> {
     const paymentId = paymentData?.data?.id;
+    console.log('ID del pago:', paymentId);
 
     if (!paymentId) {
       throw new BadRequestException(
@@ -35,6 +36,7 @@ export class PaymentsService {
     try {
       const paymentDetails =
         await this.getPaymentDetailsFromMercadoPago(paymentId);
+      console.log('Detalles del pago:', paymentDetails);
 
       const {
         id: mp_id,

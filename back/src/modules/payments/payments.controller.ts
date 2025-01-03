@@ -29,14 +29,22 @@ export class PaymentsController {
     description: 'Error processing the webhook'
   })
   @Post('webhook')
-  async handleWebhook(@Body() paymentData: CreatePaymentDto) {
+  // async handleWebhook(@Body() paymentData: CreatePaymentDto) {
+  async handleWebhook(@Body() paymentData: any) {
     try {
+      console.log('ejecutandose webhook');
       const payment = await this.paymentsService.processWebhook(paymentData);
       return payment;
     } catch (error) {
       console.error('Error al procesar webhook:', error.message);
       throw new BadRequestException('Webhook processing failed');
     }
+  }
+
+  @Post('test')
+  async test(@Body() paymentData: any) {
+    console.log(paymentData);
+    return 'hola';
   }
 
   @ApiOperation({ summary: 'Create a new payment' })
