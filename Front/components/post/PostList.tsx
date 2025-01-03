@@ -146,7 +146,7 @@ const PostList: React.FC = () => {
             <p className="text-primary text-sm italic line-clamp-3">{post.title}</p>
             <p className="text-gray-700 mb-4 line-clamp-3">{post.description}</p>
             <p className="text-xs text-gray-400">
-              {new Date(post.created_at).toLocaleString()}
+              {new Date(post.createdAt).toLocaleString()}
             </p>
 
             <div className="border-t pt-4">
@@ -208,7 +208,7 @@ const PostList: React.FC = () => {
               )}
             </div>
 
-            {user && (
+            {String(user?.user?.id) === post.userId && (
               <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <button
                   onClick={() => handleDelete(post.id)}
