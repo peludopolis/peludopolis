@@ -84,7 +84,6 @@ const PostList: React.FC = () => {
         userId: String(user?.user?.id) || '',
       });
 
-      // Recargar los comentarios después de agregar uno
       fetchComments(postId);
       setNewComment('');
     } catch (error) {
@@ -96,7 +95,6 @@ const PostList: React.FC = () => {
     try {
       await CommentService.deleteComment(commentId);
 
-      // Recargar los comentarios después de eliminar uno
       fetchComments(postId);
     } catch (error) {
       console.error('Error al eliminar comentario:', error);
@@ -171,7 +169,7 @@ const PostList: React.FC = () => {
                           </p>
                           <p className="text-xs text-gray-700 italic my-3">{comment.content}</p>
                           <p className="text-xs text-gray-400 italic">{new Date(comment.createdAt).toLocaleDateString()}</p>
-                          {String(user?.user?.id) === String(comment.user?.id) && (
+                          {(user?.user?.isAdmin || String(user?.user?.id) === String(comment.user?.id)) && (
                             <button
                               onClick={() => handleDeleteComment(comment.id, post.id)}
                               className="text-red-500 hover:underline"
@@ -208,7 +206,7 @@ const PostList: React.FC = () => {
               )}
             </div>
 
-            {String(user?.user?.id) === post.userId && (
+            {(user?.user?.isAdmin || String(user?.user?.id) === post.userId) && (
               <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <button
                   onClick={() => handleDelete(post.id)}
@@ -230,4 +228,5 @@ const PostList: React.FC = () => {
 };
 
 export default PostList;
+
 

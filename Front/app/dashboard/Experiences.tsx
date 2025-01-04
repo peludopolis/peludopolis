@@ -1,9 +1,7 @@
 "use client";
 import { useContext, useEffect, useState } from "react";
 import Image from "next/image";
-import { Pencil, Trash2, Camera } from "lucide-react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Pencil, Trash2, Camera, PawPrint } from "lucide-react";
 import { AuthContext } from "../../contexts/authContext";
 
 interface Post {
@@ -21,31 +19,30 @@ interface ExperiencesProps {
 
 const Experiences: React.FC<ExperiencesProps> = () => {
   const { user } = useContext(AuthContext);
-
   const [posts, setPosts] = useState<Post[]>([]);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [newTitle, setNewTitle] = useState<string>("");
   const [newDescription, setNewDescription] = useState<string>("");
   const [newImage, setNewImage] = useState<string>("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const fetchUserPosts = async () => {
     if (!user) return;
-  
+
     try {
       const response = await fetch(`${apiUrl}/posts`);
       if (response.ok) {
         const data = await response.json();
-        const filteredPosts = data.filter((post: { userId: string }) => post.userId === user?.user?.id.toString());
+        const filteredPosts = user?.user?.isAdmin
+          ? data
+          : data.filter((post: { userId: string }) => post.userId === user?.user?.id.toString());
         setPosts(filteredPosts);
-      } else {
-        toast.error("Error al obtener las experiencias del usuario");
       }
     } catch (error) {
       console.error("Error al obtener experiencias:", error);
-      toast.error("Error al conectar con el servidor");
     }
   };
 
@@ -62,7 +59,9 @@ const Experiences: React.FC<ExperiencesProps> = () => {
   }, [editingPost]);
 
   const handleEditSubmit = async () => {
-    if (!editingPost) return;
+    if (!editingPost || isLoading) return;
+
+    setIsLoading(true);
     try {
       const response = await fetch(`${apiUrl}/posts/${editingPost.id}`, {
         method: "PUT",
@@ -75,41 +74,41 @@ const Experiences: React.FC<ExperiencesProps> = () => {
           image: newImage,
         }),
       });
+
       if (response.ok) {
-        toast.success("¡Experiencia actualizada exitosamente!");
-        fetchUserPosts();
+        await fetchUserPosts();
         setEditingPost(null);
-      } else {
-        toast.error("Error al actualizar la experiencia");
       }
     } catch (error) {
-      console.error("Error al actualizar la experiencia:", error);
-      toast.error("Error al conectar con el servidor");
+      console.error("Error al actualizar:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleDeletePost = async (postId: string) => {
+    if (isLoading) return;
+
+    setIsLoading(true);
     try {
       const response = await fetch(`${apiUrl}/posts/${postId}`, {
         method: "DELETE",
       });
+
       if (response.ok) {
-        toast.success("Experiencia eliminada correctamente");
-        fetchUserPosts();
-      } else {
-        toast.error("Error al eliminar la experiencia");
+        await fetchUserPosts();
+        setShowDeleteConfirm(null);
       }
     } catch (error) {
-      console.error("Error al eliminar experiencia:", error);
-      toast.error("Error al conectar con el servidor");
+      console.error("Error al eliminar:", error);
+    } finally {
+      setIsLoading(false);
     }
-    setShowDeleteConfirm(null);
   };
 
   return (
     <div>
-      <ToastContainer />
-      <div className="overflow-x-auto rounded-xl shadow-lg border border-purple-100">
+      <div className="overflow-x-auto rounded-xl shadow-lg border border-dark">
         <table className="min-w-full table-auto bg-white">
           <thead>
             <tr className="bg-dark">
@@ -121,10 +120,11 @@ const Experiences: React.FC<ExperiencesProps> = () => {
               </th>
               <th className="px-6 py-4 text-white font-semibold">Título</th>
               <th className="px-6 py-4 text-white font-semibold">Descripción</th>
+              <th className="px-6 py-4 text-white font-semibold">Usuario</th>
               <th className="px-6 py-4 text-white font-semibold rounded-tr-xl">Acciones</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-purple-100">
+          <tbody className="divide-y divide-dark">
             {posts.length > 0 ? (
               posts.map((post) => (
                 <tr key={post.id} className="hover:bg-light transition-colors duration-150">
@@ -141,13 +141,15 @@ const Experiences: React.FC<ExperiencesProps> = () => {
                   </td>
                   <td className="px-6 py-4 text-gray-600">{post.title || "Sin título"}</td>
                   <td className="px-6 py-4 text-gray-600">{post.description}</td>
+                  <td className="px-6 py-4 text-gray-600">{post.author}</td>
                   <td className="px-6 py-4">
                     <div className="flex gap-3">
-                      {user?.user?.id?.toString() === post.userId && (
+                      {(user?.user?.isAdmin || user?.user?.id?.toString() === post.userId) && (
                         <>
                           <button
                             onClick={() => setEditingPost(post)}
                             className="flex items-center gap-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-400 transition-colors duration-150 shadow-sm"
+                            disabled={isLoading}
                           >
                             <Pencil className="w-4 h-4" />
                             Editar
@@ -155,6 +157,7 @@ const Experiences: React.FC<ExperiencesProps> = () => {
                           <button
                             onClick={() => setShowDeleteConfirm(post.id)}
                             className="flex items-center gap-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-400 transition-colors duration-150 shadow-sm"
+                            disabled={isLoading}
                           >
                             <Trash2 className="w-4 h-4" />
                             Eliminar
@@ -167,8 +170,11 @@ const Experiences: React.FC<ExperiencesProps> = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="text-center py-4">
-                  No hay experiencias registradas
+                <td colSpan={5} className="py-8">
+                  <div className="flex flex-col items-center justify-center gap-2 text-gray-500">
+                    <PawPrint className="w-8 h-8 text-primary" />
+                    <p className="text-lg">¡Comparte tu experiencia con la comunidad!</p>
+                  </div>
                 </td>
               </tr>
             )}
@@ -192,6 +198,7 @@ const Experiences: React.FC<ExperiencesProps> = () => {
                   onChange={(e) => setNewTitle(e.target.value)}
                   className="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500"
                   placeholder="Título de la experiencia"
+                  disabled={isLoading}
                 />
               </div>
               <div>
@@ -201,6 +208,7 @@ const Experiences: React.FC<ExperiencesProps> = () => {
                   onChange={(e) => setNewDescription(e.target.value)}
                   className="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500"
                   placeholder="Describe la experiencia..."
+                  disabled={isLoading}
                 />
               </div>
               <div>
@@ -211,20 +219,23 @@ const Experiences: React.FC<ExperiencesProps> = () => {
                   onChange={(e) => setNewImage(e.target.value)}
                   className="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500"
                   placeholder="https://ejemplo.com/imagen.jpg"
+                  disabled={isLoading}
                 />
               </div>
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setEditingPost(null)}
                   className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                  disabled={isLoading}
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleEditSubmit}
                   className="px-6 py-2.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600"
+                  disabled={isLoading}
                 >
-                  Guardar Cambios
+                  {isLoading ? "Guardando..." : "Guardar Cambios"}
                 </button>
               </div>
             </div>
@@ -246,14 +257,16 @@ const Experiences: React.FC<ExperiencesProps> = () => {
               <button
                 onClick={() => setShowDeleteConfirm(null)}
                 className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                disabled={isLoading}
               >
                 Cancelar
               </button>
               <button
                 onClick={() => handleDeletePost(showDeleteConfirm)}
                 className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                disabled={isLoading}
               >
-                Eliminar
+                {isLoading ? "Eliminando..." : "Eliminar"}
               </button>
             </div>
           </div>
@@ -264,6 +277,9 @@ const Experiences: React.FC<ExperiencesProps> = () => {
 };
 
 export default Experiences;
+
+
+
 
 
 

@@ -43,7 +43,9 @@ export interface UserSession {
   token: string;
   user?: UserSessionData;
   services: ServicePet[];
+  isAdmin?: boolean; // Nuevo campo para indicar si el usuario es administrador
 }
+
 
 interface UserSessionData {
   id: number;
