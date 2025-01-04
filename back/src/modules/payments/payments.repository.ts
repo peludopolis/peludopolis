@@ -34,8 +34,8 @@ export class PaymentsRepository extends Repository<Payment> {
   async findByIdWithRelations(id: string): Promise<Payment | null> {
     try {
       return await this.findOne({
-        where: { id },
-        relations: ['user', 'appointment']
+        where: { id }
+        // relations: ['user', 'appointment']
       });
     } catch (error) {
       console.error(
