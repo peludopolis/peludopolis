@@ -34,6 +34,7 @@ export class PaymentsController {
     try {
       console.log('ejecutandose webhook');
       const payment = await this.paymentsService.processWebhook(paymentData);
+      console.log('RESPONSE: ', payment);
       return payment;
     } catch (error) {
       console.error('Error al procesar webhook:', error.message);
