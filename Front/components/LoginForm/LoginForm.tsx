@@ -17,8 +17,34 @@ const LoginForm = () => {
     const [touched, setTouched] = useState({ email: false, password: false });
     const [isLoginWithGoogle, setIsLoginWithGoogle] = useState(false);
 
+    const validateEmail = (email: string) => {
+        if (!email.trim()) return ""; // No mostrar error si está vacío
+        if (!validator.isEmail(email)) return "Correo electrónico no válido";
+        return "";
+    };
+
+    const validatePassword = (password: string) => {
+        if (!password.trim()) return ""; // No mostrar error si está vacío
+        const hasMinLength = password.length >= 8;
+        const hasUppercase = /[A-Z]/.test(password);
+        const hasNumber = /\d/.test(password);
+        const hasSpecialChar = /[@$!%*?&]/.test(password);
+
+        if (!hasMinLength) return "Debe tener al menos 8 caracteres";
+        if (!hasUppercase) return "Debe incluir al menos una letra mayúscula";
+        if (!hasNumber) return "Debe incluir al menos un número";
+        if (!hasSpecialChar)
+            return "Debe incluir al menos un carácter especial (@, $, !, %, *, ?, &)";
+        return "";
+    };
+
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        // Validar que los campos no estén vacíos antes de enviar
+        if (!data.email.trim() || !data.password.trim()) {
+            alert("Por favor complete todos los campos");
+            return;
+        }
         const res = await login(data);
         if (res.statusCode) {
             alert(res.message);
@@ -58,7 +84,8 @@ const LoginForm = () => {
                 services: []
             },
             login: true,
-            id: ""
+            id: "",
+            isAdmin: false
         });
 
         alert("Inicio de sesión exitoso");
@@ -77,31 +104,13 @@ const LoginForm = () => {
         setTouched({ ...touched, [e.target.name]: true });
     };
 
-    const validateEmail = (email: string) => {
-        if (!validator.isEmail(email)) return "Correo electrónico no válido";
-        return "";
-    };
-
-    const validatePassword = (password: string) => {
-        const hasMinLength = password.length >= 8;
-        const hasUppercase = /[A-Z]/.test(password);
-        const hasNumber = /\d/.test(password);
-        const hasSpecialChar = /[@$!%*?&]/.test(password);
-
-        if (!hasMinLength) return "Debe tener al menos 8 caracteres";
-        if (!hasUppercase) return "Debe incluir al menos una letra mayúscula";
-        if (!hasNumber) return "Debe incluir al menos un número";
-        if (!hasSpecialChar)
-            return "Debe incluir al menos un carácter especial (@, $, !, %, *, ?, &)";
-        return "";
-    };
-
     useEffect(() => {
+        // Solo mostrar errores si el campo ha sido tocado
         setErrors({
-            email: validateEmail(data.email),
-            password: validatePassword(data.password),
+            email: touched.email ? validateEmail(data.email) : "",
+            password: touched.password ? validatePassword(data.password) : "",
         });
-    }, [data]);
+    }, [data, touched]);
 
     return (
         <div className="flex items-center justify-center h-96 bg-gray-100">
@@ -116,7 +125,7 @@ const LoginForm = () => {
             </div>
             <form
                 className="flex flex-col justify-center p-8 bg-white shadow-lg rounded-lg w-full max-w-md mx-auto lg:w-1/2 lg:max-w-none"
-                onSubmit={(e) => handleSubmit(e)}
+                onSubmit={handleSubmit}
             >
                 <h1 className="text-2xl font-bold text-center mb-4">
                     ¡Bienvenido a Peludópolis!
@@ -165,7 +174,7 @@ const LoginForm = () => {
                         <button
                             type="submit"
                             className="mt-6 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-dark focus:outline-none"
-                            disabled={!!errors.email || !!errors.password}
+                            disabled={touched.email && touched.password && (!!errors.email || !!errors.password)}
                         >
                             Iniciar sesión
                         </button>

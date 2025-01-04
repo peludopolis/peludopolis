@@ -8,8 +8,9 @@ interface AuthContextProps {
     id: string;
     user: UserSession | null;
     login: boolean;
+    isAdmin: boolean; // Nuevo campo
   } | null;
-  setUser: (user: { id: string; user: UserSession | null; login: boolean } | null) => void;
+  setUser: (user: { id: string; user: UserSession | null; login: boolean; isAdmin: boolean } | null) => void;
   logout: () => void;
   services: ServicePet[];
   setServices: (services: ServicePet[]) => void;
@@ -26,7 +27,7 @@ export const AuthContext = createContext<AuthContextProps>({
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<{ id: string; user: UserSession | null; login: boolean } | null>(null);
+  const [user, setUser] = useState<{ id: string; user: UserSession | null; login: boolean; isAdmin: boolean } | null>(null);
   const [services, setServices] = useState<ServicePet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -36,7 +37,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (!user.id) {
         user.id = "default-id"; // Generar un ID si falta
       }
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ ...user, isAdmin: user.user?.isAdmin || false })
+      );
       localStorage.setItem("services", JSON.stringify(user.user?.services || []));
     }
   }, [user]);
@@ -51,7 +55,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (!parsedUser.id) {
         parsedUser.id = "default-id"; // Generar ID si falta
       }
-      setUser(parsedUser);
+      // Asegurarnos de incluir el campo `isAdmin`
+      const isAdmin = parsedUser?.isAdmin ?? false;
+      setUser({ ...parsedUser, isAdmin });
     }
 
     if (storedServices) {
@@ -74,4 +80,5 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     </AuthContext.Provider>
   );
 };
+
 
