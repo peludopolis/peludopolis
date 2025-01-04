@@ -1,8 +1,12 @@
 "use client";
-import { useContext, useEffect, useState } from "react";
+
+import { useContext, useEffect, useState, ChangeEvent } from "react";
 import Image from "next/image";
 import { Pencil, Trash2, Camera, PawPrint } from "lucide-react";
+import Compressor from "compressorjs";
 import { AuthContext } from "../../contexts/authContext";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Post {
   id: string;
@@ -23,7 +27,8 @@ const Experiences: React.FC<ExperiencesProps> = () => {
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [newTitle, setNewTitle] = useState<string>("");
   const [newDescription, setNewDescription] = useState<string>("");
-  const [newImage, setNewImage] = useState<string>("");
+  const [newImageFile, setNewImageFile] = useState<File | null>(null);
+  const [newImagePreview, setNewImagePreview] = useState<string | null>("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -54,15 +59,51 @@ const Experiences: React.FC<ExperiencesProps> = () => {
     if (editingPost) {
       setNewTitle(editingPost.title || "");
       setNewDescription(editingPost.description || "");
-      setNewImage(editingPost.image || "");
+      setNewImagePreview(editingPost.image || "");
     }
   }, [editingPost]);
+
+  const handleEditImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      new Compressor(file, {
+        quality: 0.6,
+        success(compressedFile) {
+          setNewImageFile(compressedFile as File);
+
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setNewImagePreview(reader.result as string);
+          };
+          reader.readAsDataURL(compressedFile);
+        },
+        error(err) {
+          console.error("Error al comprimir la imagen:", err);
+          toast.error("Error al procesar la imagen");
+        },
+      });
+    }
+  };
 
   const handleEditSubmit = async () => {
     if (!editingPost || isLoading) return;
 
     setIsLoading(true);
     try {
+      let imageString = editingPost.image; // Default to existing image URL.
+
+      if (newImageFile) {
+        const reader = new FileReader();
+        reader.readAsDataURL(newImageFile);
+        await new Promise((resolve) => {
+          reader.onloadend = () => {
+            imageString = reader.result as string;
+            resolve(true);
+          };
+        });
+      }
+
       const response = await fetch(`${apiUrl}/posts/${editingPost.id}`, {
         method: "PUT",
         headers: {
@@ -71,7 +112,7 @@ const Experiences: React.FC<ExperiencesProps> = () => {
         body: JSON.stringify({
           title: newTitle,
           description: newDescription,
-          image: newImage,
+          image: imageString,
         }),
       });
 
@@ -108,6 +149,7 @@ const Experiences: React.FC<ExperiencesProps> = () => {
 
   return (
     <div>
+      <ToastContainer />
       <div className="overflow-x-auto rounded-xl shadow-lg border border-dark">
         <table className="min-w-full table-auto bg-white">
           <thead>
@@ -182,57 +224,72 @@ const Experiences: React.FC<ExperiencesProps> = () => {
         </table>
       </div>
 
-      {/* Modal de edición */}
       {editingPost && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-xl shadow-xl max-w-md w-full">
-            <h3 className="text-2xl font-semibold mb-6 text-purple-700">
-              Editar Experiencia
-            </h3>
+            <h3 className="text-2xl font-semibold mb-6 text-primary">Editar Experiencia</h3>
             <div className="space-y-6">
               <div>
-                <label className="block text-gray-700 mb-2 font-medium">Título</label>
+                <label className="block text-secondary mb-2 font-medium">Título</label>
                 <input
                   type="text"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-3 border border-warning rounded-lg focus:ring-2"
                   placeholder="Título de la experiencia"
                   disabled={isLoading}
                 />
               </div>
               <div>
-                <label className="block text-gray-700 mb-2 font-medium">Descripción</label>
+                <label className="block text-secondary mb-2 font-medium">Descripción</label>
                 <textarea
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
-                  className="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-3 border border-warning rounded-lg focus:ring-2"
                   placeholder="Describe la experiencia..."
                   disabled={isLoading}
                 />
               </div>
               <div>
-                <label className="block text-gray-700 mb-2 font-medium">Imagen URL</label>
-                <input
-                  type="text"
-                  value={newImage}
-                  onChange={(e) => setNewImage(e.target.value)}
-                  className="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500"
-                  placeholder="https://ejemplo.com/imagen.jpg"
-                  disabled={isLoading}
-                />
+                <label className="block text-secondary mb-2 font-medium">Imagen</label>
+                <div className="flex items-center gap-4">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleEditImageChange}
+                    className="hidden"
+                    id="editImageUpload"
+                  />
+                  <label
+                    htmlFor="editImageUpload"
+                    className="bg-primary text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-warning transition"
+                  >
+                    Subir Imagen
+                  </label>
+                  {newImagePreview ? (
+                    <Image
+                      src={newImagePreview}
+                      alt="Vista previa"
+                      width={80}
+                      height={80}
+                      className="rounded-lg shadow-lg"
+                    />
+                  ) : (
+                    <p className="text-gray-500">Sin imagen</p>
+                  )}
+                </div>
               </div>
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setEditingPost(null)}
-                  className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                  className="px-6 py-2.5 border border-warning text-gray-700 rounded-lg hover:bg-gray-50"
                   disabled={isLoading}
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleEditSubmit}
-                  className="px-6 py-2.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600"
+                  className="px-6 py-2.5 bg-dark text-white rounded-lg hover:bg-tertiary"
                   disabled={isLoading}
                 >
                   {isLoading ? "Guardando..." : "Guardar Cambios"}
@@ -243,13 +300,10 @@ const Experiences: React.FC<ExperiencesProps> = () => {
         </div>
       )}
 
-      {/* Modal de confirmación de eliminación */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-xl shadow-xl max-w-sm w-full">
-            <h3 className="text-xl font-semibold mb-4 text-gray-800">
-              Confirmar eliminación
-            </h3>
+            <h3 className="text-xl font-semibold mb-4 text-gray-800">Confirmar eliminación</h3>
             <p className="text-gray-600 mb-6">
               ¿Estás seguro de que deseas eliminar esta experiencia? Esta acción no se puede deshacer.
             </p>
@@ -277,6 +331,7 @@ const Experiences: React.FC<ExperiencesProps> = () => {
 };
 
 export default Experiences;
+
 
 
 
