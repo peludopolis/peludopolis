@@ -98,7 +98,8 @@ export class UsersService implements OnModuleInit {
         isAdmin: false,
         posts: [],
         appointments: [],
-        comments: []
+        comments: [],
+        payments: []
       };
       const createdUser = await this.usersRepository.createUser(newUser);
       return createdUser;

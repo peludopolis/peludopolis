@@ -17,26 +17,6 @@ const LoginForm = () => {
     const [touched, setTouched] = useState({ email: false, password: false });
     const [isLoginWithGoogle, setIsLoginWithGoogle] = useState(false);
 
-    const validateEmail = (email: string) => {
-        if (!email.trim()) return ""; // No mostrar error si está vacío
-        if (!validator.isEmail(email)) return "Correo electrónico no válido";
-        return "";
-    };
-
-    const validatePassword = (password: string) => {
-        if (!password.trim()) return ""; // No mostrar error si está vacío
-        const hasMinLength = password.length >= 8;
-        const hasUppercase = /[A-Z]/.test(password);
-        const hasNumber = /\d/.test(password);
-        const hasSpecialChar = /[@$!%*?&]/.test(password);
-
-        if (!hasMinLength) return "Debe tener al menos 8 caracteres";
-        if (!hasUppercase) return "Debe incluir al menos una letra mayúscula";
-        if (!hasNumber) return "Debe incluir al menos un número";
-        if (!hasSpecialChar)
-            return "Debe incluir al menos un carácter especial (@, $, !, %, *, ?, &)";
-        return "";
-    };
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -50,26 +30,39 @@ const LoginForm = () => {
             alert(res.message);
         } else {
             alert("Ingreso exitoso");
-            setUser(res);
+            localStorage.setItem("user", JSON.stringify({
+                user: res.user,
+                login: true,
+                id: res.user.id,
+            }));
+
+            setUser({
+                user: res.user,
+                login: true,
+                id: res.user.id,
+                isAdmin: res.user.isAdmin || false, 
+            });
+            
+
             router.push("/");
         }
     };
 
     const handleGoogleSuccess = (credentialResponse: any) => {
         const token = credentialResponse.credential;
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        localStorage.setItem("googleToken", token);
-        localStorage.setItem(
-            "user",
-            JSON.stringify({
-                user: {
-                    name: payload.name,
-                    email: payload.email,
-                    picture: payload.picture,
-                },
-                login: true,
-            })
-        );
+        const payload = JSON.parse(atob(token.split('.')[1]));
+
+        localStorage.setItem('googleToken', token);
+        localStorage.setItem('user', JSON.stringify({
+            user: {
+                name: payload.name,
+                email: payload.email,
+                picture: payload.picture,
+                id: undefined,
+            },
+            login: true,
+        }));
+
 
         setUser({
             user: {
@@ -88,8 +81,8 @@ const LoginForm = () => {
             isAdmin: false
         });
 
-        alert("Inicio de sesión exitoso");
-        router.push("/");
+        alert('Inicio de sesión exitoso');
+        router.push('/');
     };
 
     const handleGoogleFailure = () => {
@@ -102,6 +95,19 @@ const LoginForm = () => {
 
     const handleBlur = (e: ChangeEvent<HTMLInputElement>) => {
         setTouched({ ...touched, [e.target.name]: true });
+    };
+
+    const validateEmail = (e: string) => {
+        let validation = "";
+        if (!validator.isEmail(e)) validation = "Wrong email address";
+        return validation;
+    };
+
+
+    const validatePassword = (p: string) => {
+        let validation = "";
+        if (!validator.isLength(p, { min: 4, max: 8 })) validation = "Min 4, max 8";
+        return validation;
     };
 
     useEffect(() => {

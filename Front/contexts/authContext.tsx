@@ -31,6 +31,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [services, setServices] = useState<ServicePet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Cargar usuario y servicios desde localStorage al inicializar
+  useEffect(() => {
+    const localUser = JSON.parse(localStorage.getItem("user") || "null");
+    const localServices = JSON.parse(localStorage.getItem("services") || "null");
+
+    if (localUser && localUser.id !== "default-id") {
+      setUser(localUser);
+    } else {
+      setUser(null);
+    }
+
+    if (localServices) {
+      setServices(localServices);
+    }
+
+    setIsLoading(false); // Marcamos que ya se cargó
+  }, []);
+
   // Guardar usuario y servicios en localStorage cuando cambian
   useEffect(() => {
     if (user) {
@@ -45,7 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [user]);
 
-  // Cargar usuario y servicios desde localStorage al inicializar
+  // Persistir la sesión en el localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const storedServices = localStorage.getItem("services");
@@ -70,6 +88,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("services");
+    localStorage.removeItem("userSession");
     setUser(null);
     setServices([]);
   };
@@ -80,5 +99,3 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     </AuthContext.Provider>
   );
 };
-
-

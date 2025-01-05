@@ -1,10 +1,11 @@
-"use client"
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Appointment } from "../../interfaces";
 import services from "../../servicesPets/services";
 import { useUser } from "../../../contexts/UserContext";
+import PaymentPopup from "../../../components/PaymentPopup/PaymentPopup";
 
 const PaymentPage: React.FC = () => {
   const searchParams = useSearchParams();
@@ -44,11 +45,13 @@ const PaymentPage: React.FC = () => {
 
   useEffect(() => {
     const status = searchParams.get("status");
+    const paymentId = searchParams.get("id");
+
     if (status) {
       setPaymentStatus(status);
 
-      if (status === "approved") {
-        handleSendAppointment();
+      if (status === "approved" && paymentId) {
+        handleSendAppointment(paymentId);
       }
     }
   }, [searchParams]);
@@ -96,9 +99,11 @@ const PaymentPage: React.FC = () => {
       });
 
       const data = await response.json();
+      console.log('Respuesta de Mercado Pago:', data);
 
       if (data.id) {
         setCheckoutUrl(data.init_point);
+        console.log('URL de pago:', data.init_point);
       } else {
         console.error("Error al generar la preferencia:", data);
         alert("No se pudo generar la preferencia de pago.");
@@ -109,7 +114,15 @@ const PaymentPage: React.FC = () => {
     }
   };
 
-  const handleSendAppointment = async () => {
+  const handlePaymentClose = () => {
+    if (paymentStatus === "approved") {
+      router.push("/");
+    } else {
+      router.push("/");
+    }
+  };
+
+  const handleSendAppointment = async (paymentId: string) => {
     if (!userSession || !userSession.user) {
       alert("No hay usuario logueado.");
       return;
@@ -121,7 +134,11 @@ const PaymentPage: React.FC = () => {
         namePet: appointments[0].petName,
         startTime: appointments[0].time,
         user: userSession.user.id,
-        services: [{ id: "someServiceId" }], 
+        services: appointments.map((appointment) => {
+          const service = services.find((s) => s.name === appointment.service);
+          return { id: service?.id };
+        }),
+        payment_id: paymentId,
       };
 
       const response = await fetch("http://localhost:3001/appointments/create", {
@@ -136,7 +153,7 @@ const PaymentPage: React.FC = () => {
 
       if (response.ok) {
         alert("Cita agendada correctamente");
-        router.push("/");
+        router.push(`/appointments/${data.appointment.id}`);
       } else {
         console.error("Error al enviar la cita:", data);
         alert("No se pudo agendar la cita, intente nuevamente.");
@@ -189,13 +206,11 @@ const PaymentPage: React.FC = () => {
         </button>
       ) : (
         <div className="mt-4">
-          <a href={checkoutUrl} target="_blank" rel="noopener noreferrer">
-            <button className="text-white bg-green-500 hover:bg-green-600 px-4 py-2 rounded mt-4">
-              Realizar Pago
-            </button>
-          </a>
+          <p>Esperando confirmación de pago...</p>
         </div>
       )}
+
+      {checkoutUrl && <PaymentPopup url={checkoutUrl} onClose={handlePaymentClose} />}
     </div>
   );
 };
