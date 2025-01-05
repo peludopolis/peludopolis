@@ -15,9 +15,9 @@ const LoginForm = () => {
     const [data, setData] = useState({ email: "", password: "" });
     const [errors, setErrors] = useState({ email: "", password: "" });
     const [touched, setTouched] = useState({ email: false, password: false });
-    const [isLoginWithGoogle, setIsLoginWithGoogle] = useState(false); // Estado para cambiar entre login
+    const [isLoginWithGoogle, setIsLoginWithGoogle] = useState(false);
 
-    // Manejador del submit con email y contraseña
+
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const res = await login(data);
@@ -25,31 +25,38 @@ const LoginForm = () => {
             alert(res.message);
         } else {
             alert("Ingreso exitoso");
-            setUser(res);
+            localStorage.setItem("user", JSON.stringify({
+                user: res.user,
+                login: true,
+                id: res.user.id,
+            }));
+
+            setUser({
+                user: res.user,
+                login: true,
+                id: res.user.id,
+            });
+
             router.push("/");
         }
     };
 
-    // Manejador del login con Google
     const handleGoogleSuccess = (credentialResponse: any) => {
         const token = credentialResponse.credential;
-    
-        // Decodifica el token para obtener la información del usuario
-        const payload = JSON.parse(atob(token.split('.')[1]));  // Decodifica el JWT
-    
-        // Guarda la sesión en el localStorage
+        const payload = JSON.parse(atob(token.split('.')[1]));
+
         localStorage.setItem('googleToken', token);
         localStorage.setItem('user', JSON.stringify({
             user: {
                 name: payload.name,
                 email: payload.email,
                 picture: payload.picture,
-                id: undefined,  // Puedes agregar otros campos si los tienes
+                id: undefined,
             },
             login: true,
         }));
-    
-        // Actualiza el estado global del usuario
+
+
         setUser({
             user: {
                 name: payload.name,
@@ -66,41 +73,38 @@ const LoginForm = () => {
             login: true,
             id: ""
         });
-    
+
         alert('Inicio de sesión exitoso');
         router.push('/');
     };
-    
 
     const handleGoogleFailure = () => {
         alert("Error al iniciar sesión con Google");
     };
 
-    // Manejador de cambios en los inputs
+
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setData({ ...data, [e.target.name]: e.target.value });
     };
 
-    // Manejador de onBlur para marcar si el campo fue tocado
+
     const handleBlur = (e: ChangeEvent<HTMLInputElement>) => {
         setTouched({ ...touched, [e.target.name]: true });
     };
 
-    // Validación de email
     const validateEmail = (e: string) => {
         let validation = "";
         if (!validator.isEmail(e)) validation = "Wrong email address";
         return validation;
     };
 
-    // Validación de contraseña
+
     const validatePassword = (p: string) => {
         let validation = "";
         if (!validator.isLength(p, { min: 4, max: 8 })) validation = "Min 4, max 8";
         return validation;
     };
 
-    // Actualización de errores en los campos
     useEffect(() => {
         setErrors({
             email: validateEmail(data.email),
@@ -110,8 +114,6 @@ const LoginForm = () => {
 
     return (
         <div className="flex items-center justify-center h-96 bg-gray-100">
-
-            {/* Imagen del perro */}
             <div className="relative w-1/2 h-full bg-primary hidden lg:flex items-center justify-center">
                 <Image
                     src="/images/perro2.png"
@@ -122,7 +124,6 @@ const LoginForm = () => {
                 />
             </div>
 
-            {/* Formulario */}
             <form
                 className="flex flex-col justify-center p-8 bg-white shadow-lg rounded-lg w-full max-w-md mx-auto lg:w-1/2 lg:max-w-none"
                 onSubmit={(e) => handleSubmit(e)}

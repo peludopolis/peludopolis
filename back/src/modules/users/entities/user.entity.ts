@@ -10,6 +10,7 @@ import {
 import { Appointment } from 'src/modules/appointments/entities/appointment.entity';
 import { Comment } from 'src/modules/comments/entities/comment.entity';
 import { Post } from 'src/modules/posts/entities/post.entity';
+import { Payment } from 'src/modules/payments/entities/payment.entity';
 import {
   Column,
   Entity,

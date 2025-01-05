@@ -30,6 +30,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [services, setServices] = useState<ServicePet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Cargar usuario y servicios desde localStorage al inicializar
+  useEffect(() => {
+    const localUser = JSON.parse(localStorage.getItem("user") || "null");
+    const localServices = JSON.parse(localStorage.getItem("services") || "null");
+
+    if (localUser && localUser.id !== "default-id") {
+      setUser(localUser);
+    } else {
+      setUser(null);
+    }
+
+    if (localServices) {
+      setServices(localServices);
+    }
+
+    setIsLoading(false); // Marcamos que ya se cargó
+  }, []);
+
   // Guardar usuario y servicios en localStorage cuando cambian
   useEffect(() => {
     if (user) {
@@ -43,29 +61,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [user]);
 
-  // Cargar usuario y servicios desde localStorage al inicializar
+  // Persistir la sesión en el localStorage
   useEffect(() => {
-    const localUser = JSON.parse(localStorage.getItem("user") || "null");
-    const localServices = JSON.parse(localStorage.getItem("services") || "null");
-
-    if (localUser) {
-      if (!localUser.id || localUser.id === "default-id") {
-        console.warn("El usuario cargado desde localStorage no tiene un ID válido.");
-        setUser(null); // No cargamos usuarios inválidos
-      } else {
-        setUser(localUser);
-      }
+    if (user && user.user) {
+      localStorage.setItem("userSession", JSON.stringify(user.user)); // Guardar la sesión
+    } else {
+      localStorage.removeItem("userSession"); // Eliminar si no hay sesión
     }
-    if (localServices) {
-      setServices(localServices);
-    }
-
-    setIsLoading(false); // Marcamos que ya se cargó
-  }, []);
+  }, [user]);
 
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("services");
+    localStorage.removeItem("userSession");
     setUser(null);
     setServices([]);
   };
@@ -76,5 +84,3 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     </AuthContext.Provider>
   );
 };
-
-

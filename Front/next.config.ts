@@ -10,9 +10,21 @@ const nextConfig: NextConfig = {
     ],
   },
   eslint: {
-    ignoreDuringBuilds: true, // Ignora los errores de ESLint durante la construcción
+    ignoreDuringBuilds: true,
+  },
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Referrer-Policy",
+            value: "same-origin",
+          },
+        ],
+      },
+    ];
   },
 };
 
 export default nextConfig;
-
