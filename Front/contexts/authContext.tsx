@@ -8,8 +8,9 @@ interface AuthContextProps {
     id: string;
     user: UserSession | null;
     login: boolean;
+    isAdmin: boolean; // Nuevo campo
   } | null;
-  setUser: (user: { id: string; user: UserSession | null; login: boolean } | null) => void;
+  setUser: (user: { id: string; user: UserSession | null; login: boolean; isAdmin: boolean } | null) => void;
   logout: () => void;
   services: ServicePet[];
   setServices: (services: ServicePet[]) => void;
@@ -26,7 +27,7 @@ export const AuthContext = createContext<AuthContextProps>({
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<{ id: string; user: UserSession | null; login: boolean } | null>(null);
+  const [user, setUser] = useState<{ id: string; user: UserSession | null; login: boolean; isAdmin: boolean } | null>(null);
   const [services, setServices] = useState<ServicePet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -51,24 +52,47 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Guardar usuario y servicios en localStorage cuando cambian
   useEffect(() => {
     if (user) {
-      if (!user.id || user.id === "default-id") {
-        console.warn("El usuario no tiene un ID válido.");
-        return; // No guardamos usuarios inválidos
+      if (!user.id) {
+        user.id = "default-id"; // Generar un ID si falta
       }
-      localStorage.setItem("user", JSON.stringify(user));
-      setServices(user?.user?.services || []);
-      localStorage.setItem("services", JSON.stringify(user?.user?.services || []));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ ...user, isAdmin: user.user?.isAdmin || false })
+      );
+      localStorage.setItem("services", JSON.stringify(user.user?.services || []));
     }
   }, [user]);
 
   // Persistir la sesión en el localStorage
   useEffect(() => {
+<<<<<<< HEAD
     if (user && user.user) {
       localStorage.setItem("userSession", JSON.stringify(user.user)); // Guardar la sesión
     } else {
       localStorage.removeItem("userSession"); // Eliminar si no hay sesión
     }
   }, [user]);
+=======
+    const storedUser = localStorage.getItem("user");
+    const storedServices = localStorage.getItem("services");
+
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      if (!parsedUser.id) {
+        parsedUser.id = "default-id"; // Generar ID si falta
+      }
+      // Asegurarnos de incluir el campo `isAdmin`
+      const isAdmin = parsedUser?.isAdmin ?? false;
+      setUser({ ...parsedUser, isAdmin });
+    }
+
+    if (storedServices) {
+      setServices(JSON.parse(storedServices));
+    }
+
+    setIsLoading(false); // Marcamos que ya se cargó
+  }, []);
+>>>>>>> f53e878d1b328acf835c86886781d361be12aa31
 
   const logout = () => {
     localStorage.removeItem("user");

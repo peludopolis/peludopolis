@@ -135,7 +135,7 @@ export const CommentService = {
 
   deleteComment: async (commentId: string) => {
     try {
-      const response = await fetch(`/api/comments/${commentId}`, {
+      const response = await fetch(`${COMMENT_API_URL}/${commentId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

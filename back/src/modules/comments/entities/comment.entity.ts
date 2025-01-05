@@ -39,14 +39,17 @@ export class Comment {
     type: () => User
   })
   @ManyToOne(() => User, (user) => user.comments)
-  user: User; //string uuid
+  user: User;
+
+  @Column()
+  userId: string; // Columna explícita para el userId
 
   @ApiProperty({
     description: 'Post al que pertenece el comentario.',
     type: () => Post
   })
-  @ManyToOne(() => Post, (post) => post.comments)
-  post: Post; //string uuid
+  @ManyToOne(() => Post, (post) => post.comments, { onDelete: 'CASCADE' })
+  post: Post;
 
   @ApiProperty({
     description: 'Fecha de creación del comentario.',
@@ -55,3 +58,4 @@ export class Comment {
   @CreateDateColumn()
   createdAt: Date;
 }
+

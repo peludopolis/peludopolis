@@ -7,7 +7,8 @@ import {
   NotFoundException,
   Param,
   Post,
-  Put
+  Put,
+  Query
 } from '@nestjs/common';
 import { CommentsService } from '../service/comments.service';
 import { CreateCommentDto } from '../dtos/create-comment.dto';
@@ -85,6 +86,32 @@ export class CommentsController {
     }
   }
 
+  @Get('user/:userId')
+  @ApiOperation({ summary: 'Obtener comentarios por ID de usuario' })
+  @ApiResponse({
+    status: 200,
+    description: 'Comentarios realizados por el usuario.',
+    isArray: true,
+    type: Comment
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No se encontraron comentarios para este usuario.'
+  })
+  async findByUser(@Param('userId') userId: string) {
+    try {
+      const comments = await this.commentsService.findByUser(userId);
+      if (!comments || comments.length === 0) {
+        throw new NotFoundException(
+          `No comments found for the user with id ${userId}`
+        );
+      }
+      return comments;
+    } catch (error) {
+      throw new BadRequestException(error.message || 'Error fetching comments');
+    }
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un comentario por ID' })
   @ApiResponse({
@@ -154,3 +181,4 @@ export class CommentsController {
     };
   }
 }
+
