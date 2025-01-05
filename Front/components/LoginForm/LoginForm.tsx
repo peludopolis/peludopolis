@@ -17,29 +17,6 @@ const LoginForm = () => {
     const [touched, setTouched] = useState({ email: false, password: false });
     const [isLoginWithGoogle, setIsLoginWithGoogle] = useState(false);
 
-<<<<<<< HEAD
-=======
-    const validateEmail = (email: string) => {
-        if (!email.trim()) return ""; // No mostrar error si está vacío
-        if (!validator.isEmail(email)) return "Correo electrónico no válido";
-        return "";
-    };
-
-    const validatePassword = (password: string) => {
-        if (!password.trim()) return ""; // No mostrar error si está vacío
-        const hasMinLength = password.length >= 8;
-        const hasUppercase = /[A-Z]/.test(password);
-        const hasNumber = /\d/.test(password);
-        const hasSpecialChar = /[@$!%*?&]/.test(password);
-
-        if (!hasMinLength) return "Debe tener al menos 8 caracteres";
-        if (!hasUppercase) return "Debe incluir al menos una letra mayúscula";
-        if (!hasNumber) return "Debe incluir al menos un número";
-        if (!hasSpecialChar)
-            return "Debe incluir al menos un carácter especial (@, $, !, %, *, ?, &)";
-        return "";
-    };
->>>>>>> f53e878d1b328acf835c86886781d361be12aa31
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -63,7 +40,9 @@ const LoginForm = () => {
                 user: res.user,
                 login: true,
                 id: res.user.id,
+                isAdmin: res.user.isAdmin || false, 
             });
+            
 
             router.push("/");
         }
@@ -71,7 +50,6 @@ const LoginForm = () => {
 
     const handleGoogleSuccess = (credentialResponse: any) => {
         const token = credentialResponse.credential;
-<<<<<<< HEAD
         const payload = JSON.parse(atob(token.split('.')[1]));
 
         localStorage.setItem('googleToken', token);
@@ -85,21 +63,6 @@ const LoginForm = () => {
             login: true,
         }));
 
-=======
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        localStorage.setItem("googleToken", token);
-        localStorage.setItem(
-            "user",
-            JSON.stringify({
-                user: {
-                    name: payload.name,
-                    email: payload.email,
-                    picture: payload.picture,
-                },
-                login: true,
-            })
-        );
->>>>>>> f53e878d1b328acf835c86886781d361be12aa31
 
         setUser({
             user: {
@@ -118,36 +81,22 @@ const LoginForm = () => {
             isAdmin: false
         });
 
-<<<<<<< HEAD
         alert('Inicio de sesión exitoso');
         router.push('/');
-=======
-        alert("Inicio de sesión exitoso");
-        router.push("/");
->>>>>>> f53e878d1b328acf835c86886781d361be12aa31
     };
 
     const handleGoogleFailure = () => {
         alert("Error al iniciar sesión con Google");
     };
 
-<<<<<<< HEAD
-
-=======
->>>>>>> f53e878d1b328acf835c86886781d361be12aa31
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setData({ ...data, [e.target.name]: e.target.value });
     };
 
-<<<<<<< HEAD
-
-=======
->>>>>>> f53e878d1b328acf835c86886781d361be12aa31
     const handleBlur = (e: ChangeEvent<HTMLInputElement>) => {
         setTouched({ ...touched, [e.target.name]: true });
     };
 
-<<<<<<< HEAD
     const validateEmail = (e: string) => {
         let validation = "";
         if (!validator.isEmail(e)) validation = "Wrong email address";
@@ -161,8 +110,6 @@ const LoginForm = () => {
         return validation;
     };
 
-=======
->>>>>>> f53e878d1b328acf835c86886781d361be12aa31
     useEffect(() => {
         // Solo mostrar errores si el campo ha sido tocado
         setErrors({
@@ -182,10 +129,6 @@ const LoginForm = () => {
                     className="absolute bottom-0 right-0 object-contain"
                 />
             </div>
-<<<<<<< HEAD
-
-=======
->>>>>>> f53e878d1b328acf835c86886781d361be12aa31
             <form
                 className="flex flex-col justify-center p-8 bg-white shadow-lg rounded-lg w-full max-w-md mx-auto lg:w-1/2 lg:max-w-none"
                 onSubmit={handleSubmit}

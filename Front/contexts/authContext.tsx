@@ -65,14 +65,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Persistir la sesión en el localStorage
   useEffect(() => {
-<<<<<<< HEAD
-    if (user && user.user) {
-      localStorage.setItem("userSession", JSON.stringify(user.user)); // Guardar la sesión
-    } else {
-      localStorage.removeItem("userSession"); // Eliminar si no hay sesión
-    }
-  }, [user]);
-=======
     const storedUser = localStorage.getItem("user");
     const storedServices = localStorage.getItem("services");
 
@@ -92,7 +84,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     setIsLoading(false); // Marcamos que ya se cargó
   }, []);
->>>>>>> f53e878d1b328acf835c86886781d361be12aa31
 
   const logout = () => {
     localStorage.removeItem("user");
