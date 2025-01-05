@@ -8,6 +8,7 @@ import Chatbot from "../components/Chatbot/Chatbot";
 import { AuthProvider } from "../contexts/authContext";
 import { UserProvider } from "../contexts/UserContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import Head from "next/head"; // Importa Head de Next.js
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -29,18 +30,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {/* Aquí se agrega el script de MercadoPago */}
+        <Head>
+          <script src="https://sdk.mercadopago.com/js/v2"></script>
+        </Head>
+
         <GoogleOAuthProvider clientId="428954429923-bicutvc9ci34rlq7c1pdv7kivd3n87c7.apps.googleusercontent.com">
-            <AuthProvider>
-              <UserProvider>
-                <div className="flex flex-col min-h-screen">
-                  <Navbar />
-                  <main className="flex-grow">{children}</main>
-                  <Footer />
-                </div>
-                <BadgeWhatsapp />
-                <Chatbot />
-              </UserProvider>
-            </AuthProvider>
+          <AuthProvider>
+            <UserProvider>
+              <div className="flex flex-col min-h-screen">
+                <Navbar />
+                <main className="flex-grow">{children}</main>
+                <Footer />
+              </div>
+              <BadgeWhatsapp />
+              <Chatbot />
+            </UserProvider>
+          </AuthProvider>
         </GoogleOAuthProvider>
       </body>
     </html>
