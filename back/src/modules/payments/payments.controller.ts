@@ -42,6 +42,32 @@ export class PaymentsController {
     }
   }
 
+  @ApiOperation({ summary: 'Get payment by external reference' })
+  @ApiResponse({
+    status: 200,
+    description: 'Payment found successfully'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Payment not found'
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Error fetching payment details'
+  })
+  @Get('external-reference/:reference')
+  async getPaymentByExternalReference(@Param('reference') reference: string) {
+    try {
+      return await this.paymentsService.findByExternalReference(reference);
+    } catch (error) {
+      console.error(
+        `Error al obtener el pago por referencia externa ${reference}:`,
+        error.message
+      );
+      throw error;
+    }
+  }
+
   @Post('test')
   async test(@Body() paymentData: any) {
     console.log(paymentData);

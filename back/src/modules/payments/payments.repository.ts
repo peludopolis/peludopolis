@@ -17,6 +17,22 @@ export class PaymentsRepository extends Repository<Payment> {
     }
   }
 
+  async findByExternalReference(
+    externalReference: string
+  ): Promise<Payment | null> {
+    try {
+      return await this.findOne({
+        where: { external_reference: externalReference }
+      });
+    } catch (error) {
+      console.error(
+        'Error al obtener el pago por referencia externa:',
+        error.message
+      );
+      throw new InternalServerErrorException('Error al obtener el pago');
+    }
+  }
+
   async findAllWithRelations(): Promise<Payment[]> {
     try {
       return await this.find({

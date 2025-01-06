@@ -23,6 +23,27 @@ export class PaymentsService {
     }
   }
 
+  async findByExternalReference(externalReference: string): Promise<Payment> {
+    try {
+      const payment =
+        await this.paymentsRepository.findByExternalReference(
+          externalReference
+        );
+      if (!payment) {
+        throw new NotFoundException(
+          `Payment with external reference ${externalReference} not found`
+        );
+      }
+      return payment;
+    } catch (error) {
+      console.error(
+        `Error al buscar el pago con referencia externa ${externalReference}:`,
+        error.message
+      );
+      throw new InternalServerErrorException('Failed to fetch payment');
+    }
+  }
+
   async processWebhook(paymentData: any): Promise<Payment | void> {
     const paymentId = paymentData?.data?.id;
     console.log('ID del pago:', paymentId);
