@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsNumber,
+  IsUUID,
+  IsOptional
+} from 'class-validator';
 
 export class CreatePaymentDto {
   @ApiProperty({
@@ -46,4 +52,8 @@ export class CreatePaymentDto {
   @IsString({ message: 'El campo "status" debe ser una cadena de texto.' })
   @IsNotEmpty({ message: 'El campo "status" no puede estar vacío.' })
   status: string;
+
+  @IsOptional()
+  @IsString()
+  external_reference?: string;
 }

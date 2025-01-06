@@ -14,7 +14,7 @@ export class Payment {
   id: string;
 
   @Column({ type: 'varchar', nullable: false, unique: true })
-  mp_id: string; 
+  mp_id: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   amount: number;
@@ -36,4 +36,7 @@ export class Payment {
   @UpdateDateColumn()
   updated_at: Date;
   user: any;
+
+  @Column({ type: 'varchar', nullable: true })
+  external_reference: string;
 }
