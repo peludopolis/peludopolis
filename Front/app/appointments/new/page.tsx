@@ -1,10 +1,11 @@
-"use client"
+"use client";
 
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { format, addWeeks, startOfWeek, addDays, isBefore, isToday } from "date-fns";
+import { format, addWeeks, startOfWeek, addDays, isBefore } from "date-fns";
 import { es } from "date-fns/locale";
 import { Slot, AvailableSlots } from "../../interfaces/index";
+import { AuthContext } from "../../../contexts/authContext"; // Importa el contexto de autenticación
 
 const NewAppointmentPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -14,11 +15,18 @@ const NewAppointmentPage: React.FC = () => {
     date: "",
     time: "",
   });
-
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [availableSlots, setAvailableSlots] = useState<AvailableSlots>({});
   const [appointments, setAppointments] = useState<Slot[]>([]);
   const router = useRouter();
+  const { user } = useContext(AuthContext); // Obtén el usuario del contexto
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/login"); // Redirige si el usuario no está autenticado
+    }
+  }, [user, router]);
+
   const services = ["Elija un servicio", "Baño", "Corte de pelo", "Corte de uña"];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -32,9 +40,7 @@ const NewAppointmentPage: React.FC = () => {
     e.preventDefault();
     try {
       if (appointments.length === 0) {
-        router.push(
-          `/appointments/payment?${new URLSearchParams(formData).toString()}`
-        );
+        router.push(`/appointments/payment?${new URLSearchParams(formData).toString()}`);
       } else {
         const citas = [selectedSlot, ...appointments].filter(Boolean);
         const queryString = new URLSearchParams({
@@ -138,6 +144,24 @@ const NewAppointmentPage: React.FC = () => {
     });
   };
 
+  if (!user) {
+    return (
+      <div className="text-center p-6 bg-red-100 border border-red-400 text-red-700 rounded-md">
+        <p>Debes estar logueado para agendar una nueva cita.</p>
+        <p>
+          Por favor,{" "}
+          <a href="/login" className="text-blue-600 underline">
+            inicia sesión
+          </a>{" "}
+          o{" "}
+          <a href="/register" className="text-blue-600 underline">
+            regístrate
+          </a>.
+        </p>
+      </div>
+    );
+  }
+  
   return (
     <div className="container mx-auto px-4">
       <h1 className="text-black text-3xl text-center font-bold mb-6 mt-4">
