@@ -23,6 +23,7 @@ const PaymentPage: React.FC = () => {
       parsedAppointments.sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
       setAppointments(parsedAppointments);
     } else {
+      const id = searchParams.get("id");
       const name = searchParams.get("name");
       const petName = searchParams.get("petName");
       const service = searchParams.get("service");
@@ -87,6 +88,8 @@ const PaymentPage: React.FC = () => {
         },
         notification_url: `${backUrl}/payments/webhook`,
         auto_return: "approved",
+        // external_reference: {${'id'} agregar el id para enviarlo
+        // payments/external-reference/id
       };
 
       const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
