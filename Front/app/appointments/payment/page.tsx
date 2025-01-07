@@ -10,12 +10,13 @@ import PaymentPopup from "../../../components/PaymentPopup/PaymentPopup";
 const PaymentPage: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { userSession } = useUser();
+  const { userSession } = useUser(); // Recuperar datos del usuario logueado
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
 
+  // Obtener citas desde los parámetros de búsqueda
   useEffect(() => {
     const rawAppointments = searchParams.get("appointments");
     if (rawAppointments) {
@@ -36,6 +37,7 @@ const PaymentPage: React.FC = () => {
     }
   }, [searchParams]);
 
+  // Calcular el precio total de las citas
   useEffect(() => {
     const totalPrice = appointments.reduce((sum, appointment) => {
       const service = services.find((s) => s.name === appointment.service);
@@ -44,19 +46,22 @@ const PaymentPage: React.FC = () => {
     setTotal(totalPrice);
   }, [appointments]);
 
+  // Manejar el estado del pago desde los parámetros de búsqueda
   useEffect(() => {
     const status = searchParams.get("status");
     const paymentId = searchParams.get("id");
+    const externalRef = searchParams.get("external_reference"); // Recuperar el external_reference
 
     if (status) {
       setPaymentStatus(status);
 
       if (status === "approved" && paymentId) {
-        handleSendAppointment(paymentId);
+        handleSendAppointment(paymentId, externalRef); // Enviar cita con el paymentId y external_reference
       }
     }
   }, [searchParams]);
 
+  // Generar preferencia de pago en Mercado Pago
   const handlePayment = async () => {
     try {
       const accessToken = process.env.NEXT_PUBLIC_MERCADOPAGO_ACCESS_TOKEN;
@@ -81,6 +86,7 @@ const PaymentPage: React.FC = () => {
             unit_price: service?.price || 0,
           };
         }),
+        external_reference: userSession?.user.id, // Guardar el ID del usuario logueado
         back_urls: {
           success: `${localUrl}/appointments/payment?status=approved`,
           failure: `${localUrl}/appointments/payment?status=failure`,
@@ -88,8 +94,8 @@ const PaymentPage: React.FC = () => {
         },
         notification_url: `${backUrl}/payments/webhook`,
         auto_return: "approved",
-        // external_reference: {${'id'} agregar el id para enviarlo
-        // payments/external-reference/id
+        // external_reference: {${'id'} agregar el id para enviarlo(ESTO YA SE HIZO)
+        // payments/external-reference/id(ESTO YA SE HIZO)
       };
 
       const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
@@ -102,11 +108,11 @@ const PaymentPage: React.FC = () => {
       });
 
       const data = await response.json();
-      console.log('Respuesta de Mercado Pago:', data);
+      console.log("Respuesta de Mercado Pago:", data);
 
       if (data.id) {
         setCheckoutUrl(data.init_point);
-        console.log('URL de pago:', data.init_point);
+        console.log("URL de pago:", data.init_point);
       } else {
         console.error("Error al generar la preferencia:", data);
         alert("No se pudo generar la preferencia de pago.");
@@ -117,15 +123,8 @@ const PaymentPage: React.FC = () => {
     }
   };
 
-  const handlePaymentClose = () => {
-    if (paymentStatus === "approved") {
-      router.push("/");
-    } else {
-      router.push("/");
-    }
-  };
-
-  const handleSendAppointment = async (paymentId: string) => {
+  // Enviar la cita al backend después del pago
+  const handleSendAppointment = async (paymentId: string, externalRef: string | null) => {
     if (!userSession || !userSession.user) {
       alert("No hay usuario logueado.");
       return;
@@ -136,7 +135,7 @@ const PaymentPage: React.FC = () => {
         date: appointments[0].date,
         namePet: appointments[0].petName,
         startTime: appointments[0].time,
-        user: userSession.user.id,
+        user: externalRef || userSession.user.id, // Usar el external_reference recuperado
         services: appointments.map((appointment) => {
           const service = services.find((s) => s.name === appointment.service);
           return { id: service?.id };
@@ -164,6 +163,15 @@ const PaymentPage: React.FC = () => {
     } catch (error) {
       console.error("Error en la petición al backend:", error);
       alert("Error en la conexión con el servidor.");
+    }
+  };
+
+  // Manejar cierre del popup de pago
+  const handlePaymentClose = () => {
+    if (paymentStatus === "approved") {
+      router.push("/appointments");
+    } else {
+      router.push("/");
     }
   };
 
