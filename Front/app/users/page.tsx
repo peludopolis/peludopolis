@@ -78,13 +78,13 @@ const UsersTable: React.FC = () => {
     <div className="p-4 bg-white rounded-lg shadow-sm">
       <h1 className="text-center text-2xl text-primary mt-3 font-semibold">Lista de usuarios</h1>
       <div className="container p-16">
-        <table className=" w-full table-auto border border-dark ">
-          <thead >
-            <tr className="bg-dark  text-white">
-              <th className="px-6 py-3 text-left text-lg font-semibold ">Nombre</th>
-              <th className="px-6 py-3 text-left text-lg font-semibold ">Email</th>
-              <th className="px-6 py-3 text-left text-lg font-semibold ">Teléfono</th>
-              <th className="px-6 py-3 text-left text-lg font-semibold ">Dirección</th>
+        <table className="shadow-lg w-full table-auto border border-dark rounded-lg overflow-hidden">
+          <thead>
+            <tr className="bg-dark text-white">
+              <th className="px-6 py-3 text-left text-lg font-semibold">Nombre</th>
+              <th className="px-6 py-3 text-left text-lg font-semibold">Email</th>
+              <th className="px-6 py-3 text-left text-lg font-semibold">Teléfono</th>
+              <th className="px-6 py-3 text-left text-lg font-semibold">Dirección</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-dark">
@@ -104,6 +104,7 @@ const UsersTable: React.FC = () => {
       </div>
     </div>
   );
+  
 };
 
 export default UsersTable;
