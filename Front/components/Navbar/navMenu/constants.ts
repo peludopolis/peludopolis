@@ -18,4 +18,5 @@ export interface NavItem {
     label: string;
     soundKey: SoundKey;
     icon: ReactNode;
+    adminOnly?: boolean;
 }
