@@ -73,7 +73,7 @@ const PaymentPage: React.FC = () => {
       }
 
       const localUrl = "http://localhost:3000";
-      const backUrl = "https://b18a-2800-484-de80-c900-4c13-b0ea-81d9-f2de.ngrok-free.app";
+      const backUrl = "https://155f-187-251-242-164.ngrok-free.app";
 
       const preference = {
         items: appointments.map((appointment) => {
@@ -86,7 +86,7 @@ const PaymentPage: React.FC = () => {
             unit_price: service?.price || 0,
           };
         }),
-        external_reference: userSession?.user.id, // Guardar el ID del usuario logueado
+        external_reference: userSession?.user?.id || "", // Guardar el ID del usuario logueado
         back_urls: {
           success: `${localUrl}/appointments/payment?status=approved`,
           failure: `${localUrl}/appointments/payment?status=failure`,

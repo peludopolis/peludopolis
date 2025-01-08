@@ -235,15 +235,15 @@ const NewAppointmentPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             {getDatesForDay(selectedDay).map((d, index) => (
               <div key={index} className="border border-gray-300 p-4 rounded-md">
-                <h3 className="text-black text-xl font-bold">{`${d.day.charAt(0).toUpperCase() + d.day.slice(1)} ${format(new Date(d.date), 'd MMMM yyyy', { locale: es })}`}</h3>
-                {["9:00", "9:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00"].map((time, timeIndex) => {
-                  const slotKey = `${format(new Date(d.date), 'd MMMM yyyy', { locale: es })} ${time}`;
+                <h3 className="text-black text-xl font-bold">{`${d.day.charAt(0).toUpperCase() + d.day.slice(1)} ${format(new Date(d.date), 'yyyy-MM-dd', { locale: es })}`}</h3>
+                {["09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00"].map((time, timeIndex) => {
+                  const slotKey = `${format(new Date(d.date), 'yyyy-MM-dd', { locale: es })} ${time}`;
                   const isOccupied = availableSlots[slotKey] === "occupied";
                   return (
                     <button
                       key={timeIndex}
                       type="button"
-                      onClick={() => handleSelectSlot(format(new Date(d.date), 'd MMMM yyyy', { locale: es }), time)}
+                      onClick={() => handleSelectSlot(format(new Date(d.date), 'yyyy-MM-dd', { locale: es }), time)}
                       className={`${
                         isOccupied ? "bg-red-500" : "bg-green-500"
                       } text-white p-2 w-full rounded-md mt-2`}
