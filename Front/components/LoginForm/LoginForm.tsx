@@ -20,33 +20,49 @@ const LoginForm = () => {
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // Validar que los campos no estén vacíos antes de enviar
+    
         if (!data.email.trim() || !data.password.trim()) {
             alert("Por favor complete todos los campos");
             return;
         }
-        const res = await login(data);
+    
+        const res = await login(data); // Llama al servicio de login
+    
+        console.log("Respuesta del backend:", res); // Depura para verificar la respuesta
+    
         if (res.statusCode) {
             alert(res.message);
         } else {
             alert("Ingreso exitoso");
+    
+            // Guarda el token JWT en localStorage
+            if (res.accessToken) {
+                localStorage.setItem("userToken", res.accessToken); // Guardar el token correctamente
+            } else {
+                console.error("El token de acceso no está presente en la respuesta");
+            }
+    
+            // Guarda los datos del usuario en localStorage
             localStorage.setItem("user", JSON.stringify({
                 user: res.user,
                 login: true,
                 id: res.user.id,
+                isAdmin: res.user.isAdmin,
             }));
-
+    
+            // Actualiza el contexto
             setUser({
                 user: res.user,
                 login: true,
                 id: res.user.id,
-                isAdmin: res.user.isAdmin || false, 
+                isAdmin: res.user.isAdmin || false,
             });
-            
-
+    
             router.push("/");
         }
     };
+    
+    
 
     const handleGoogleSuccess = (credentialResponse: any) => {
         const token = credentialResponse.credential;
