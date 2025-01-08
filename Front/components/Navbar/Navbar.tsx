@@ -24,9 +24,9 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* Columna 2: Search Input */}
-        <div className="flex items-center justify-center">
-          <SearchBar />
-        </div>
+        <div className="hidden md:block">
+            <SearchBar />
+          </div>
 
         {/* Columna 3: Menú de Autenticación */}
         <div className="flex items-center justify-end space-x-4">
@@ -61,11 +61,9 @@ const Navbar: React.FC = () => {
 
         {/* Search Input */}
         <div className="w-full">
-          <input
-            type="search"
-            placeholder="Buscar..."
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+        <div className="md:hidden pb-4">
+          <SearchBar />
+        </div>
         </div>
       </div>
     </nav>
