@@ -43,10 +43,10 @@ const Navbar: React.FC = () => {
       <div className="md:hidden flex flex-col items-center space-y-4 px-4 py-2">
         {/* Logo (mantiene su posición) */}
         <div className="flex items-center justify-center">
-          <Link href="/">
-            <div className="flex items-center justify-center gap-2 font-bold text-3xl tracking-wide">
-              <PawPrint className="w-8 h-8 bg-primary" />
-              <span className="bg-seconday font-fun drop-shadow-[0_0_10px_rgba(37,99,235,0.9)]">
+        <Link href="/">
+            <div className="flex items-center gap-2 font-bold text-3xl tracking-wide">
+              <PawPrint className="w-12 h-12" color="#F9A826" />
+              <span className="text-blue-500 font-fun drop-shadow-[0_0_10px_rgba(37,99,235,0.9)]">
                 Peludópolis
               </span>
             </div>
