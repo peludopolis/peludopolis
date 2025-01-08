@@ -2,11 +2,9 @@
 
 import { useContext, useEffect, useState, ChangeEvent } from "react";
 import Image from "next/image";
-import { Pencil, Trash2, Camera, PawPrint } from "lucide-react";
+import { Pencil, Trash2, Camera, PawPrint, AlertTriangle, X } from "lucide-react";
 import Compressor from "compressorjs";
 import { AuthContext } from "../../contexts/authContext";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 interface Post {
   id: string;
@@ -21,6 +19,11 @@ interface ExperiencesProps {
   userId: string;
 }
 
+interface ToastProps {
+  message: string;
+  type: 'success' | 'error';
+}
+
 const Experiences: React.FC<ExperiencesProps> = () => {
   const { user } = useContext(AuthContext);
   const [posts, setPosts] = useState<Post[]>([]);
@@ -31,8 +34,22 @@ const Experiences: React.FC<ExperiencesProps> = () => {
   const [newImagePreview, setNewImagePreview] = useState<string | null>("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [toast, setToast] = useState<ToastProps | null>(null);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
+  const showToast = (message: string, type: 'success' | 'error') => {
+    setToast({ message, type });
+  };
 
   const fetchUserPosts = async () => {
     if (!user) return;
@@ -80,7 +97,7 @@ const Experiences: React.FC<ExperiencesProps> = () => {
         },
         error(err) {
           console.error("Error al comprimir la imagen:", err);
-          toast.error("Error al procesar la imagen");
+          showToast("Error al procesar la imagen", "error");
         },
       });
     }
@@ -91,7 +108,7 @@ const Experiences: React.FC<ExperiencesProps> = () => {
 
     setIsLoading(true);
     try {
-      let imageString = editingPost.image; // Default to existing image URL.
+      let imageString = editingPost.image;
 
       if (newImageFile) {
         const reader = new FileReader();
@@ -119,9 +136,11 @@ const Experiences: React.FC<ExperiencesProps> = () => {
       if (response.ok) {
         await fetchUserPosts();
         setEditingPost(null);
+        showToast('¡La experiencia se ha actualizado exitosamente!', 'success');
       }
     } catch (error) {
       console.error("Error al actualizar:", error);
+      showToast('Hubo un error al actualizar la experiencia', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -139,9 +158,11 @@ const Experiences: React.FC<ExperiencesProps> = () => {
       if (response.ok) {
         await fetchUserPosts();
         setShowDeleteConfirm(null);
+        showToast('La experiencia ha sido eliminada exitosamente', 'success');
       }
     } catch (error) {
       console.error("Error al eliminar:", error);
+      showToast('Hubo un error al eliminar la experiencia', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -149,7 +170,28 @@ const Experiences: React.FC<ExperiencesProps> = () => {
 
   return (
     <div>
-      <ToastContainer />
+      {/* Custom Toast */}
+      {toast && (
+        <div className="fixed top-5 right-5 z-50 animate-fade-in-up">
+          <div
+            className={`rounded-lg px-4 py-3 shadow-lg ${
+              toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            } text-white flex items-center gap-2 min-w-[300px]`}
+          >
+            {toast.type === 'success' ? (
+              <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+            ) : (
+              <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+            )}
+            <span className="text-sm font-medium">{toast.message}</span>
+          </div>
+        </div>
+      )}
+
       <div className="overflow-x-auto rounded-xl shadow-lg border border-dark">
         <table className="min-w-full table-auto bg-white">
           <thead>
@@ -300,28 +342,80 @@ const Experiences: React.FC<ExperiencesProps> = () => {
         </div>
       )}
 
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-xl max-w-sm w-full">
-            <h3 className="text-xl font-semibold mb-4 text-gray-800">Confirmar eliminación</h3>
-            <p className="text-gray-600 mb-6">
-              ¿Estás seguro de que deseas eliminar esta experiencia? Esta acción no se puede deshacer.
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setShowDeleteConfirm(null)}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-                disabled={isLoading}
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={() => handleDeletePost(showDeleteConfirm)}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-                disabled={isLoading}
-              >
-                {isLoading ? "Eliminando..." : "Eliminar"}
-              </button>
+{showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowDeleteConfirm(null)}
+          />
+          
+          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 transform transition-all">
+            <button 
+              onClick={() => setShowDeleteConfirm(null)}
+              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-red-100 p-2 rounded-full">
+                  <AlertTriangle className="w-6 h-6 text-red-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-red-600">
+                  ¿Eliminar experiencia?
+                </h3>
+              </div>
+
+              <div className="space-y-4">
+                <p className="text-gray-600">
+                  Estás a punto de eliminar la siguiente experiencia:
+                </p>
+
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                  {posts.find(post => post.id === showDeleteConfirm)?.image && (
+                    <Image
+                      src={posts.find(post => post.id === showDeleteConfirm)?.image || ''}
+                      alt="Imagen de la experiencia"
+                      width={100}
+                      height={100}
+                      className="rounded-lg mb-2 object-cover"
+                    />
+                  )}
+                  <p className="font-medium text-gray-900">
+                    {posts.find(post => post.id === showDeleteConfirm)?.title || 'Sin título'}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {posts.find(post => post.id === showDeleteConfirm)?.description}
+                  </p>
+                </div>
+
+                <p className="text-sm text-red-500 flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4" />
+                  Esta acción no se puede deshacer.
+                </p>
+              </div>
+
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setShowDeleteConfirm(null)}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  disabled={isLoading}
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => handleDeletePost(showDeleteConfirm)}
+                  disabled={isLoading}
+                  className={`flex-1 px-4 py-2 bg-red-600 text-white rounded-lg 
+                    ${isLoading 
+                      ? 'opacity-50 cursor-not-allowed' 
+                      : 'hover:bg-red-700 active:bg-red-800'} 
+                    transition-colors`}
+                >
+                  {isLoading ? 'Eliminando...' : 'Eliminar'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
