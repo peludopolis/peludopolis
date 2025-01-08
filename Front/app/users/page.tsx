@@ -2,6 +2,7 @@
 
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/authContext";
+import { Search } from "lucide-react";
 
 interface User {
   id: string;
@@ -14,6 +15,8 @@ interface User {
 const UsersTable: React.FC = () => {
   const { user, isLoading } = useContext(AuthContext);
   const [users, setUsers] = useState<User[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoadingUsers, setIsLoadingUsers] = useState<boolean>(true);
 
@@ -41,6 +44,7 @@ const UsersTable: React.FC = () => {
 
       const data = await response.json();
       setUsers(data);
+      setFilteredUsers(data);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -57,6 +61,13 @@ const UsersTable: React.FC = () => {
       setIsLoadingUsers(false);
     }
   }, [user, isLoading]);
+
+  useEffect(() => {
+    const filtered = users.filter(user =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredUsers(filtered);
+  }, [searchTerm, users]);
 
   if (isLoading || isLoadingUsers) {
     return (
@@ -78,6 +89,18 @@ const UsersTable: React.FC = () => {
     <div className="p-4 bg-white rounded-lg shadow-sm">
       <h1 className="text-center text-2xl text-primary mt-3 font-semibold">Lista de usuarios</h1>
       <div className="container p-16">
+        <div className="mb-4 relative">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Buscar por nombre..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="shadow-lg p-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+          </div>
+        </div>
         <table className="shadow-lg w-full table-auto border border-dark rounded-lg overflow-hidden">
           <thead>
             <tr className="bg-dark text-white">
@@ -88,7 +111,7 @@ const UsersTable: React.FC = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-dark">
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <tr 
                 key={user.id} 
                 className="hover:bg-light transition-colors duration-150"
@@ -104,7 +127,6 @@ const UsersTable: React.FC = () => {
       </div>
     </div>
   );
-  
 };
 
 export default UsersTable;
