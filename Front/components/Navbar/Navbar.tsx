@@ -4,6 +4,7 @@ import { PawPrint } from 'lucide-react';
 
 import NavMenu from './navMenu/NavMenu';
 import NavAuth from './navAuth/NavAuth';
+import SearchBar from './searchBar/SearchBar';
 
 const Navbar: React.FC = () => {
   return (
@@ -24,11 +25,7 @@ const Navbar: React.FC = () => {
 
         {/* Columna 2: Search Input */}
         <div className="flex items-center justify-center">
-          <input
-            type="search"
-            placeholder="Buscar..."
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          <SearchBar />
         </div>
 
         {/* Columna 3: Menú de Autenticación */}
