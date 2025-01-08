@@ -159,7 +159,7 @@ const ServiceDetailPage = () => {
 
                 <div className="flex items-center">
                   <DollarSign className="w-6 h-6 text-green-600 mr-2" />
-                  <span className="text-2xl font-bold text-green-600">${service.price.toFixed(2)}</span>
+                  <span className="text-2xl font-bold text-green-600">{service.price.toFixed(2)}</span>
                 </div>
               </div>
 
