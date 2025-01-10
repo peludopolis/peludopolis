@@ -51,7 +51,6 @@ export class PaymentsRepository extends Repository<Payment> {
     try {
       return await this.findOne({
         where: { id }
-        // relations: ['user', 'appointment']
       });
     } catch (error) {
       console.error(
