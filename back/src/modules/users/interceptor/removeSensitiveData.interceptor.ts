@@ -4,27 +4,46 @@ import {
   ExecutionContext,
   CallHandler
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable()
 export class RemoveSensitiveFieldsInterceptor implements NestInterceptor {
+  constructor(private readonly reflector: Reflector) {}
+
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    return next.handle().pipe(
-      map((data) => {
-        if (Array.isArray(data)) {
-          return data.map((user) => this.removeSensitiveFields(user));
-        } else if (data && typeof data === 'object') {
-          return this.removeSensitiveFields(data);
-        }
-        return data;
-      })
+    const skipSensitiveFields = this.reflector.get<boolean>(
+      'skipSensitiveFields',
+      context.getHandler()
     );
+
+    if (skipSensitiveFields) {
+      return next.handle();
+    }
+
+    return next.handle().pipe(map((data) => this.processResponse(data)));
   }
 
-  private removeSensitiveFields(user: Record<string, any>) {
+  private processResponse(data: any): any {
+    if (Array.isArray(data)) {
+      return data.map((item) => this.processResponse(item));
+    } else if (data && typeof data === 'object') {
+      return this.cleanUserObject(data);
+    }
+    return data;
+  }
+
+  private cleanUserObject(obj: Record<string, any>): any {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, isAdmin, ...userResponse } = user;
-    return userResponse;
+    const { password, isAdmin, ...cleanedObj } = obj;
+
+    for (const key in cleanedObj) {
+      if (cleanedObj[key] && typeof cleanedObj[key] === 'object') {
+        cleanedObj[key] = this.processResponse(cleanedObj[key]);
+      }
+    }
+
+    return cleanedObj;
   }
 }

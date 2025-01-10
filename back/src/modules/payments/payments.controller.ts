@@ -68,11 +68,11 @@ export class PaymentsController {
     }
   }
 
-  @Post('test')
-  async test(@Body() paymentData: any) {
-    console.log(paymentData);
-    return 'hola';
-  }
+  // @Post('test')
+  // async test(@Body() paymentData: any) {
+  //   console.log(paymentData);
+  //   return 'hola';
+  // }
 
   @ApiOperation({ summary: 'Create a new payment' })
   @ApiResponse({

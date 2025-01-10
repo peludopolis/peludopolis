@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { RemoveSensitiveFieldsInterceptor } from './modules/users/interceptor/removeSensitiveData.interceptor';
@@ -33,7 +33,9 @@ async function bootstrap() {
       transform: true
     })
   );
-  app.useGlobalInterceptors(new RemoveSensitiveFieldsInterceptor());
+  app.useGlobalInterceptors(
+    new RemoveSensitiveFieldsInterceptor(new Reflector())
+  );
 
   const port = process.env.PORT || 3001; // Usa el puerto de las variables de entorno o el 3000 como predeterminado
   await app.listen(port);
