@@ -1,10 +1,11 @@
-"use client"
+"use client";
 
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { format, addWeeks, startOfWeek, addDays, isBefore, isToday } from "date-fns";
+import { format, addWeeks, startOfWeek, addDays, isBefore } from "date-fns";
 import { es } from "date-fns/locale";
 import { Slot, AvailableSlots } from "../../interfaces/index";
+import { AuthContext } from "../../../contexts/authContext"; // Importa el contexto de autenticación
 
 const NewAppointmentPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -14,11 +15,18 @@ const NewAppointmentPage: React.FC = () => {
     date: "",
     time: "",
   });
-
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [availableSlots, setAvailableSlots] = useState<AvailableSlots>({});
   const [appointments, setAppointments] = useState<Slot[]>([]);
   const router = useRouter();
+  const { user } = useContext(AuthContext); // Obtén el usuario del contexto
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/login"); // Redirige si el usuario no está autenticado
+    }
+  }, [user, router]);
+
   const services = ["Elija un servicio", "Baño", "Corte de pelo", "Corte de uña"];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -32,9 +40,7 @@ const NewAppointmentPage: React.FC = () => {
     e.preventDefault();
     try {
       if (appointments.length === 0) {
-        router.push(
-          `/appointments/payment?${new URLSearchParams(formData).toString()}`
-        );
+        router.push(`/appointments/payment?${new URLSearchParams(formData).toString()}`);
       } else {
         const citas = [selectedSlot, ...appointments].filter(Boolean);
         const queryString = new URLSearchParams({
@@ -138,6 +144,24 @@ const NewAppointmentPage: React.FC = () => {
     });
   };
 
+  if (!user) {
+    return (
+      <div className="text-center p-6 bg-red-100 border border-red-400 text-red-700 rounded-md">
+        <p>Debes estar logueado para agendar una nueva cita.</p>
+        <p>
+          Por favor,{" "}
+          <a href="/login" className="text-blue-600 underline">
+            inicia sesión
+          </a>{" "}
+          o{" "}
+          <a href="/register" className="text-blue-600 underline">
+            regístrate
+          </a>.
+        </p>
+      </div>
+    );
+  }
+  
   return (
     <div className="container mx-auto px-4">
       <h1 className="text-black text-3xl text-center font-bold mb-6 mt-4">
@@ -211,15 +235,15 @@ const NewAppointmentPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             {getDatesForDay(selectedDay).map((d, index) => (
               <div key={index} className="border border-gray-300 p-4 rounded-md">
-                <h3 className="text-black text-xl font-bold">{`${d.day.charAt(0).toUpperCase() + d.day.slice(1)} ${format(new Date(d.date), 'd MMMM yyyy', { locale: es })}`}</h3>
-                {["9:00", "9:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00"].map((time, timeIndex) => {
-                  const slotKey = `${format(new Date(d.date), 'd MMMM yyyy', { locale: es })} ${time}`;
+                <h3 className="text-black text-xl font-bold">{`${d.day.charAt(0).toUpperCase() + d.day.slice(1)} ${format(new Date(d.date), 'yyyy-MM-dd', { locale: es })}`}</h3>
+                {["09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00"].map((time, timeIndex) => {
+                  const slotKey = `${format(new Date(d.date), 'yyyy-MM-dd', { locale: es })} ${time}`;
                   const isOccupied = availableSlots[slotKey] === "occupied";
                   return (
                     <button
                       key={timeIndex}
                       type="button"
-                      onClick={() => handleSelectSlot(format(new Date(d.date), 'd MMMM yyyy', { locale: es }), time)}
+                      onClick={() => handleSelectSlot(format(new Date(d.date), 'yyyy-MM-dd', { locale: es }), time)}
                       className={`${
                         isOccupied ? "bg-red-500" : "bg-green-500"
                       } text-white p-2 w-full rounded-md mt-2`}

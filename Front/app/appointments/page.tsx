@@ -1,17 +1,24 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useRouter } from "next/navigation";
 import AppointmentCard from "../../components/AppointmentCard/AppointmentCard";
 import { Appointment } from "../interfaces/index";
+import { AuthContext } from "../../contexts/authContext";
 
 const AppointmentPage: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
+    //if (!user) {
+      //router.push("/login"); // Redirige a la página de inicio de sesión si no está autenticado
+      //return;
+    //}
+
     async function fetchAppointments() {
       try {
         const response = await fetch("http://localhost:3001/appointments/all"); // Cambiar cuando esté listo el backend
@@ -29,7 +36,25 @@ const AppointmentPage: React.FC = () => {
     }
 
     fetchAppointments();
-  }, []);
+  }, [user, router]);
+
+  if (!user) {
+    return (
+      <div className="text-center p-6 bg-red-100 border border-red-400 text-red-700 rounded-md">
+        <p>Debes estar logueado para ver las citas programadas.</p>
+        <p>
+          Por favor,{" "}
+          <a href="/login" className="text-blue-600 underline">
+            inicia sesión
+          </a>{" "}
+          o{" "}
+          <a href="/register" className="text-blue-600 underline">
+            regístrate
+          </a>.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4">
@@ -59,3 +84,4 @@ const AppointmentPage: React.FC = () => {
 };
 
 export default AppointmentPage;
+
