@@ -64,42 +64,68 @@ const LoginForm = () => {
     
     
 
-    const handleGoogleSuccess = (credentialResponse: any) => {
-        const token = credentialResponse.credential;
-        const payload = JSON.parse(atob(token.split('.')[1]));
-
-        localStorage.setItem('googleToken', token);
-        localStorage.setItem('user', JSON.stringify({
-            user: {
-                name: payload.name,
-                email: payload.email,
-                picture: payload.picture,
-                id: undefined,
-            },
-            login: true,
-        }));
-
-
-        setUser({
-            user: {
-                name: payload.name,
-                email: payload.email,
-                picture: payload.picture,
-                id: 0,
-                phone: "",
-                address: "",
-                login: false,
-                token: "",
-                services: []
-            },
-            login: true,
-            id: "",
-            isAdmin: false
-        });
-
-        alert('Inicio de sesión exitoso');
-        router.push('/');
+    const handleGoogleSuccess = async (credentialResponse: any) => {
+        try {
+            const token = credentialResponse.credential;
+            const payload = JSON.parse(atob(token.split('.')[1]));
+    
+            // Guardar el usuario en la base de datos
+            const res = await fetch('http://localhost:3001/google-users/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: payload.email,
+                    name: payload.name,
+                    picture: payload.picture,
+                    googleId: payload.sub,
+                }),
+            });
+    
+            const data = await res.json();
+    
+            if (res.ok) {
+                // Guardar token y datos del usuario en localStorage
+                localStorage.setItem('googleToken', token);
+                localStorage.setItem('user', JSON.stringify({
+                    user: {
+                        name: data.user.name,
+                        email: data.user.email,
+                        picture: data.user.picture,
+                        id: data.user.id,
+                    },
+                    login: true,
+                }));
+    
+                // Actualizar el estado global del usuario
+                setUser({
+                    user: {
+                        name: data.user.name,
+                        email: data.user.email,
+                        picture: data.user.picture,
+                        id: data.user.id,
+                        phone: "",
+                        address: "",
+                        login: true,
+                        token: "",
+                        services: []
+                    },
+                    login: true,
+                    id: data.user.id,
+                    isAdmin: false,
+                });
+    
+                alert('Inicio de sesión exitoso');
+                router.push('/'); // Redirigir al dashboard o página principal
+            } else {
+                console.error('Error al registrar el usuario:', data.message);
+                alert('Hubo un problema al registrar el usuario. Inténtalo de nuevo.');
+            }
+        } catch (error) {
+            console.error('Error en la autenticación con Google:', error);
+            alert('Hubo un problema con el inicio de sesión. Inténtalo de nuevo.');
+        }
     };
+    
 
     const handleGoogleFailure = () => {
         alert("Error al iniciar sesión con Google");

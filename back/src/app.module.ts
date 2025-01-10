@@ -17,6 +17,7 @@ import { CommentsModule } from './modules/comments/comments.module';
 // import { AppointmentsModule } from './modules/appointments/appointments.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { PaymentsController } from './modules/payments/payments.controller';
+import { GoogleUsersModule } from './modules/google-users/google-users.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { PaymentsController } from './modules/payments/payments.controller';
     EmailModule,
     UploadImageModule,
     PaymentsModule,
+    GoogleUsersModule,
   ],
   controllers: [AppController, PaymentsController],
   providers: [AppService],
