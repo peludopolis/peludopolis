@@ -26,6 +26,7 @@ import {
   ApiResponse,
   ApiTags
 } from '@nestjs/swagger';
+import { SkipSensitiveFieldsInterceptor } from './interceptor/skipSensitiveFields.decorator';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -34,6 +35,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
+  @SkipSensitiveFieldsInterceptor()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.Admin)
   @ApiOperation({
