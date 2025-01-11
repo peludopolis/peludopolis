@@ -4,6 +4,7 @@ import { PawPrint } from 'lucide-react';
 
 import NavMenu from './navMenu/NavMenu';
 import NavAuth from './navAuth/NavAuth';
+import SearchBar from './searchBar/SearchBar';
 
 const Navbar: React.FC = () => {
   return (
@@ -23,13 +24,9 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* Columna 2: Search Input */}
-        <div className="flex items-center justify-center">
-          <input
-            type="search"
-            placeholder="Buscar..."
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+        <div className="hidden md:block">
+            <SearchBar />
+          </div>
 
         {/* Columna 3: Menú de Autenticación */}
         <div className="flex items-center justify-end space-x-4">
@@ -46,10 +43,10 @@ const Navbar: React.FC = () => {
       <div className="md:hidden flex flex-col items-center space-y-4 px-4 py-2">
         {/* Logo (mantiene su posición) */}
         <div className="flex items-center justify-center">
-          <Link href="/">
-            <div className="flex items-center justify-center gap-2 font-bold text-3xl tracking-wide">
-              <PawPrint className="w-8 h-8 bg-primary" />
-              <span className="bg-seconday font-fun drop-shadow-[0_0_10px_rgba(37,99,235,0.9)]">
+        <Link href="/">
+            <div className="flex items-center gap-2 font-bold text-3xl tracking-wide">
+              <PawPrint className="w-12 h-12" color="#F9A826" />
+              <span className="text-blue-500 font-fun drop-shadow-[0_0_10px_rgba(37,99,235,0.9)]">
                 Peludópolis
               </span>
             </div>
@@ -64,11 +61,9 @@ const Navbar: React.FC = () => {
 
         {/* Search Input */}
         <div className="w-full">
-          <input
-            type="search"
-            placeholder="Buscar..."
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+        <div className="md:hidden pb-4">
+          <SearchBar />
+        </div>
         </div>
       </div>
     </nav>

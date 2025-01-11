@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { animalSounds } from "./constants";
 import { navItems } from "./navItems";
 import NavItemComponent from "./NavItem";
 import SoundToggle from "./SoundToggle";
 import { Menu, X } from "lucide-react";
+import { AuthContext } from "../../../contexts/authContext";
 
 const NavMenu: React.FC = () => {
+    const { user } = useContext(AuthContext); // Obtener el usuario del contexto
     const [isSoundEnabled, setIsSoundEnabled] = useState(true);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Estado del menú móvil
     const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
@@ -40,17 +42,14 @@ const NavMenu: React.FC = () => {
     };
 
     return (
-        <nav className="md:bg-white shadow-lg relative font-fun rounded-lg">
-
+        <nav className="md:bg-white shadow-xl relative font-fun rounded-lg">
             {/* Contenedor general */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-around h-16 items-center">
-
-
                     {/* Menú hamburguesa (visible en pantallas medianas y más pequeñas) */}
                     <button
                         onClick={toggleMobileMenu}
-                        className="block md:hidden bg-gray-100 p-2 rounded-md focus:outline-none hover:bg-gray-200 shadow-lg"
+                        className="block md:hidden bg-gray-100 p-2 rounded-md focus:outline-none hover:bg-gray-200 shadow-xl"
                         aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
                     >
                         {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -58,15 +57,24 @@ const NavMenu: React.FC = () => {
 
                     {/* Menú de navegación (pantallas grandes) */}
                     <div className="hidden md:flex space-x-4">
-                        {navItems.map((item) => (
-                            <NavItemComponent
-                                key={item.href}
-                                {...item}
-                                isSoundEnabled={isSoundEnabled}
-                                playSound={playSound}
-                            />
-                        ))}
+                        {navItems
+                            .filter((item) => {
+                                // Filtrar el ítem de "Usuarios" si el usuario no es admin
+                                if (item.adminOnly && !user?.isAdmin) {
+                                    return false;
+                                }
+                                return true;
+                            })
+                            .map((item) => (
+                                <NavItemComponent
+                                    key={item.href}
+                                    {...item}
+                                    isSoundEnabled={isSoundEnabled}
+                                    playSound={playSound}
+                                />
+                            ))}
                     </div>
+
                     {/* Controles del sonido */}
                     <SoundToggle isSoundEnabled={isSoundEnabled} toggleSound={toggleSound} />
                 </div>
@@ -74,14 +82,22 @@ const NavMenu: React.FC = () => {
                 {/* Menú desplegable (pantallas pequeñas) */}
                 {isMobileMenuOpen && (
                     <div className="lg:hidden mt-2 space-y-2">
-                        {navItems.map((item) => (
-                            <NavItemComponent
-                                key={item.href}
-                                {...item}
-                                isSoundEnabled={isSoundEnabled}
-                                playSound={playSound}
-                            />
-                        ))}
+                        {navItems
+                            .filter((item) => {
+                                // Filtrar el ítem de "Usuarios" si el usuario no es admin
+                                if (item.adminOnly && !user?.isAdmin) {
+                                    return false;
+                                }
+                                return true;
+                            })
+                            .map((item) => (
+                                <NavItemComponent
+                                    key={item.href}
+                                    {...item}
+                                    isSoundEnabled={isSoundEnabled}
+                                    playSound={playSound}
+                                />
+                            ))}
                     </div>
                 )}
             </div>
@@ -90,5 +106,6 @@ const NavMenu: React.FC = () => {
 };
 
 export default NavMenu;
+
 
 

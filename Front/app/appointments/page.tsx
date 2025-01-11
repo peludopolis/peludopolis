@@ -14,10 +14,10 @@ const AppointmentPage: React.FC = () => {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    if (!user) {
-      router.push("/login"); // Redirige a la página de inicio de sesión si no está autenticado
-      return;
-    }
+    //if (!user) {
+      //router.push("/login"); // Redirige a la página de inicio de sesión si no está autenticado
+      //return;
+    //}
 
     async function fetchAppointments() {
       try {

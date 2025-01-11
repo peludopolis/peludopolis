@@ -20,70 +20,71 @@ const LoginForm = () => {
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // Validar que los campos no estén vacíos antes de enviar
+    
         if (!data.email.trim() || !data.password.trim()) {
             alert("Por favor complete todos los campos");
             return;
         }
-        const res = await login(data);
+    
+        const res = await login(data); // Llama al servicio de login
+    
+        console.log("Respuesta del backend:", res); // Depura para verificar la respuesta
+    
         if (res.statusCode) {
             alert(res.message);
         } else {
             alert("Ingreso exitoso");
+    
+            // Guarda el token JWT en localStorage
+            if (res.accessToken) {
+                localStorage.setItem("userToken", res.accessToken); // Guardar el token correctamente
+            } else {
+                console.error("El token de acceso no está presente en la respuesta");
+            }
+    
+            // Guarda los datos del usuario en localStorage
             localStorage.setItem("user", JSON.stringify({
                 user: res.user,
                 login: true,
                 id: res.user.id,
+                isAdmin: res.user.isAdmin,
             }));
-
+    
+            // Actualiza el contexto
             setUser({
                 user: res.user,
                 login: true,
                 id: res.user.id,
-                isAdmin: res.user.isAdmin || false, 
+                isAdmin: res.user.isAdmin || false,
             });
-            
-
+    
             router.push("/");
         }
     };
+    
+    
 
-    const handleGoogleSuccess = (credentialResponse: any) => {
-        const token = credentialResponse.credential;
-        const payload = JSON.parse(atob(token.split('.')[1]));
-
-        localStorage.setItem('googleToken', token);
-        localStorage.setItem('user', JSON.stringify({
-            user: {
+    const handleGoogleSuccess = async (credentialResponse: any) => {
+        try {
+            const token = credentialResponse.credential;
+            const payload = JSON.parse(atob(token.split('.')[1]));
+    
+            // Guardar el token y la información básica del usuario temporalmente
+            localStorage.setItem('googleToken', token);
+            localStorage.setItem('googleUser', JSON.stringify({
                 name: payload.name,
                 email: payload.email,
                 picture: payload.picture,
-                id: undefined,
-            },
-            login: true,
-        }));
-
-
-        setUser({
-            user: {
-                name: payload.name,
-                email: payload.email,
-                picture: payload.picture,
-                id: 0,
-                phone: "",
-                address: "",
-                login: false,
-                token: "",
-                services: []
-            },
-            login: true,
-            id: "",
-            isAdmin: false
-        });
-
-        alert('Inicio de sesión exitoso');
-        router.push('/');
+            }));
+    
+            // Redirigir al formulario para completar los datos
+            router.push('/complete-profile'); // Ruta del formulario
+        } catch (error) {
+            console.error('Error al procesar el token de Google:', error);
+            alert('Hubo un problema con el inicio de sesión. Inténtalo de nuevo.');
+        }
     };
+    
 
     const handleGoogleFailure = () => {
         alert("Error al iniciar sesión con Google");

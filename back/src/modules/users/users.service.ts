@@ -109,7 +109,11 @@ export class UsersService implements OnModuleInit {
 
   async findAll() {
     try {
-      return await this.usersRepository.findAll();
+      const users = await this.usersRepository.findAll();
+      return users.map(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        ({ password, ...userWithoutPassword }) => userWithoutPassword
+      );
     } catch (error) {
       throw new Error(
         `No se pudo obtener la lista de usuarios: ${error.message}`

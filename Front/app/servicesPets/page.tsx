@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Droplet, Scissors, Bed, Stethoscope, Dog, Cat, PawPrint, Calendar } from 'lucide-react';
 
 // Importamos los servicios
 import services from './services';
+import { useRouter } from 'next/navigation';
 
 // Mapeo de iconos para tipos de servicios
 const serviceIcons: { [key: string]: React.ComponentType<React.SVGProps<SVGSVGElement>> } = {
@@ -30,14 +30,25 @@ interface Service {
 
 const ServiceCard = ({ service }: { service: Service }) => {
   const ServiceIcon = serviceIcons[service.name as keyof typeof serviceIcons] || Droplet;
+  const router = useRouter();
+
+  const handleCardClick = () => {
+    router.push(`/servicesPets/${service.id}`);
+  };
+
+  const handleAppointmentClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Evita que el click se propague a la card
+    router.push('/appointments');
+  };
 
   return (
     <motion.div
+      onClick={handleCardClick}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       className="bg-white shadow-lg rounded-2xl p-6 border border-gray-100 
         transform transition-all duration-300 hover:shadow-2xl 
-        hover:border-blue-200 mb-4"
+        hover:border-blue-200 mb-4 cursor-pointer"
     >
       <div className="flex items-center mb-4">
         <ServiceIcon className="w-6 h-6 text-blue-500 mr-4" />
@@ -55,7 +66,10 @@ const ServiceCard = ({ service }: { service: Service }) => {
         </div>
         <div className="flex items-center mt-2">
           <div className="flex items-center mr-2">
-            {service.type === 'perro' ? <Dog className="w-4 h-4 mr-1 text-blue-600" /> : <Cat className="w-4 h-4 mr-1 text-purple-600" />}
+            {service.type === 'perro' ? 
+              <Dog className="w-4 h-4 mr-1 text-blue-600" /> : 
+              <Cat className="w-4 h-4 mr-1 text-purple-600" />
+            }
             <span className={`px-2 py-1 rounded-full text-xs font-bold 
               ${service.type === 'perro' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}`}>
               {service.type === 'perro' ? 'Perro' : 'Gato'}
@@ -68,17 +82,14 @@ const ServiceCard = ({ service }: { service: Service }) => {
             </span>
           </div>
         </div>
-        <Link href="/appointments" className="block mt-4">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="w-full flex items-center justify-center bg-blue-400 text-white 
-            py-2 rounded-full hover:bg-blue-600 transition-colors duration-300"
-          >
-            <Calendar className="w-5 h-5 mr-2" />
-            Solicitar Turno
-          </motion.button>
-        </Link>
+        <button
+          onClick={handleAppointmentClick}
+          className="w-full flex items-center justify-center bg-blue-400 text-white 
+          py-2 rounded-full hover:bg-blue-600 transition-colors duration-300 mt-4"
+        >
+          <Calendar className="w-5 h-5 mr-2" />
+          Solicitar Turno
+        </button>
       </div>
     </motion.div>
   );
