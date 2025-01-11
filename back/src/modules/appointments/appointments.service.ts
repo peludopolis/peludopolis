@@ -11,13 +11,15 @@ import { UsersService } from '../users/users.service';
 import { ServicesCatalogService } from '../services-catalog/services/services-catalog.service';
 import { SaveAppointment } from './dto/save-appointment.dto';
 import { ServicesCatalog } from '../services-catalog/entities/services-catalog.entity';
+import { EmailService } from '../notifications/notifications.service';
 
 @Injectable()
 export class AppointmentsService {
   constructor(
     private readonly appointmentRepository: AppointmentsRepository,
     private readonly userService: UsersService,
-    private readonly serviceCatalogService: ServicesCatalogService
+    private readonly serviceCatalogService: ServicesCatalogService,
+    private readonly emailService: EmailService
   ) {}
 
   async obtenerHorariosDisponibles(
@@ -206,7 +208,15 @@ export class AppointmentsService {
       // status: 'pending', // Se comenta para pruebas
     };
 
-    return await this.appointmentRepository.createAppointment(appointment);
+    const createdAppointment =
+      await this.appointmentRepository.createAppointment(appointment);
+
+    //Enviar correo de confirmación
+    const subject = 'Confirmación de turno';
+    const text = `Su turno ha sido creado para el ${date} a las ${startTime}. ¡Los esperamos!`;
+    await this.emailService.sendEmail(user.email, subject, text);
+
+    return createdAppointment;
   }
 
   async getAppointmentWithServices(
