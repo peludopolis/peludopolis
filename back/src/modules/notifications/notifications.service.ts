@@ -1,38 +1,41 @@
-import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
-import { Transporter } from 'nodemailer';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class EmailService {
-  private transporter: Transporter;
+  private transporter;
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: parseInt(process.env.MAIL_PORT, 10),
+      service: 'gmail',
       auth: {
         user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASSWORD
+        pass: process.env.PASSWORD_APP
+      }
+    });
+
+    this.transporter.verify((error, success) => {
+      if (error) {
+        console.error('Error al configurar el transporte:', error);
+      } else {
+        console.log('Transporte configurado correctamente:', success);
       }
     });
   }
 
-  async sendPaymentConfirmationEmail(
-    clientEmail: string,
-    paymentAmount: number
-  ): Promise<void> {
+  async sendEmail(to: string, subject: string, text: string) {
     const mailOptions = {
       from: process.env.MAIL_USER,
-      to: clientEmail,
-      subject: 'Confirmación de pago',
-      text: `Se ha recibido el pago de ${paymentAmount} por tu turno. ¡Gracias!`
+      to,
+      subject,
+      text
     };
 
     try {
-      await this.transporter.sendMail(mailOptions);
-      console.log('Correo de confirmación enviado');
+      const info = await this.transporter.sendMail(mailOptions);
+      console.log('Correo enviado:', info.response);
     } catch (error) {
-      console.error('Error al enviar el correo:', error);
+      console.error('Error al enviar correo:', error);
     }
   }
 }
