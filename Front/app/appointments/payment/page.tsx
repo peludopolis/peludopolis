@@ -10,13 +10,13 @@ import PaymentPopup from "../../../components/PaymentPopup/PaymentPopup";
 const PaymentPage: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { userSession } = useUser(); // Recuperar datos del usuario logueado
+  const { userSession } = useUser();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
 
-  // Obtener citas desde los parámetros de búsqueda
+
   useEffect(() => {
     const rawAppointments = searchParams.get("appointments");
     if (rawAppointments) {
@@ -32,12 +32,20 @@ const PaymentPage: React.FC = () => {
       const time = searchParams.get("time");
 
       if (name && petName && service && date && time) {
-        setAppointments([{ name, petName, service, date, time }]);
+        setAppointments([{
+          service, date, namePet: petName, startTime: time, endTime: time, userId: 0, paymentId: "",
+          name: undefined,
+          petName: undefined,
+          time: undefined,
+          id: 0,
+          createdAt: "",
+          status: ""
+        }]);
       }
     }
   }, [searchParams]);
 
-  // Calcular el precio total de las citas
+
   useEffect(() => {
     const totalPrice = appointments.reduce((sum, appointment) => {
       const service = services.find((s) => s.name === appointment.service);
@@ -46,22 +54,21 @@ const PaymentPage: React.FC = () => {
     setTotal(totalPrice);
   }, [appointments]);
 
-  // Manejar el estado del pago desde los parámetros de búsqueda
   useEffect(() => {
     const status = searchParams.get("status");
     const paymentId = searchParams.get("id");
-    const externalRef = searchParams.get("external_reference"); // Recuperar el external_reference
+    const externalRef = searchParams.get("external_reference");
 
     if (status) {
       setPaymentStatus(status);
 
       if (status === "approved" && paymentId) {
-        handleSendAppointment(paymentId, externalRef); // Enviar cita con el paymentId y external_reference
+        handleSendAppointment(paymentId, externalRef);
       }
     }
   }, [searchParams]);
 
-  // Generar preferencia de pago en Mercado Pago
+
   const handlePayment = async () => {
     try {
       const accessToken = process.env.NEXT_PUBLIC_MERCADOPAGO_ACCESS_TOKEN;
@@ -73,29 +80,29 @@ const PaymentPage: React.FC = () => {
       }
 
       const localUrl = "http://localhost:3000";
-      const backUrl = "https://155f-187-251-242-164.ngrok-free.app";
+      const backUrl = "https://b06a-2803-9800-98c9-89af-f117-a709-e065-c9a.ngrok-free.app";
 
       const preference = {
         items: appointments.map((appointment) => {
           const service = services.find((s) => s.name === appointment.service);
           return {
             title: service?.name || "Servicio",
-            description: service?.description || "",
+            description: service?.description || "Descripción del servicio",
             quantity: 1,
             currency_id: "ARS",
             unit_price: service?.price || 0,
           };
         }),
-        external_reference: userSession?.user?.id || "", // Guardar el ID del usuario logueado
+        external_reference: userSession?.user?.id || "",
         back_urls: {
           success: `${localUrl}/appointments/payment?status=approved`,
           failure: `${localUrl}/appointments/payment?status=failure`,
           pending: `${localUrl}/appointments/payment?status=pending`,
         },
         notification_url: `${backUrl}/payments/webhook`,
+        log:console.log(`${backUrl}/payments/webhook`),
+        
         auto_return: "approved",
-        // external_reference: {${'id'} agregar el id para enviarlo(ESTO YA SE HIZO)
-        // payments/external-reference/id(ESTO YA SE HIZO)
       };
 
       const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
@@ -114,16 +121,16 @@ const PaymentPage: React.FC = () => {
         setCheckoutUrl(data.init_point);
         console.log("URL de pago:", data.init_point);
       } else {
-        console.error("Error al generar la preferencia:", data);
+        console.log("Error al generar la preferencia:", data);
         alert("No se pudo generar la preferencia de pago.");
       }
     } catch (error) {
-      console.error("Error al generar la preferencia de pago:", error);
+      console.log("Error al generar la preferencia de pago:", error);
       alert("Ocurrió un error inesperado.");
     }
   };
 
-  // Enviar la cita al backend después del pago
+
   const handleSendAppointment = async (paymentId: string, externalRef: string | null) => {
     if (!userSession || !userSession.user) {
       alert("No hay usuario logueado.");
@@ -133,17 +140,18 @@ const PaymentPage: React.FC = () => {
     try {
       const appointmentData = {
         date: appointments[0].date,
-        namePet: appointments[0].petName,
-        startTime: appointments[0].time,
-        user: externalRef || userSession.user.id, // Usar el external_reference recuperado
+        namePet: appointments[0].namePet,
+        startTime: appointments[0].startTime,
+        endTime: appointments[0].endTime,
+        userId: externalRef ? externalRef : userSession.user.id,
         services: appointments.map((appointment) => {
           const service = services.find((s) => s.name === appointment.service);
           return { id: service?.id };
         }),
-        payment_id: paymentId,
+        paymentId: paymentId,
       };
 
-      const response = await fetch("http://localhost:3001/appointments/create", {
+      const response = await fetch("https://b06a-2803-9800-98c9-89af-f117-a709-e065-c9a.ngrok-free.app/appointments/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -166,7 +174,6 @@ const PaymentPage: React.FC = () => {
     }
   };
 
-  // Manejar cierre del popup de pago
   const handlePaymentClose = () => {
     if (paymentStatus === "approved") {
       router.push("/appointments");
@@ -196,11 +203,11 @@ const PaymentPage: React.FC = () => {
       {appointments.length > 0 ? (
         <div className="text-black mb-6 border p-4 rounded-md bg-gray-50">
           <h2 className="text-lg font-bold mb-4">Detalles de la Cita</h2>
-          <p><strong>Cliente:</strong> {appointments[0]?.name}</p>
-          <p><strong>Mascota:</strong> {appointments[0]?.petName}</p>
+          <p><strong>Cliente:</strong> {appointments[0]?.namePet}</p>
+          <p><strong>Mascota:</strong> {appointments[0]?.namePet}</p>
           <p><strong>Servicio:</strong> {appointments[0]?.service}</p>
           <p><strong>Fecha:</strong> {appointments[0]?.date}</p>
-          <p><strong>Hora:</strong> {appointments[0]?.time}</p>
+          <p><strong>Hora:</strong> {appointments[0]?.startTime}</p>
         </div>
       ) : (
         <p>No hay citas para mostrar.</p>
