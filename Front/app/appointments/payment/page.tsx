@@ -73,7 +73,7 @@ const PaymentPage: React.FC = () => {
       }
 
       const localUrl = "http://localhost:3000";
-      const backUrl = "https://b16a-2800-484-de80-c900-39cd-3756-4dd2-8e63.ngrok-free.app";
+      const backUrl = "https://f6d2-2800-484-de80-c900-79d8-13b6-32c1-5813.ngrok-free.app";
 
       const preference = {
         items: appointments.map((appointment) => {
@@ -86,7 +86,7 @@ const PaymentPage: React.FC = () => {
             unit_price: service?.price || 0,
           };
         }),
-        external_reference: userSession?.user?.id || "", // Guardar el ID del usuario logueado
+        external_reference: userSession?.user?.id || "",// Guardar el ID del usuario logueado
         back_urls: {
           success: `${localUrl}/appointments/payment?status=approved`,
           failure: `${localUrl}/appointments/payment?status=failure`,
@@ -98,6 +98,7 @@ const PaymentPage: React.FC = () => {
         // payments/external-reference/id(ESTO YA SE HIZO)
       };
 
+      console.log("External Reference:", preference.external_reference);
       const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
         method: "POST",
         headers: {

@@ -14,7 +14,6 @@ import typeOrmConfig from './config/typeOrm.config';
 import { UploadImageModule } from './modules/image-upload/image-upload.module';
 import { JwtModule } from '@nestjs/jwt';
 import { CommentsModule } from './modules/comments/comments.module';
-// import { AppointmentsModule } from './modules/appointments/appointments.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { PaymentsController } from './modules/payments/payments.controller';
 import { GoogleUsersModule } from './modules/google-users/google-users.module';
@@ -51,6 +50,6 @@ import { GoogleUsersModule } from './modules/google-users/google-users.module';
     GoogleUsersModule,
   ],
   controllers: [AppController, PaymentsController],
-  providers: [AppService],
+  providers: [AppService]
 })
 export class AppModule {}

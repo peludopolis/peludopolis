@@ -35,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <script src="https://sdk.mercadopago.com/js/v2"></script>
         </Head>
 
-        <GoogleOAuthProvider clientId="428954429923-bicutvc9ci34rlq7c1pdv7kivd3n87c7.apps.googleusercontent.com">
+        <GoogleOAuthProvider clientId="428954429923-nu9gigf254p3t5pnnrrdggkl1o6v0smg.apps.googleusercontent.com">
           <AuthProvider>
             <UserProvider>
               <div className="flex flex-col min-h-screen">

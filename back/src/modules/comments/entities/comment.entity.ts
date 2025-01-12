@@ -58,4 +58,3 @@ export class Comment {
   @CreateDateColumn()
   createdAt: Date;
 }
-
