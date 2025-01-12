@@ -63,7 +63,8 @@ export class PaymentsService {
         id: mp_id,
         status,
         payment_method_id: method,
-        transaction_amount: amount
+        transaction_amount: amount,
+        external_reference: external_reference
       } = paymentDetails;
 
       if (status !== 'approved') {
@@ -84,7 +85,8 @@ export class PaymentsService {
         mp_id,
         status,
         payment_method_id: method,
-        amount
+        amount,
+        external_reference: external_reference
       });
       await this.paymentsRepository.save(payment);
 
