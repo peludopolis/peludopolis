@@ -69,21 +69,33 @@ const LoginForm = () => {
             const token = credentialResponse.credential;
             const payload = JSON.parse(atob(token.split('.')[1]));
     
-            // Guardar el token y la información básica del usuario temporalmente
+            // Llama al backend para verificar si el usuario ya existe
+            const checkRes = await fetch('http://localhost:3001/users/findByEmail/' + payload.email, {
+                method: 'GET',
+            });
+    
+            if (checkRes.ok) {
+                const { user, accessToken } = await checkRes.json();
+                // Guarda el token y redirige al dashboard
+                localStorage.setItem('user', JSON.stringify({ ...user, accessToken }));
+                router.push('/dashboard');
+                return;
+            }
+    
+            // Si el usuario no existe, guardar datos básicos y redirigir al formulario
             localStorage.setItem('googleToken', token);
             localStorage.setItem('googleUser', JSON.stringify({
                 name: payload.name,
                 email: payload.email,
                 picture: payload.picture,
             }));
-    
-            // Redirigir al formulario para completar los datos
-            router.push('/complete-profile'); // Ruta del formulario
+            router.push('/complete-profile');
         } catch (error) {
             console.error('Error al procesar el token de Google:', error);
             alert('Hubo un problema con el inicio de sesión. Inténtalo de nuevo.');
         }
     };
+    
     
 
     const handleGoogleFailure = () => {
