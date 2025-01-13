@@ -73,7 +73,7 @@ const PaymentPage: React.FC = () => {
       }
 
       const localUrl = "http://localhost:3000";
-      const backUrl = "https://f5f8-152-169-8-75.ngrok-free.app";
+      const backUrl = "https://f6d2-2800-484-de80-c900-79d8-13b6-32c1-5813.ngrok-free.app";
 
       const preference = {
         items: appointments.map((appointment) => {

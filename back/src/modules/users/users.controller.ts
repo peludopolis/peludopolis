@@ -5,6 +5,7 @@ import {
   FileTypeValidator,
   Get,
   MaxFileSizeValidator,
+  NotFoundException,
   Param,
   ParseFilePipe,
   Put,
@@ -27,12 +28,16 @@ import {
   ApiTags
 } from '@nestjs/swagger';
 import { SkipSensitiveFieldsInterceptor } from './interceptor/skipSensitiveFields.decorator';
+import { JwtService } from '@nestjs/jwt';
 
 @ApiTags('users')
 @ApiBearerAuth()
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService
+  ) {}
 
   @Get()
   @SkipSensitiveFieldsInterceptor()
@@ -70,6 +75,26 @@ export class UsersController {
   })
   async getUserById(@Param() params: ValidateIdDto) {
     return await this.usersService.findById(params.id);
+  }
+
+  @Get('findByEmail/:email')
+  async getUserByEmail(@Param('email') email: string) {
+    const user = await this.usersService.findByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    const payload = {
+      email: user.email,
+      sub: user.id,
+      isAdmin: user.isAdmin || false
+    };
+    const accessToken = this.jwtService.sign(payload, {
+      expiresIn: '1h'
+    });
+
+    return { user, accessToken };
   }
 
   @Put(':id')
