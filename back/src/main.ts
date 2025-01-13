@@ -13,6 +13,10 @@ async function bootstrap() {
     .setTitle('Peludopolis API')
     .setDescription('Documentación de la API para Peludopolis')
     .setVersion('1.0')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'access-token'
+    )
     .addTag('users')
     .addTag('posts')
     .addTag('comments')
