@@ -31,38 +31,85 @@ const Slider = () => {
   
     return () => clearInterval(intervalId);
   }, [images.length]);
+
+  const goToSlide = (index: number) => {
+    setCurrentIndex(index);
+  };
   
+  const goToPrevious = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === 0 ? images.length - 1 : prevIndex - 1
+    );
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prevIndex) => 
+      (prevIndex + 1) % images.length
+    );
+  };
 
   return (
-    <div
-      className="relative mx-auto overflow-hidden border rounded-lg"
-      style={{ width: "980px", height: "450px" }}
-    >
-
-      <div
-        className="flex transition-transform duration-1000 ease-in-out"
-        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-      >
-        {images.map((image, index) => (
-          <div
-            key={index}
-            className="w-full flex-shrink-0 relative"
-            style={{ width: "980px", height: "450px" }}
-          >
-
-            <Image
-              src={image.src}
-              alt={image.alt}
-              width={980}
-              height={450}
-              className="object-cover w-full h-full"
-            />
-
-            <div className="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white p-4 w-full text-center">
-              <p>{image.description}</p>
+    <div className="relative w-full max-w-[980px] mx-auto overflow-hidden rounded-lg">
+      {/* Contenedor principal con aspect ratio 16:9 */}
+      <div className="relative w-full pb-[46%]">
+        {/* Contenedor del carrusel */}
+        <div 
+          className="absolute top-0 left-0 w-full h-full flex transition-transform duration-1000 ease-in-out"
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
+          {images.map((image, index) => (
+            <div
+              key={index}
+              className="w-full h-full flex-shrink-0 relative"
+            >
+              <div className="relative w-full h-full">
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 980px"
+                  className="object-cover"
+                  priority={index === 0}
+                />
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 md:p-4">
+                <p className="text-sm md:text-base text-center">{image.description}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+
+        {/* Botones de navegación */}
+        <button
+          onClick={goToPrevious}
+          className="absolute left-2 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-opacity"
+          aria-label="Previous slide"
+        >
+          &#10094;
+        </button>
+        <button
+          onClick={goToNext}
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-opacity"
+          aria-label="Next slide"
+        >
+          &#10095;
+        </button>
+
+        {/* Indicadores */}
+        <div className="absolute bottom-14 left-0 right-0 flex justify-center gap-2">
+          {images.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`w-2 h-2 rounded-full transition-all ${
+                currentIndex === index
+                  ? "bg-white w-4"
+                  : "bg-white/50"
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
