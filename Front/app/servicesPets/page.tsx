@@ -38,7 +38,7 @@ const ServiceCard = ({ service }: { service: Service }) => {
 
   const handleAppointmentClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Evita que el click se propague a la card
-    router.push('/appointments');
+    router.push('/appointments/new');
   };
 
   return (

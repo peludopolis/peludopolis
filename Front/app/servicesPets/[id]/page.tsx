@@ -176,7 +176,7 @@ const ServiceDetailPage = () => {
               transition={{ delay: 0.4 }}
               className="mt-8"
             >
-              <Link href="/appointments" className="block">
+              <Link href="/appointments/new" className="block">
                 <button className="w-full bg-blue-500 text-white py-3 px-6 rounded-full 
                   hover:bg-blue-600 transition-colors duration-300 font-semibold text-lg
                   flex items-center justify-center">
