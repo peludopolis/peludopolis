@@ -119,7 +119,9 @@ export class UsersService implements OnModuleInit {
       }
       return user;
     } catch (error) {
-      throw new Error(`No se pudo encontrar el usuario: ${error.message}`);
+      throw new NotFoundException(
+        `No se pudo encontrar el usuario: ${error.message}`
+      );
     }
   }
 
