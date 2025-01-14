@@ -5,10 +5,10 @@ import {
   FileTypeValidator,
   Get,
   MaxFileSizeValidator,
-  NotFoundException,
   Param,
   ParseFilePipe,
   Put,
+  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors
@@ -28,16 +28,14 @@ import {
   ApiTags
 } from '@nestjs/swagger';
 import { SkipSensitiveFieldsInterceptor } from './interceptor/skipSensitiveFields.decorator';
-import { JwtService } from '@nestjs/jwt';
+import { GoogleAuthGuard } from '../auth/guard/googleAuth.guard';
+import { Request } from 'express';
 
 @ApiTags('users')
 @ApiBearerAuth()
 @Controller('users')
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly jwtService: JwtService
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Get()
   @SkipSensitiveFieldsInterceptor()
@@ -77,22 +75,17 @@ export class UsersController {
     return await this.usersService.findById(params.id);
   }
 
+  @UseGuards(GoogleAuthGuard)
   @Get('findByEmail/:email')
-  async getUserByEmail(@Param('email') email: string) {
-    const user = await this.usersService.findByEmail(email);
+  async getUserByEmail(@Param('email') email: string, @Req() request: Request) {
+    const googleUser = request['googleUser'];
+    console.log(googleUser);
 
-    if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
-    }
-
-    const payload = {
-      email: user.email,
-      sub: user.id,
-      isAdmin: user.isAdmin || false
-    };
-    const accessToken = this.jwtService.sign(payload, {
-      expiresIn: '1h'
-    });
+    const { user, accessToken } =
+      await this.usersService.validateGoogleUserAndGenerateToken(
+        email,
+        googleUser
+      );
 
     return { user, accessToken };
   }
