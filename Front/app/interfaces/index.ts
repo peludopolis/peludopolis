@@ -1,38 +1,46 @@
 import { ReactNode } from "react";
 
-export interface ServiceSectionProps {
-    title: string;
-    description: string;
-    imageSrc: string;
-    imageAlt: string;
-  }
+export interface Payment {
+  id: number;
+  mpId: string;
+  amount: number;
+  paymentMethodId: string;
+  status: "approved" | "pending" | "failed"; // Cambio aquí
+  createdAt: string;
+  updatedAt: string;
+  externalReference: string;
+}
 
-  // Interfaz para el usuario
+
+
+export interface Appointment {
+  name: string;
+  petName: string;
+  service: string;
+  time: string;
+  id: number;
+  date: string;
+  namePet: string;
+  startTime: string;
+  endTime?: string;
+  createdAt: string;
+  status: string;
+  userId: number;
+  paymentId: string;
+}
+
+
 export interface User {
   id: number;
   name: string;
   email: string;
   address: string;
   phone: string;
-  role:  "admin" | "user";
+  role: "admin" | "user";
 }
 
-
-
-export interface UserLogin { 
-  email: string;
-  password: string;
-}
-
-export interface UserData { 
-  name: string;
-  email: string;
-  address: string;
-  phone: string;
-}
 
 export interface UserSession {
-  picture: string;
   id: number;
   name: string;
   email: string;
@@ -41,34 +49,18 @@ export interface UserSession {
   profilePicture?: string;
   login: boolean;
   token: string;
-  user?: UserSessionData;
-  services: ServicePet[];
-  isAdmin?: boolean; // Nuevo campo para indicar si el usuario es administrador
+  user: User;  // Aquí eliminamos el "?" para hacer que el usuario no sea opcional
 }
 
 
-interface UserSessionData {
+
+export interface Service {
   id: number;
   name: string;
-  email: string;
-  address: string;
-  phone: string;
-  role: "admin" | "user";
-  credential: Credential;
-  services: ServicePet[];
+  description: string;
+  price: number;
 }
 
-// Interfaz para el servicioMascota
-export interface ServicePet {
-  id: number;
-  status?: string;
-  date?: string;
-}
-
-interface Credential {
-  id: number;
-  password: string;
-}
 
 export interface Slot {
   name: string;
@@ -78,14 +70,19 @@ export interface Slot {
   time: string;
 }
 
+
 export interface AvailableSlots {
-  [key: string]: 'available' | 'occupied';
+  [key: string]: "available" | "occupied";
 }
 
-export interface Appointment {
-  name: string;
-  petName: string;
-  service: string;
-  date: string;
-  time: string;
+
+export interface ServiceSectionProps {
+  title: string;
+  description: string;
+  imageSrc: string;
+  imageAlt: string;
+}
+export interface PaymentPopupProps {
+  checkoutUrl: string;
+  onClose: () => void;
 }
