@@ -111,3 +111,4 @@ export class PostsService {
     return { message: 'Post successfully deleted' };
   }
 }
+console.log ("Hola mundo");

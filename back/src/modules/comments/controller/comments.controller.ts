@@ -7,8 +7,7 @@ import {
   NotFoundException,
   Param,
   Post,
-  Put,
-  Query
+  Put
 } from '@nestjs/common';
 import { CommentsService } from '../service/comments.service';
 import { CreateCommentDto } from '../dtos/create-comment.dto';
@@ -181,4 +180,3 @@ export class CommentsController {
     };
   }
 }
-

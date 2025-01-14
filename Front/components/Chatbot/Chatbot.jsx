@@ -198,7 +198,7 @@ Duración: ${selectedService.duration} minutos`,
         } else if (option === 'Agendar Turno') {
           addBotMessage('Te redirigiremos a nuestra página de reservas.');
           setTimeout(() => {
-            router.push('/appointments');
+            router.push('/appointments/new');
           }, 1500);
         }
         break;

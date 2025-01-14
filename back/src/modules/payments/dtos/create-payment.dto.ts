@@ -1,21 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsString,
-  IsNotEmpty,
-  IsNumber,
-  IsUUID,
-  IsOptional
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 
 export class CreatePaymentDto {
   @ApiProperty({
     description: 'Identificador único del pago.',
     type: 'string',
-    format: 'uuid',
-    example: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+    example: '98936807634-001'
   })
-  @IsUUID('4', { message: 'El campo "id" debe ser un UUID válido.' })
   @IsNotEmpty({ message: 'El campo "id" no puede estar vacío.' })
+  @IsString({ message: 'El campo "id" debe ser una cadena de texto.' })
   id: string;
 
   @ApiProperty({
@@ -35,25 +28,31 @@ export class CreatePaymentDto {
   @ApiProperty({
     description: 'Identificador del método de pago utilizado.',
     type: 'string',
-    format: 'uuid',
-    example: 'b1f2d4c6-3e56-4b2d-b3b6-77bbd472a129'
+    example: 'account money'
   })
-  @IsUUID('4', {
-    message: 'El campo "payment_method_id" debe ser un un UUID válido.'
+  @IsString({
+    message: 'El campo "payment_method_id" debe ser una cadena de texto.'
   })
   @IsNotEmpty({ message: 'El campo "payment_method_id" no puede estar vacío.' })
   payment_method_id: string;
 
   @ApiProperty({
-    description: 'Estado del pago (por ejemplo: "pendiente", "completado").',
+    description: 'Estado del pago (por ejemplo: "success", "rejected").',
     type: 'string',
-    example: 'completado'
+    example: 'success'
   })
   @IsString({ message: 'El campo "status" debe ser una cadena de texto.' })
   @IsNotEmpty({ message: 'El campo "status" no puede estar vacío.' })
   status: string;
 
+  @ApiProperty({
+    description: 'Referencia externa definida por el sistema.',
+    type: 'string',
+    example: 'user-12345'
+  })
   @IsOptional()
-  @IsString()
+  @IsString({
+    message: 'El campo "external_reference" debe ser una cadena de texto.'
+  })
   external_reference?: string;
 }

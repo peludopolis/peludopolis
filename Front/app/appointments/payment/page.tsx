@@ -317,7 +317,7 @@ const PaymentPage: React.FC = () => {
       const backUrl = "https://eff0-2803-9800-98c9-89af-f117-a709-e065-c9a.ngrok-free.app";
 
       const externalReference = userSession?.user?.id || "";
-console.log("external_reference:", externalReference); // Log antes de la creación del objeto preference
+console.log("external_reference:", externalReference);
 
 const preference = {
   items: appointments.map((appointment) => {
@@ -341,6 +341,7 @@ const preference = {
 };
 
 
+      console.log("External Reference:", preference.external_reference);
       const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
         method: "POST",
         headers: {

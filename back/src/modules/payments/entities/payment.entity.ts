@@ -35,7 +35,7 @@ export class Payment {
 
   @UpdateDateColumn()
   updated_at: Date;
-  user: any;
+  // user: any;
 
   @Column({ type: 'varchar', nullable: true })
   external_reference: string;
