@@ -1,22 +1,23 @@
 import { ReactNode } from "react";
 
 export interface Payment {
-  id: number;              
-  mpId: string;          
+  id: number;
+  mpId: string;
   amount: number;
   paymentMethodId: string;
-  status: string;
+  status: "approved" | "pending" | "failed"; // Cambio aquí
   createdAt: string;
   updatedAt: string;
   externalReference: string;
 }
 
 
+
 export interface Appointment {
-  name: ReactNode;
-  petName: ReactNode;
-  service: ReactNode;
-  time: ReactNode;
+  name: string;
+  petName: string;
+  service: string;
+  time: string;
   id: number;
   date: string;
   namePet: string;
@@ -48,8 +49,9 @@ export interface UserSession {
   profilePicture?: string;
   login: boolean;
   token: string;
-  user?: User;
+  user: User;  // Aquí eliminamos el "?" para hacer que el usuario no sea opcional
 }
+
 
 
 export interface Service {
@@ -79,4 +81,8 @@ export interface ServiceSectionProps {
   description: string;
   imageSrc: string;
   imageAlt: string;
+}
+export interface PaymentPopupProps {
+  checkoutUrl: string;
+  onClose: () => void;
 }
