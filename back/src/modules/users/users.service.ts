@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  OnModuleInit,
+  UnauthorizedException
+} from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { v4 as uuid } from 'uuid';
 import { CreateUserDto } from './dtos/createUser.dto';
@@ -6,13 +12,15 @@ import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dtos/updateUser.dto';
 import { UploadImageService } from '../image-upload/image-upload.service';
-import { Auth0UserDto } from '../auth/dto/auth0User.dto';
+import { JwtService } from '@nestjs/jwt';
+import { GoogleUserDto } from './dtos/googleUser.dto';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
   constructor(
     private usersRepository: UsersRepository,
-    private uploadImageService: UploadImageService
+    private uploadImageService: UploadImageService,
+    private readonly jwtService: JwtService
   ) {}
 
   private generateUUID(): string {
@@ -49,24 +57,6 @@ export class UsersService implements OnModuleInit {
         );
       }
     }
-  }
-
-  async findOrCreateUserFromAuth0(auth0User: Auth0UserDto) {
-    let user = await this.findByEmail(auth0User.email);
-
-    if (!user) {
-      user = await this.createUser({
-        email: auth0User.email,
-        password: '',
-        name:
-          auth0User.name || `${auth0User.given_name} ${auth0User.family_name}`,
-        address: '',
-        phone: '',
-        profilePicture: auth0User.picture
-      });
-    }
-
-    return user;
   }
 
   async makeAdmin(email: string) {
@@ -140,6 +130,47 @@ export class UsersService implements OnModuleInit {
       throw new Error(
         `No se pudo encontrar el usuario por email: ${error.message}`
       );
+    }
+  }
+
+  async validateGoogleUserAndGenerateToken(
+    email: string,
+    googleUser: GoogleUserDto
+  ) {
+    try {
+      if (googleUser.email !== email) {
+        throw new UnauthorizedException(
+          'El correo no coincide con el token de Google.'
+        );
+      }
+
+      const userFound = await this.findByEmail(email);
+
+      if (!userFound) {
+        throw new NotFoundException('Usuario no encontrado.');
+      }
+
+      const payload = {
+        email: userFound.email,
+        sub: userFound.id,
+        isAdmin: userFound.isAdmin || false
+      };
+
+      const accessToken = this.jwtService.sign(payload, {
+        expiresIn: '1h'
+      });
+
+      return { user: googleUser, accessToken };
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
+      } else if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else {
+        throw new BadRequestException(
+          'Error al procesar el usuario de Google.'
+        );
+      }
     }
   }
 
