@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import validator from "validator";
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { GoogleLogin } from '@react-oauth/google';
 
 const RegisterForm = () => {
   const router = useRouter();
+  const [user, setUser] = useState<any>(null);
 
   const [data, setData] = useState({
     name: "",
@@ -90,8 +92,64 @@ const RegisterForm = () => {
     }
 
     return ""; // Devuelve una cadena vacía si no hay errores
-};
-  
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      const token = credentialResponse.credential;
+      const payload = JSON.parse(atob(token.split('.')[1]));
+
+      // Llama al backend para verificar si el usuario ya existe
+      const checkRes = await fetch('http://localhost:3001/users/findByEmail/' + payload.email, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${credentialResponse.credential}`,
+        },
+      });
+
+      if (checkRes.ok) {
+        const { user, accessToken } = await checkRes.json();
+        
+        // Guarda el token de acceso y los datos del usuario en localStorage
+        localStorage.setItem('userToken', accessToken); // Guarda el token de acceso
+        localStorage.setItem('user', JSON.stringify({
+          user,
+          login: true,
+          id: user.id,
+          isAdmin: user.isAdmin,
+        }));
+        
+        // Actualiza el contexto con los datos del usuario
+        setUser({
+          user,
+          login: true,
+          id: user.id,
+          isAdmin: user.isAdmin || false,
+          accessToken: accessToken,
+        });
+
+        router.push('/login');
+        return;
+      }
+
+      // Si el usuario no existe, guardar datos básicos y redirigir al formulario
+      localStorage.setItem('googleToken', token);
+      localStorage.setItem('googleUser', JSON.stringify({
+        name: payload.name,
+        email: payload.email,
+        picture: payload.picture,
+      }));
+      router.push('/complete-profile');
+    } catch (error) {
+      console.error('Error al procesar el token de Google:', error);
+      alert('Tu cuenta ya esta registrada porfavor inicia sesión.');
+      router.push('/login');
+    }
+  };
+
+  const handleGoogleFailure = () => {
+    alert("Error al iniciar sesión con Google");
+  };
 
   useEffect(() => {
     setErrors({
@@ -103,7 +161,6 @@ const RegisterForm = () => {
       phone: validatePhone(data.phone),
     });
   }, [data]);
-  
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
@@ -202,15 +259,23 @@ const RegisterForm = () => {
         <button
           type="submit"
           className="w-full py-3 bg-blue-500 text-white text-lg font-semibold rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300"
-          
         >
           Registrarse
         </button>
+
+        <div className="mt-4 text-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleFailure}
+            useOneTap
+            theme="outline"
+            shape="rectangular"
+            size="large"
+          />
+        </div>
       </form>
     </div>
   );
 };
 
 export default RegisterForm;
-
-
