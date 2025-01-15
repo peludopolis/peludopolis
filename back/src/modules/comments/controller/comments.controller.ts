@@ -13,13 +13,19 @@ import { CommentsService } from '../service/comments.service';
 import { CreateCommentDto } from '../dtos/create-comment.dto';
 import { UpdateCommentDto } from '../dtos/update-comment.dto';
 import { Comment } from '../entities/comment.entity';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags
+} from '@nestjs/swagger';
 
 @ApiTags('Comments')
 @Controller('comments')
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
+  @ApiBearerAuth()
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo comentario' })
   @ApiResponse({
@@ -35,6 +41,7 @@ export class CommentsController {
     return this.commentsService.create(createCommentDto);
   }
 
+  @ApiBearerAuth()
   @Get()
   @ApiOperation({ summary: 'Obtener todos los comentarios' })
   @ApiResponse({
@@ -59,6 +66,7 @@ export class CommentsController {
     }
   }
 
+  @ApiBearerAuth()
   @Get('post/:postId')
   @ApiOperation({ summary: 'Obtener comentarios por ID de post' })
   @ApiResponse({
@@ -85,6 +93,7 @@ export class CommentsController {
     }
   }
 
+  @ApiBearerAuth()
   @Get('user/:userId')
   @ApiOperation({ summary: 'Obtener comentarios por ID de usuario' })
   @ApiResponse({
