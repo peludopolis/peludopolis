@@ -11,7 +11,7 @@ interface AuthContextProps {
     isAdmin: boolean;
     accessToken: string | null;
   } | null;
-  setUser: (user: { id: string; user: UserSession | null; login: boolean; isAdmin: boolean; accessToken: string | null } | null) => void;
+  setUser: (user: AuthContextProps["user"]) => void;
   logout: () => void;
   services: ServicePet[];
   setServices: (services: ServicePet[]) => void;
@@ -35,15 +35,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Restaurar estado desde localStorage al cargar la página
   useEffect(() => {
     try {
-      const localUser = JSON.parse(localStorage.getItem("user") || "null");
-      const localServices = JSON.parse(localStorage.getItem("services") || "[]");
+      const localUser = localStorage.getItem("user");
+      const localServices = localStorage.getItem("services");
 
-      if (localUser) {
-        setUser(localUser);
-      }
-      if (localServices) {
-        setServices(localServices);
-      }
+      if (localUser) setUser(JSON.parse(localUser));
+      if (localServices) setServices(JSON.parse(localServices));
     } catch (error) {
       console.error("Error al restaurar la sesión:", error);
       setUser(null);
@@ -78,7 +74,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, logout, services, setServices, isLoading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        logout,
+        services,
+        setServices,
+        isLoading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
