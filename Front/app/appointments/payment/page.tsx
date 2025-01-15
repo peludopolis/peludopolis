@@ -10,7 +10,7 @@ import { AuthContext } from '../../../contexts/authContext';
 const PaymentPage: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { user } = useContext(AuthContext); // Mueve esto al nivel superior
+  const { user } = useContext(AuthContext);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
@@ -23,7 +23,6 @@ const PaymentPage: React.FC = () => {
       parsedAppointments.sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
       setAppointments(parsedAppointments);
     } else {
-      //const id = searchParams.get("id");
       const name = searchParams.get("name");
       const petName = searchParams.get("petName");
       const service = searchParams.get("service");
@@ -34,8 +33,8 @@ const PaymentPage: React.FC = () => {
         setAppointments([{
           service, date, namePet: petName, startTime: time, endTime: time, userId: 0, paymentId: "",
           name,
-          petName: appointments[0]?.petName || "",
-          time: appointments[0]?.time || "",
+          petName: petName,
+          time: time,
           id: 0,
           createdAt: "",
           status: ""
@@ -67,10 +66,8 @@ const PaymentPage: React.FC = () => {
       }
     }
   }, [searchParams]);
-  
 
   const handlePayment = async () => {
-
     if (!user || !user.user) {
         console.error("Error: No hay usuario logueado.");
         alert("No hay usuario logueado. Por favor, inicie sesión.");
@@ -87,13 +84,12 @@ const PaymentPage: React.FC = () => {
         }
 
         const localUrl = "http://localhost:3000";
-        const backUrl = "https://faca-2803-9800-988d-724d-9d84-bc2e-3899-d589.ngrok-free.app";
+        const backUrl = "https://05ca-2800-484-de80-c900-5da0-89f6-2d07-478.ngrok-free.app";
 
         console.log("userSession:", user);
         console.log("userSession.user:", user?.user);
 
         const externalReference = user?.user?.id || "";
-        console.log("external_reference:", externalReference);
 
         const preference = {
             items: appointments.map((appointment) => {
@@ -109,17 +105,16 @@ const PaymentPage: React.FC = () => {
             payer: {
                 email: user?.user?.email || "",
             },
-            external_reference: externalReference, // Usamos la variable externa aquí
-  back_urls: {
-    success: `${localUrl}/appointments/payment?status=approved`,
-    failure: `${localUrl}/appointments/payment?status=failure`,
-    pending: `${localUrl}/appointments/payment?status=pending`,
-  },
-  notification_url: `${backUrl}/payments/webhook`,
-  auto_return: "approved",
-};
+            external_reference: externalReference,
+            back_urls: {
+                success: `${localUrl}/appointments/payment?status=approved`,
+                failure: `${localUrl}/appointments/payment?status=failure`,
+                pending: `${localUrl}/appointments/payment?status=pending`,
+            },
+            notification_url: `${backUrl}/payments/webhook`,
+            auto_return: "approved",
+        };
 
-//http://localhost:3001/payments/external-reference/:reference 
 
       console.log("External Reference:", preference.external_reference);
       const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
@@ -132,13 +127,10 @@ const PaymentPage: React.FC = () => {
       });
 
         const data = await response.json();
-        console.log("Respuesta de Mercado Pago:", data);
 
         if (data.id) {
             setCheckoutUrl(data.init_point);
-            console.log("URL de pago:", data.init_point);
         } else {
-            console.log("Error al generar la preferencia:", data);
             alert("No se pudo generar la preferencia de pago.");
         }
     } catch (error) {
@@ -147,11 +139,7 @@ const PaymentPage: React.FC = () => {
     }
 };
 
-console.log("PAYMENT ID PAGO:", searchParams.get("id"));
-
-const handleSendAppointment = async (paymentId: string, externalRef: string | null) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { user } = useContext(AuthContext);
+  const handleSendAppointment = async (paymentId: string, externalRef: string | null) => {
     if (!user || !user.user) {
         alert("No hay usuario logueado.");
         return;
@@ -160,16 +148,14 @@ const handleSendAppointment = async (paymentId: string, externalRef: string | nu
     try {
       const appointmentData = {
         date: appointments[0].date,
-        name: appointments[0].name,
         namePet: appointments[0].namePet,
         startTime: appointments[0].startTime,
-        endTime: appointments[0].endTime,
+        endTime: appointments[0].endTime || appointments[0].startTime,
         user: externalRef ? externalRef : user.user.id,
-        services: appointments.map((appointment) => {
-          const service = services.find((s) => s.name === appointment.service);
-          return { id: service?.id };
-        }),
-        paymentId: paymentId,
+        payment_id: paymentId,
+        services: appointments.map((appointment) => ({
+          id: appointment.service,
+        })),
       };
 
       const response = await fetch("http://localhost:3001/appointments/create", {
@@ -186,7 +172,6 @@ const handleSendAppointment = async (paymentId: string, externalRef: string | nu
         alert("Cita agendada correctamente");
         router.push(`/appointments/${data.appointment.id}`);
       } else {
-        console.error("Error al enviar la cita:", data);
         alert("No se pudo agendar la cita, intente nuevamente.");
       }
     } catch (error) {
@@ -220,19 +205,19 @@ const handleSendAppointment = async (paymentId: string, externalRef: string | nu
 
   return (
     <div className="container mx-auto px-4">
-  <h1 className="text-black text-3xl font-bold mb-6">Confirmación de Cita y Pago</h1>
-  {appointments.length > 0 ? (
-    <div className="text-black mb-6 border p-4 rounded-md bg-gray-50">
-      <h2 className="text-lg font-bold mb-4">Detalles de la Cita</h2>
-      <p><strong>Cliente:</strong> {appointments[0]?.name}</p>
-      <p><strong>Mascota:</strong> {appointments[0]?.namePet}</p>
-      <p><strong>Servicio:</strong> {appointments[0]?.service}</p>
-      <p><strong>Fecha:</strong> {appointments[0]?.date}</p>
-      <p><strong>Hora:</strong> {appointments[0]?.startTime}</p>
-    </div>
-  ) : (
-    <p>No hay citas para mostrar.</p>
-  )}
+      <h1 className="text-black text-3xl font-bold mb-6">Confirmación de Cita y Pago</h1>
+      {appointments.length > 0 ? (
+        <div className="text-black mb-6 border p-4 rounded-md bg-gray-50">
+          <h2 className="text-lg font-bold mb-4">Detalles de la Cita</h2>
+          <p><strong>Cliente:</strong> {appointments[0]?.name}</p>
+          <p><strong>Mascota:</strong> {appointments[0]?.namePet}</p>
+          <p><strong>Servicio:</strong> {appointments[0]?.service}</p>
+          <p><strong>Fecha:</strong> {appointments[0]?.date}</p>
+          <p><strong>Hora:</strong> {appointments[0]?.startTime}</p>
+        </div>
+      ) : (
+        <p>No hay citas para mostrar.</p>
+      )}
 
       <h2 className="text-lg font-bold">Total: ${total}</h2>
 
@@ -255,3 +240,4 @@ const handleSendAppointment = async (paymentId: string, externalRef: string | nu
 };
 
 export default PaymentPage;
+
