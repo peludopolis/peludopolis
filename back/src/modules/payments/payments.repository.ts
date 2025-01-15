@@ -17,13 +17,16 @@ export class PaymentsRepository extends Repository<Payment> {
     }
   }
 
-  async findByExternalReference(
+  async findMostRecentByExternalReference(
     externalReference: string
   ): Promise<Payment | null> {
     try {
-      return await this.findOne({
-        where: { external_reference: externalReference }
-      });
+      return await this.createQueryBuilder('payment')
+        .where('payment.external_reference = :externalReference', {
+          externalReference
+        })
+        .orderBy('payment.created_at', 'DESC')
+        .getOne();
     } catch (error) {
       console.error(
         'Error al obtener el pago por referencia externa:',
