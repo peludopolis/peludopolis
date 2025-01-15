@@ -155,6 +155,7 @@ export class UsersController {
     return { user, accessToken };
   }
 
+  @ApiBearerAuth()
   @Put(':id')
   @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('profilePicture'))
@@ -195,6 +196,7 @@ export class UsersController {
     );
   }
 
+  @ApiBearerAuth()
   @Delete(':id')
   @UseGuards(AuthGuard)
   @ApiOperation({

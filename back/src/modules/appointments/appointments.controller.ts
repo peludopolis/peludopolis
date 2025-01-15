@@ -12,7 +12,12 @@ import { AppointmentsService } from './appointments.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { QueryValidationDto } from './dto/queryValidationDto.dto';
 import { PaymentsService } from '../payments/payments.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags
+} from '@nestjs/swagger';
 import { SaveAppointment } from './dto/save-appointment.dto';
 
 @ApiTags('Appointments')
@@ -23,6 +28,7 @@ export class AppointmentsController {
     private readonly paymentService: PaymentsService
   ) {}
 
+  @ApiBearerAuth()
   @Post('create')
   @ApiOperation({ summary: 'Crear una nueva cita' })
   @ApiResponse({
@@ -51,6 +57,7 @@ export class AppointmentsController {
     });
   }
 
+  @ApiBearerAuth()
   @Get('availabilityByServices')
   @ApiOperation({ summary: 'Obtener horarios disponibles por servicios' })
   @ApiResponse({
@@ -81,6 +88,7 @@ export class AppointmentsController {
     return availableSlots;
   }
 
+  @ApiBearerAuth()
   @Get('all')
   @ApiOperation({ summary: 'Obtener todas las citas disponibles' })
   @ApiResponse({
