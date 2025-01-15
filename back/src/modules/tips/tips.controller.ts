@@ -13,6 +13,7 @@ import { CreateTipDto } from './dto/create-tips.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileValidationPipe } from '../image-upload/pipes/file-validation.pipe';
 import {
+  ApiBearerAuth,
   ApiConsumes,
   ApiOperation,
   ApiResponse,
@@ -24,6 +25,7 @@ import {
 export class TipsController {
   constructor(private readonly tipsService: TipsService) {}
 
+  @ApiBearerAuth()
   @Post('create')
   @UseInterceptors(FileInterceptor('image'))
   @ApiOperation({ summary: 'Crear un nuevo tip con una imagen asociada' })
@@ -55,6 +57,7 @@ export class TipsController {
     }
   }
 
+  @ApiBearerAuth()
   @Get()
   @ApiOperation({ summary: 'Obtener todos los tips disponibles' })
   @ApiResponse({

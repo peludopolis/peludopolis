@@ -56,6 +56,8 @@ const PaymentPage: React.FC = () => {
     const paymentId = searchParams.get("id");
     const externalRef = searchParams.get("external_reference");
 
+    console.log("Payment ID capturadoOOOOOO:", paymentId);
+
     if (status) {
       setPaymentStatus(status);
 
@@ -82,7 +84,10 @@ const PaymentPage: React.FC = () => {
         }
 
         const localUrl = "http://localhost:3000";
-        const backUrl = "https://2fb7-2803-9800-98c9-89af-b1e8-7811-2922-1cb.ngrok-free.app";
+        const backUrl = "https://05ca-2800-484-de80-c900-5da0-89f6-2d07-478.ngrok-free.app";
+
+        console.log("userSession:", user);
+        console.log("userSession.user:", user?.user);
 
         const externalReference = user?.user?.id || "";
 
@@ -110,14 +115,16 @@ const PaymentPage: React.FC = () => {
             auto_return: "approved",
         };
 
-        const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify(preference),
-        });
+
+      console.log("External Reference:", preference.external_reference);
+      const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(preference),
+      });
 
         const data = await response.json();
 
@@ -130,7 +137,7 @@ const PaymentPage: React.FC = () => {
         console.log("Error al generar la preferencia de pago:", error);
         alert("Ocurrió un error inesperado.");
     }
-  };
+};
 
   const handleSendAppointment = async (paymentId: string, externalRef: string | null) => {
     if (!user || !user.user) {
@@ -233,3 +240,4 @@ const PaymentPage: React.FC = () => {
 };
 
 export default PaymentPage;
+
