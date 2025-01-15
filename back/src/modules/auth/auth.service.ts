@@ -14,27 +14,30 @@ export class AuthService {
   async signin(loginDto: LoginDto) {
     try {
       const { email, password } = loginDto;
-      const user = await this.usersService.findByEmail(email);
+      const userFound = await this.usersService.findByEmail(email);
 
-      if (!user) {
+      if (!userFound) {
         throw new UnauthorizedException('Usuario o contraseña incorrectos');
       }
 
-      const isPasswordCorrect = await bcrypt.compare(password, user.password);
+      const isPasswordCorrect = await bcrypt.compare(
+        password,
+        userFound.password
+      );
       if (!isPasswordCorrect) {
         throw new UnauthorizedException('Usuario o contraseña incorrectos');
       }
 
       const payload = {
-        email: user.email,
-        sub: user.id,
-        isAdmin: user.isAdmin
+        email: userFound.email,
+        sub: userFound.id,
+        isAdmin: userFound.isAdmin
       };
       const accessToken = this.jwtService.sign(payload, {
         expiresIn: '1h'
       });
 
-      return { accessToken, user };
+      return { accessToken, userFound };
     } catch (error) {
       error.message = `Error durante el inicio de sesión: ${error.message}`;
       throw error;
