@@ -5,7 +5,15 @@ import { useRouter } from "next/navigation";
 import { format, addWeeks, startOfWeek, addDays, isBefore } from "date-fns";
 import { es } from "date-fns/locale";
 import { Slot, AvailableSlots } from "../../interfaces/index";
-import { AuthContext } from "../../../contexts/authContext"; // Importa el contexto de autenticación
+import { AuthContext } from "../../../contexts/authContext";
+
+interface Service {
+  name: string;
+  type: string;
+  stage: string;
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const NewAppointmentPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -15,19 +23,33 @@ const NewAppointmentPage: React.FC = () => {
     date: "",
     time: "",
   });
+  const [services, setServices] = useState<Service[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [availableSlots, setAvailableSlots] = useState<AvailableSlots>({});
   const [appointments, setAppointments] = useState<Slot[]>([]);
   const router = useRouter();
-  const { user } = useContext(AuthContext); // Obtén el usuario del contexto
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     if (!user) {
-      router.push("/login"); // Redirige si el usuario no está autenticado
+      router.push("/login");
     }
   }, [user, router]);
 
-  const services = ["Elija un servicio", "Baño", "Corte de pelo", "Corte de uña"];
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch(`${API_URL}/services-catalog`);
+        const data = await response.json();
+        setServices(data);
+      } catch (error) {
+        console.error('Error fetching services:', error);
+        alert('Error al cargar los servicios. Por favor, intente nuevamente.');
+      }
+    };
+
+    fetchServices();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
@@ -205,9 +227,10 @@ const NewAppointmentPage: React.FC = () => {
             className="w-full border border-gray-300 p-2 rounded text-black"
             required
           >
+            <option value="">Elija un servicio</option>
             {services.map((service, index) => (
-              <option key={index} value={service}>
-                {service}
+              <option key={index} value={service.name}>
+                {`${service.name} - ${service.type} (${service.stage})`}
               </option>
             ))}
           </select>
