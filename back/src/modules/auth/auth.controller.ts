@@ -9,7 +9,12 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dtos/createUser.dto';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags
+} from '@nestjs/swagger';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -19,6 +24,7 @@ export class AuthController {
     private readonly usersService: UsersService
   ) {}
 
+  @ApiBearerAuth()
   @Post('signin')
   @ApiOperation({ summary: 'Iniciar sesión de usuario' })
   @ApiResponse({

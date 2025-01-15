@@ -118,6 +118,7 @@ const PaymentPage: React.FC = () => {
 };
 
 
+
       console.log("External Reference:", preference.external_reference);
       const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
         method: "POST",

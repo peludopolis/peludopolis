@@ -12,13 +12,19 @@ import {
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto } from './dtos/create-payment.dto';
 import { UpdatePaymentStatusDto } from './dtos/update-payment-status.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags
+} from '@nestjs/swagger';
 
 @ApiTags('Payments')
 @Controller('payments')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Handle payment webhook' })
   @ApiResponse({
     status: 200,
@@ -41,6 +47,7 @@ export class PaymentsController {
     }
   }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get payment by external reference' })
   @ApiResponse({
     status: 200,
@@ -67,6 +74,7 @@ export class PaymentsController {
     }
   }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new payment' })
   @ApiResponse({
     status: 201,
@@ -86,6 +94,7 @@ export class PaymentsController {
     }
   }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get payment details by ID' })
   @ApiResponse({
     status: 200,
@@ -113,6 +122,7 @@ export class PaymentsController {
     }
   }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all payments' })
   @ApiResponse({
     status: 200,
@@ -132,6 +142,7 @@ export class PaymentsController {
     }
   }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update payment status by ID' })
   @ApiResponse({
     status: 200,

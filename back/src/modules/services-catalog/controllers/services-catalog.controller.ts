@@ -13,7 +13,12 @@ import { ServicesCatalogService } from '../services/services-catalog.service';
 import { CreateServicesCatalogDto } from '../dtos/create-services-catalog.dto';
 import { UpdateServicesCatalogDto } from '../dtos/update-services-catalog.dto';
 import { isUUID } from 'class-validator';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags
+} from '@nestjs/swagger';
 
 @ApiTags('Services Catalog')
 @Controller('services-catalog')
@@ -22,6 +27,7 @@ export class ServicesCatalogController {
     private readonly servicesCatalogService: ServicesCatalogService
   ) {}
 
+  @ApiBearerAuth()
   @Get()
   @ApiOperation({ summary: 'Obtener todos los servicios del catálogo' })
   @ApiResponse({
@@ -41,6 +47,7 @@ export class ServicesCatalogController {
     }
   }
 
+  @ApiBearerAuth()
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un servicio por su ID' })
   @ApiResponse({
@@ -76,6 +83,7 @@ export class ServicesCatalogController {
     }
   }
 
+  @ApiBearerAuth()
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo servicio en el catálogo' })
   @ApiResponse({
@@ -101,6 +109,7 @@ export class ServicesCatalogController {
     }
   }
 
+  @ApiBearerAuth()
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar un servicio existente' })
   @ApiResponse({
