@@ -85,7 +85,7 @@ const PaymentPage: React.FC = () => {
         }
 
         const localUrl = "http://localhost:3000";
-        const backUrl = "https://05ca-2800-484-de80-c900-5da0-89f6-2d07-478.ngrok-free.app";
+        const backUrl = "https://faca-2803-9800-988d-724d-9d84-bc2e-3899-d589.ngrok-free.app";
 
         console.log("userSession:", user);
         console.log("userSession.user:", user?.user);
