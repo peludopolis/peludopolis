@@ -8,9 +8,10 @@ interface AuthContextProps {
     id: string;
     user: UserSession | null;
     login: boolean;
-    isAdmin: boolean; // Nuevo campo
+    isAdmin: boolean;
+    accessToken: string | null;
   } | null;
-  setUser: (user: { id: string; user: UserSession | null; login: boolean; isAdmin: boolean } | null) => void;
+  setUser: (user: AuthContextProps["user"]) => void;
   logout: () => void;
   services: ServicePet[];
   setServices: (services: ServicePet[]) => void;
@@ -27,74 +28,62 @@ export const AuthContext = createContext<AuthContextProps>({
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<{ id: string; user: UserSession | null; login: boolean; isAdmin: boolean } | null>(null);
+  const [user, setUser] = useState<AuthContextProps["user"]>(null);
   const [services, setServices] = useState<ServicePet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Cargar usuario y servicios desde localStorage al inicializar
+  // Restaurar estado desde localStorage al cargar la página
   useEffect(() => {
-    const localUser = JSON.parse(localStorage.getItem("user") || "null");
-    const localServices = JSON.parse(localStorage.getItem("services") || "null");
+    try {
+      const localUser = localStorage.getItem("user");
+      const localServices = localStorage.getItem("services");
 
-    if (localUser && localUser.id !== "default-id") {
-      setUser(localUser);
-    } else {
+      if (localUser) setUser(JSON.parse(localUser));
+      if (localServices) setServices(JSON.parse(localServices));
+    } catch (error) {
+      console.error("Error al restaurar la sesión:", error);
       setUser(null);
+      setServices([]);
+    } finally {
+      setIsLoading(false);
     }
-
-    if (localServices) {
-      setServices(localServices);
-    }
-
-    setIsLoading(false); // Marcamos que ya se cargó
   }, []);
 
-  // Guardar usuario y servicios en localStorage cuando cambian
+  // Guardar cambios en el estado en localStorage
   useEffect(() => {
     if (user) {
-      if (!user.id) {
-        user.id = "default-id"; // Generar un ID si falta
-      }
-      localStorage.setItem(
-        "user",
-        JSON.stringify({ ...user, isAdmin: user.user?.isAdmin || false })
-      );
-      localStorage.setItem("services", JSON.stringify(user.user?.services || []));
+      localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("user");
     }
   }, [user]);
 
-  // Persistir la sesión en el localStorage
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const storedServices = localStorage.getItem("services");
-
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      if (!parsedUser.id) {
-        parsedUser.id = "default-id"; // Generar ID si falta
-      }
-      // Asegurarnos de incluir el campo `isAdmin`
-      const isAdmin = parsedUser?.isAdmin ?? false;
-      setUser({ ...parsedUser, isAdmin });
+    if (services.length) {
+      localStorage.setItem("services", JSON.stringify(services));
+    } else {
+      localStorage.removeItem("services");
     }
-
-    if (storedServices) {
-      setServices(JSON.parse(storedServices));
-    }
-
-    setIsLoading(false); // Marcamos que ya se cargó
-  }, []);
+  }, [services]);
 
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("services");
-    localStorage.removeItem("userSession");
     setUser(null);
     setServices([]);
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, logout, services, setServices, isLoading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        logout,
+        services,
+        setServices,
+        isLoading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

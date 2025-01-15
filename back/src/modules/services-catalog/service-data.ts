@@ -24,7 +24,7 @@ export const serviceData = [
     employeeName: 'Carlos Martínez',
     category: ServiceCategory.CORTEDEPELO,
     type: AnimalType.PERRO,
-    stage: Stage.Adulto,
+    stage: Stage.Cachorro,
     duration: 30
   },
   {
@@ -193,5 +193,6 @@ export const serviceData = [
     type: AnimalType.GATO,
     stage: Stage.Adulto,
     duration: 30
-  }
+  },
+
 ];
