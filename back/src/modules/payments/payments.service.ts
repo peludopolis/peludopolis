@@ -26,7 +26,7 @@ export class PaymentsService {
   async findByExternalReference(externalReference: string): Promise<Payment> {
     try {
       const payment =
-        await this.paymentsRepository.findByExternalReference(
+        await this.paymentsRepository.findMostRecentByExternalReference(
           externalReference
         );
       if (!payment) {

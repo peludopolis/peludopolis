@@ -57,6 +57,8 @@ const PaymentPage: React.FC = () => {
     const paymentId = searchParams.get("id");
     const externalRef = searchParams.get("external_reference");
 
+    console.log("Payment ID capturadoOOOOOO:", paymentId);
+
     if (status) {
       setPaymentStatus(status);
 
@@ -118,6 +120,9 @@ const PaymentPage: React.FC = () => {
 };
 
 
+
+//http://localhost:3001/payments/external-reference/:reference 
+
       console.log("External Reference:", preference.external_reference);
       const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
         method: "POST",
@@ -143,6 +148,8 @@ const PaymentPage: React.FC = () => {
         alert("Ocurrió un error inesperado.");
     }
 };
+
+console.log("PAYMENT ID PAGO:", searchParams.get("id"));
 
 const handleSendAppointment = async (paymentId: string, externalRef: string | null) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
