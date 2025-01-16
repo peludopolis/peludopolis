@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(null);
       setServices([]);
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // El estado de carga se termina después de restaurar los datos
     }
   }, []);
 
