@@ -7,6 +7,7 @@ import {
   IsUUID,
   ValidateNested
 } from 'class-validator';
+import { Payment } from 'src/modules/payments/entities/payment.entity';
 import { ServicesCatalog } from 'src/modules/services-catalog/entities/services-catalog.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 
@@ -71,8 +72,8 @@ export class SaveAppointment {
   @IsUUID('4', {
     message: 'El campo "payment_id" debe ser un UUID válido en su versión 4.'
   })
-  @IsNotEmpty({ message: 'El campo "payment_id" es obligatorio.' })
-  payment_id: string;
+  @IsNotEmpty({ message: 'El campo "payment" es obligatorio.' })
+  payment: Payment;
 
   // @ApiProperty({ description: 'Estado de la cita', example: 'confirmed' })
   // status: string; // Se comenta para pruebas

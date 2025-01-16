@@ -54,7 +54,9 @@ export class ServicesCatalogService {
   }
 
   async findAll(): Promise<ServicesCatalog[]> {
-    const services = await this.serviceCatalogRepository.find();
+    const services = await this.serviceCatalogRepository.find({
+      relations: ['appointment']
+    });
 
     if (!services || services.length === 0) {
       throw new NotFoundException('No se encontraron servicios en el catálogo');

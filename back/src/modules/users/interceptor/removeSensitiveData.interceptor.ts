@@ -40,7 +40,12 @@ export class RemoveSensitiveFieldsInterceptor implements NestInterceptor {
 
     for (const key in cleanedObj) {
       if (cleanedObj[key] && typeof cleanedObj[key] === 'object') {
-        if (key !== 'created_at' && key !== 'updated_at') {
+        if (
+          key !== 'created_at' &&
+          key !== 'updated_at' &&
+          key !== 'createdAt' &&
+          key !== 'updatedAt'
+        ) {
           cleanedObj[key] = this.processResponse(cleanedObj[key]);
         }
       }

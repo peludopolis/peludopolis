@@ -22,3 +22,23 @@ const config = {
 export default registerAs('typeorm', () => config);
 
 export const connectionSource = new DataSource(config as DataSourceOptions);
+
+// import { registerAs } from '@nestjs/config';
+// import { config as dotenvConfig } from 'dotenv';
+// import { DataSource, DataSourceOptions } from 'typeorm';
+
+// dotenvConfig({ path: '.env' });
+
+// const config: DataSourceOptions = {
+//   type: 'postgres',
+//   url: process.env.DATABASE_URL,
+//   synchronize: true,
+//   logging: true,
+//   migrations: ['dist/migrations/*{.js,.ts}'],
+//   entities: ['dist/**/*.entity{.ts,.js}'],
+//   ssl: { rejectUnauthorized: false }
+// };
+
+// export default registerAs('typeorm', () => config);
+
+// export const connectionSource = new DataSource(config);
