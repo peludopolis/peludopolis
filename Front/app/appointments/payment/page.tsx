@@ -30,7 +30,9 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const PaymentPage: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
+
   const { user, setUser } = useContext(AuthContext);
+
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [total, setTotal] = useState<number>(0);
@@ -118,6 +120,7 @@ const PaymentPage: React.FC = () => {
         console.error('Error al parsear appointments de URL:', error);
       }
     } else {
+
       const namePet = searchParams.get("namePet");
       const services = searchParams.get("services");
       const date = searchParams.get("date");
@@ -159,14 +162,17 @@ const PaymentPage: React.FC = () => {
         verifyPayment(externalRef);
       }
     }
+
   }, [searchParams, user?.accessToken]);
 
   const verifyPayment = async (externalRef: string) => {
     try {
+
       if (!user?.accessToken) {
         console.log('No hay token de acceso disponible');
         return;
       }
+
 
       console.log('Verificando pago con referencia:', externalRef);
       const paymentResponse = await fetch(`${API_URL}/payments/external-reference/${externalRef}`, {
@@ -175,6 +181,7 @@ const PaymentPage: React.FC = () => {
           "Content-Type": "application/json"
         }
       });
+
 
       if (!paymentResponse.ok) {
         const errorData = await paymentResponse.json();
@@ -192,6 +199,7 @@ const PaymentPage: React.FC = () => {
       } else {
         throw new Error('No se recibió ID de pago en la respuesta');
       }
+
     } catch (error) {
       console.error('Error al verificar pago:', error);
       alert('Error al verificar el pago. Por favor, contacta con soporte.');
@@ -224,6 +232,7 @@ const PaymentPage: React.FC = () => {
       });
       alert('No se pueden procesar los datos de la cita. Por favor, intenta nuevamente.');
       return;
+
     }
 
     setIsCreatingAppointment(true);
@@ -236,6 +245,7 @@ const PaymentPage: React.FC = () => {
         user: user.user.id,
         services: appointments[0].services,
         payment_id: paymentId,
+
       };
 
       console.log('Enviando datos de la cita:', appointmentData);
@@ -327,6 +337,7 @@ const PaymentPage: React.FC = () => {
         setCheckoutUrl(data.init_point);
       } else {
         throw new Error("No se recibió el punto de inicio del checkout");
+
       }
     } catch (error) {
       console.error('Error en el proceso de pago:', error);
@@ -427,6 +438,7 @@ const PaymentPage: React.FC = () => {
               );
             })}
           </ul>
+
         </div>
       ) : (
         <p>No hay citas para mostrar.</p>
