@@ -4,66 +4,134 @@ import React, { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { format, addWeeks, startOfWeek, addDays, isBefore } from "date-fns";
 import { es } from "date-fns/locale";
-import { Slot, AvailableSlots } from "../../interfaces/index";
-import { AuthContext } from "../../../contexts/authContext"; // Importa el contexto de autenticación
+import { AuthContext } from "../../../contexts/authContext";
+
+interface Service {
+  id: string;
+  name: string;
+  type: string;
+  stage: string;
+}
+
+interface Slot {
+  namePet: string;
+  date: string;
+  startTime: string;
+  services: Array<{ id: string }>;
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const NewAppointmentPage: React.FC = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    petName: "",
-    service: "",
+    namePet: "",
+    service: "", // Aquí se guardará el ID del servicio
+    serviceName: "",
     date: "",
     time: "",
   });
+  const [services, setServices] = useState<Service[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
-  const [availableSlots, setAvailableSlots] = useState<AvailableSlots>({});
+  const [availableSlots, setAvailableSlots] = useState<Record<string, string>>({});
   const [appointments, setAppointments] = useState<Slot[]>([]);
   const router = useRouter();
-  const { user } = useContext(AuthContext); // Obtén el usuario del contexto
+  const { user } = useContext(AuthContext);
+  const [selectedDay, setSelectedDay] = useState<string>("lunes");
 
   useEffect(() => {
     if (!user) {
-      router.push("/login"); // Redirige si el usuario no está autenticado
+      router.push("/login");
+      return;
     }
   }, [user, router]);
 
-  const services = ["Elija un servicio", "Baño", "Corte de pelo", "Corte de uña"];
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch(`${API_URL}/services-catalog`);
+        const data = await response.json();
+        setServices(data);
+      } catch (error) {
+        console.error('Error fetching services:', error);
+        alert('Error al cargar los servicios. Por favor, intente nuevamente.');
+      }
+    };
+
+    fetchServices();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    
+    if (name === 'service') {
+      const selectedService = services.find(s => s.id === value);
+      setFormData(prev => ({
+        ...prev,
+        service: value, // Guardamos el ID del servicio seleccionado
+        serviceName: selectedService ? selectedService.name : '' // También guardamos el nombre, si es necesario
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Log para ver los datos antes de enviarlos
+    console.log("Datos de la cita a enviar:", {
+      namePet: formData.namePet,
+      date: formData.date,
+      startTime: formData.time,
+      services: [{ id: formData.service }],
+    });
+  
     try {
+      const appointmentData = {
+        namePet: formData.namePet,
+        date: formData.date,
+        startTime: formData.time,
+        services: [{ id: formData.service }],
+      };
+  
+      // Redirigir a la página de pago si no hay citas previas
       if (appointments.length === 0) {
-        router.push(`/appointments/payment?${new URLSearchParams(formData).toString()}`);
+        router.push(`/appointments/payment?${new URLSearchParams({
+          ...appointmentData,
+          services: JSON.stringify(appointmentData.services),
+        }).toString()}`);
       } else {
-        const citas = [selectedSlot, ...appointments].filter(Boolean);
-        const queryString = new URLSearchParams({
-          appointments: JSON.stringify(citas),
-        }).toString();
-        router.push(`/appointments/payment?${queryString}`);
+        const allAppointments = [appointmentData, ...appointments];
+        router.push(`/appointments/payment?${new URLSearchParams({
+          appointments: JSON.stringify(allAppointments),
+        }).toString()}`);
       }
     } catch (error) {
       alert("Error al enviar la cita. Por favor, verifica la conexión al servidor.");
     }
   };
+  
 
   const handleAddAnotherService = () => {
     if (selectedSlot) {
-      setAppointments((prevAppointments) => [...prevAppointments, selectedSlot]);
+      setAppointments(prev => [...prev, {
+        namePet: formData.namePet,
+        date: formData.date,
+        startTime: formData.time,
+        services: [{ id: formData.service }]
+      }]);
     }
 
-    setFormData({
-      ...formData,
+    setFormData(prev => ({
+      ...prev,
       service: "",
+      serviceName: "",
       date: "",
       time: "",
-    });
+    }));
     setSelectedSlot(null);
     alert("Puedes agregar otro servicio ahora.");
   };
@@ -90,7 +158,6 @@ const NewAppointmentPage: React.FC = () => {
   };
 
   const { week1, week2 } = generateDates();
-  const [selectedDay, setSelectedDay] = useState<string>("lunes");
 
   const handleDayClick = (day: string) => {
     setSelectedDay(day);
@@ -116,14 +183,13 @@ const NewAppointmentPage: React.FC = () => {
 
     setAvailableSlots((prevSlots) => {
       if (selectedSlot) {
-        const previousSlotKey = `${selectedSlot.date} ${selectedSlot.time}`;
+        const previousSlotKey = `${selectedSlot.date} ${selectedSlot.startTime}`;
         return {
           ...prevSlots,
           [previousSlotKey]: "available",
           [slotKey]: "occupied",
         };
       }
-
       return {
         ...prevSlots,
         [slotKey]: "occupied",
@@ -131,17 +197,17 @@ const NewAppointmentPage: React.FC = () => {
     });
 
     setSelectedSlot({
-      name: formData.name,
-      petName: formData.petName,
-      service: formData.service,
+      namePet: formData.namePet,
+      date,
+      startTime: time,
+      services: [{ id: formData.service }]
+    });
+    
+    setFormData(prev => ({
+      ...prev,
       date,
       time,
-    });
-    setFormData({
-      ...formData,
-      date,
-      time,
-    });
+    }));
   };
 
   if (!user) {
@@ -161,7 +227,7 @@ const NewAppointmentPage: React.FC = () => {
       </div>
     );
   }
-  
+
   return (
     <div className="container mx-auto px-4">
       <h1 className="text-black text-3xl text-center font-bold mb-6 mt-4">
@@ -170,26 +236,12 @@ const NewAppointmentPage: React.FC = () => {
       <form className="max-w-md mx-auto space-y-4" onSubmit={handleSubmit}>
         <div>
           <label className="text-black block mb-2 text-sm font-medium">
-            Nombre del Cliente
-          </label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full border border-gray-300 p-2 rounded"
-            placeholder="Nombre del cliente"
-            required
-          />
-        </div>
-        <div>
-          <label className="text-black block mb-2 text-sm font-medium">
             Nombre de la Mascota
           </label>
           <input
             type="text"
-            name="petName"
-            value={formData.petName}
+            name="namePet"
+            value={formData.namePet}
             onChange={handleChange}
             className="w-full border border-gray-300 p-2 rounded"
             placeholder="Nombre de la mascota"
@@ -205,9 +257,10 @@ const NewAppointmentPage: React.FC = () => {
             className="w-full border border-gray-300 p-2 rounded text-black"
             required
           >
-            {services.map((service, index) => (
-              <option key={index} value={service}>
-                {service}
+            <option value="">Elija un servicio</option>
+            {services.map((service) => (
+              <option key={service.id} value={service.id}>
+                {`${service.name} - ${service.type} (${service.stage})`}
               </option>
             ))}
           </select>
@@ -218,9 +271,9 @@ const NewAppointmentPage: React.FC = () => {
             Selecciona el día y horario:
           </label>
           <div className="flex justify-between mb-4 gap-2 -ml-2">
-            {["lunes", "martes", "miércoles", "jueves", "viernes"].map((day, index) => (
+            {["lunes", "martes", "miércoles", "jueves", "viernes"].map((day) => (
               <button
-                key={index}
+                key={day}
                 type="button"
                 onClick={() => handleDayClick(day)}
                 className={`${
@@ -235,15 +288,17 @@ const NewAppointmentPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             {getDatesForDay(selectedDay).map((d, index) => (
               <div key={index} className="border border-gray-300 p-4 rounded-md">
-                <h3 className="text-black text-xl font-bold">{`${d.day.charAt(0).toUpperCase() + d.day.slice(1)} ${format(new Date(d.date), 'yyyy-MM-dd', { locale: es })}`}</h3>
-                {["09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00"].map((time, timeIndex) => {
-                  const slotKey = `${format(new Date(d.date), 'yyyy-MM-dd', { locale: es })} ${time}`;
+                <h3 className="text-black text-xl font-bold">
+                  {`${d.day.charAt(0).toUpperCase() + d.day.slice(1)} ${format(d.date, 'yyyy-MM-dd', { locale: es })}`}
+                </h3>
+                {["09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00"].map((time) => {
+                  const slotKey = `${format(d.date, 'yyyy-MM-dd', { locale: es })} ${time}`;
                   const isOccupied = availableSlots[slotKey] === "occupied";
                   return (
                     <button
-                      key={timeIndex}
+                      key={time}
                       type="button"
-                      onClick={() => handleSelectSlot(format(new Date(d.date), 'yyyy-MM-dd', { locale: es }), time)}
+                      onClick={() => handleSelectSlot(format(d.date, 'yyyy-MM-dd', { locale: es }), time)}
                       className={`${
                         isOccupied ? "bg-red-500" : "bg-green-500"
                       } text-white p-2 w-full rounded-md mt-2`}

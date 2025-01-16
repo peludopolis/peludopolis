@@ -2,92 +2,179 @@
 
 import React, { useEffect, useState, useContext } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Appointment } from "../../interfaces";
-import services from "../../servicesPets/services";
+import { AuthContext } from "../../../contexts/authContext";
 import PaymentPopup from "../../../components/PaymentPopup/PaymentPopup";
-import { AuthContext } from '../../../contexts/authContext';
+
+interface Service {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+}
+
+interface Appointment {
+  namePet: string;
+  date: string;
+  startTime: string;
+  services: Array<{ id: string }>;
+}
+
+interface Payment {
+  id: string;
+  status: string;
+  external_reference: string;
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const PaymentPage: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { user } = useContext(AuthContext); // Mueve esto al nivel superior
+
+  const { user, setUser } = useContext(AuthContext);
+
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
-
-  useEffect(() => {
-    const rawAppointments = searchParams.get("appointments");
-    if (rawAppointments) {
-      const parsedAppointments: Appointment[] = JSON.parse(rawAppointments);
-      parsedAppointments.sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
-      setAppointments(parsedAppointments);
-    } else {
-      //const id = searchParams.get("id");
-      const name = searchParams.get("name");
-      const petName = searchParams.get("petName");
-      const service = searchParams.get("service");
-      const date = searchParams.get("date");
-      const time = searchParams.get("time");
-
-      if (name && petName && service && date && time) {
-        setAppointments([{
-          service, date, namePet: petName, startTime: time, endTime: time, userId: 0, paymentId: "",
-          name,
-          petName: appointments[0]?.petName || "",
-          time: appointments[0]?.time || "",
-          id: 0,
-          createdAt: "",
-          status: ""
-        }]);
-      }
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
-    const totalPrice = appointments.reduce((sum, appointment) => {
-      const service = services.find((s) => s.name === appointment.service);
-      return service ? sum + service.price : sum;
-    }, 0);
-    setTotal(totalPrice);
-  }, [appointments]);
-
-  useEffect(() => {
-    const status = searchParams.get("status");
-    const paymentId = searchParams.get("id");
-    const externalRef = searchParams.get("external_reference");
-
-    console.log("Payment ID capturadoOOOOOO:", paymentId);
-
-    if (status) {
-      setPaymentStatus(status);
-
-      if (status === "approved" && paymentId) {
-        handleSendAppointment(paymentId, externalRef);
-      }
-    }
-  }, [searchParams]);
+  const [isUserLoaded, setIsUserLoaded] = useState<boolean>(false);
+  const [isCreatingAppointment, setIsCreatingAppointment] = useState<boolean>(false);
+  const [paymentId, setPaymentId] = useState<string | null>(null);
   
 
-  const handlePayment = async () => {
+  // Log inicial para debugging
+  useEffect(() => {
+    console.log('Estado inicial:', {
+      user: !!user,
+      isUserLoaded,
+      paymentStatus,
+      appointments: appointments.length,
+      paymentId
+    });
+  }, []);
 
-    if (!user || !user.user) {
-        console.error("Error: No hay usuario logueado.");
-        alert("No hay usuario logueado. Por favor, inicie sesión.");
-        return;
+  // Cargar usuario desde localStorage
+  useEffect(() => {
+    console.log('Intentando cargar usuario desde localStorage...');
+    const savedUser = localStorage.getItem("user");
+    if (savedUser && !user) {
+      console.log('Usuario encontrado en localStorage');
+      setUser(JSON.parse(savedUser));
+    }
+    if (user) {
+      console.log('Usuario cargado correctamente');
+      setIsUserLoaded(true);
+    }
+  }, [user, setUser]);
+
+  // Fetch servicios
+  useEffect(() => {
+    if (!isUserLoaded) {
+      console.log('Esperando carga de usuario para fetch de servicios...');
+      return;
     }
 
-    try {
-        const accessToken = process.env.NEXT_PUBLIC_MERCADOPAGO_ACCESS_TOKEN;
+    const fetchServices = async () => {
+      try {
+        console.log('Iniciando fetch de servicios...');
+        const response = await fetch(`${API_URL}/services-catalog`);
+        const data = await response.json();
+        console.log('Servicios obtenidos:', data);
+        setServices(data);
+      } catch (error) {
+        console.error('Error al obtener servicios:', error);
+      }
+    };
 
-        if (!accessToken) {
-            console.error("Error: Falta configurar la clave de Mercado Pago.");
-            alert("Error en la configuración de Mercado Pago. Contacte con soporte.");
-            return;
+    fetchServices();
+  }, [isUserLoaded]);
+
+  // Procesar parámetros de URL y cargar appointments desde localStorage
+  useEffect(() => {
+    console.log('Procesando parámetros de URL y localStorage...');
+    
+    // Primero intentamos cargar desde localStorage
+    const savedAppointments = localStorage.getItem('pendingAppointments');
+    if (savedAppointments) {
+      console.log('Appointments encontrados en localStorage:', savedAppointments);
+      try {
+        const parsed = JSON.parse(savedAppointments);
+        setAppointments(parsed);
+        return; // Si tenemos datos en localStorage, no procesamos los params
+      } catch (error) {
+        console.error('Error al parsear appointments desde localStorage:', error);
+      }
+    }
+
+    // Si no hay datos en localStorage, procesamos los parámetros de URL
+    const rawAppointments = searchParams.get("appointments");
+    if (rawAppointments) {
+      try {
+        const parsedAppointments = JSON.parse(rawAppointments);
+        console.log('Appointments parseados de URL:', parsedAppointments);
+        setAppointments(parsedAppointments);
+        // Guardamos en localStorage
+        localStorage.setItem('pendingAppointments', JSON.stringify(parsedAppointments));
+      } catch (error) {
+        console.error('Error al parsear appointments de URL:', error);
+      }
+    } else {
+
+      const namePet = searchParams.get("namePet");
+      const services = searchParams.get("services");
+      const date = searchParams.get("date");
+      const startTime = searchParams.get("startTime");
+
+      if (namePet && services && date && startTime) {
+        try {
+          const parsedServices = JSON.parse(services);
+          const appointment = {
+            namePet,
+            date,
+            startTime,
+            services: parsedServices
+          };
+          console.log('Appointment individual creado:', appointment);
+          setAppointments([appointment]);
+          // Guardamos en localStorage
+          localStorage.setItem('pendingAppointments', JSON.stringify([appointment]));
+        } catch (error) {
+          console.error('Error al procesar servicios individuales:', error);
         }
+      }
+    }
+  }, [searchParams]);
+
+  // Verificar estado del pago
+  useEffect(() => {
+    const status = searchParams.get("status");
+    const externalRef = searchParams.get("external_reference");
+
+    console.log('Verificando estado de pago:', { status, externalRef, hasUser: !!user?.accessToken });
+
+    if (status && user?.accessToken) {
+      console.log('Estado del pago recibido:', status);
+      setPaymentStatus(status);
+      
+      if (status === "approved" && externalRef) {
+        console.log('Pago aprobado, verificando detalles con token:', user.accessToken);
+        verifyPayment(externalRef);
+      }
+    }
+
+  }, [searchParams, user?.accessToken]);
+
+  const verifyPayment = async (externalRef: string) => {
+    try {
+
+      if (!user?.accessToken) {
+        console.log('No hay token de acceso disponible');
+        return;
+      }
 
         const localUrl = "http://localhost:3000";
-        const backUrl = "https://98b0-2800-484-de80-c900-8516-419d-96b9-23d7.ngrok-free.app";
+        const backUrl = "https://faca-2803-9800-988d-724d-9d84-bc2e-3899-d589.ngrok-free.app";
 
         console.log("userSession:", user);
         console.log("userSession.user:", user?.user);
@@ -125,133 +212,299 @@ const PaymentPage: React.FC = () => {
       const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(preference),
+          "Authorization": `Bearer ${user.accessToken}`,
+          "Content-Type": "application/json"
+        }
       });
 
-        const data = await response.json();
-        console.log("Respuesta de Mercado Pago:", data);
 
-        if (data.id) {
-            setCheckoutUrl(data.init_point);
-            console.log("URL de pago:", data.init_point);
-        } else {
-            console.log("Error al generar la preferencia:", data);
-            alert("No se pudo generar la preferencia de pago.");
-        }
+      if (!paymentResponse.ok) {
+        const errorData = await paymentResponse.json();
+        console.error('Error en la respuesta del servidor:', errorData);
+        throw new Error(`Error al verificar el pago: ${errorData.message || 'Error desconocido'}`);
+      }
+
+      const paymentData = await paymentResponse.json();
+      console.log('Datos del pago verificados:', paymentData);
+      
+      if (paymentData.id) {
+        setPaymentId(paymentData.id);
+        // Guardamos el paymentId en localStorage para asegurar que no se pierda
+        localStorage.setItem('pendingPaymentId', paymentData.id);
+      } else {
+        throw new Error('No se recibió ID de pago en la respuesta');
+      }
+
     } catch (error) {
-        console.log("Error al generar la preferencia de pago:", error);
-        alert("Ocurrió un error inesperado.");
+      console.error('Error al verificar pago:', error);
+      alert('Error al verificar el pago. Por favor, contacta con soporte.');
     }
-};
+  };
 
-console.log("PAYMENT ID PAGO:", searchParams.get("id"));
-
-const handleSendAppointment = async (paymentId: string, externalRef: string | null) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { user } = useContext(AuthContext);
-    if (!user || !user.user) {
-        alert("No hay usuario logueado.");
-        return;
+  // Recuperar paymentId de localStorage
+  useEffect(() => {
+    const savedPaymentId = localStorage.getItem('pendingPaymentId');
+    if (savedPaymentId && !paymentId) {
+      console.log('Recuperando paymentId desde localStorage:', savedPaymentId);
+      setPaymentId(savedPaymentId);
     }
+  }, [paymentId]);
+
+  const handleCreateAppointment = async () => {
+    console.log('Iniciando creación de cita con datos:', {
+      paymentId,
+      userId: user?.user?.id,
+      appointments,
+      token: user?.accessToken
+    });
+
+    if (!paymentId || !user?.user || !appointments.length || !user?.accessToken) {
+      console.error('Faltan datos necesarios para crear la cita', {
+        paymentId,
+        userId: user?.user?.id,
+        appointmentsLength: appointments.length,
+        hasToken: !!user?.accessToken
+      });
+      alert('No se pueden procesar los datos de la cita. Por favor, intenta nuevamente.');
+      return;
+
+    }
+
+    setIsCreatingAppointment(true);
 
     try {
       const appointmentData = {
         date: appointments[0].date,
-        name: appointments[0].name,
         namePet: appointments[0].namePet,
         startTime: appointments[0].startTime,
-        endTime: appointments[0].endTime,
-        user: externalRef ? externalRef : user.user.id,
-        services: appointments.map((appointment) => {
-          const service = services.find((s) => s.name === appointment.service);
-          return { id: service?.id };
-        }),
-        paymentId: paymentId,
+        user: user.user.id,
+        services: appointments[0].services,
+        payment_id: paymentId,
+
       };
 
-      const response = await fetch("http://localhost:3001/appointments/create", {
+      console.log('Enviando datos de la cita:', appointmentData);
+
+      const response = await fetch(`${API_URL}/appointments/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${user.accessToken}`
         },
         body: JSON.stringify(appointmentData),
       });
 
-      const data = await response.json();
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error al agendar la cita");
+      }
 
-      if (response.ok) {
-        alert("Cita agendada correctamente");
-        router.push(`/appointments/${data.appointment.id}`);
+      const data = await response.json();
+      console.log('Respuesta exitosa al crear cita:', data);
+
+      // Limpiamos localStorage solo después de una creación exitosa
+      localStorage.removeItem('pendingAppointments');
+      localStorage.removeItem('pendingPaymentId');
+
+      
+      alert("Cita agendada correctamente");
+      router.push("/appointments");
+    } catch (error) {
+      console.error('Error al crear la cita:', error);
+      alert(error instanceof Error ? error.message : "Error al agendar la cita");
+    } finally {
+      setIsCreatingAppointment(false);
+    }
+  };
+
+  const handlePayment = async () => {
+    try {
+      if (!user?.user) {
+        throw new Error('No hay usuario logueado');
+      }
+
+      console.log('Iniciando proceso de pago...');
+
+      const accessToken = process.env.NEXT_PUBLIC_MERCADOPAGO_ACCESS_TOKEN;
+      if (!accessToken) {
+        throw new Error('Falta configurar la clave de Mercado Pago');
+      }
+
+      const items = appointments.flatMap((appointment) => 
+        appointment.services.map((service) => {
+          const serviceInfo = services.find(s => s.id === service.id);
+          const price = serviceInfo ? Number(serviceInfo.price) : 0;
+          if (isNaN(price)) throw new Error(`Precio inválido para el servicio ${service.id}`);
+          return { title: serviceInfo?.name || "Servicio", quantity: 1, unit_price: price, currency_id: "ARS" };
+        })
+      );
+
+      console.log('Items para el pago:', items);
+
+      const preference = {
+        items,
+        payer: { email: user.user.email },
+        external_reference: user.user.id.toString(),
+        back_urls: {
+          success: `${window.location.origin}/appointments/payment?status=approved&external_reference=${user.user.id}`,
+          failure: `${window.location.origin}/appointments/payment?status=failure&external_reference=${user.user.id}`,
+          pending: `${window.location.origin}/appointments/payment?status=pending&external_reference=${user.user.id}`,
+        },
+        notification_url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/payments/webhook`,
+        auto_return: "approved",
+      };
+
+      console.log('Preferencia de pago:', preference);
+
+      const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json", 
+          Authorization: `Bearer ${accessToken}` 
+        },
+        body: JSON.stringify(preference),
+      });
+
+      const data = await response.json();
+      console.log('Respuesta de MercadoPago:', data);
+
+      if (data.init_point) {
+        setCheckoutUrl(data.init_point);
       } else {
-        console.error("Error al enviar la cita:", data);
-        alert("No se pudo agendar la cita, intente nuevamente.");
+        throw new Error("No se recibió el punto de inicio del checkout");
+
       }
     } catch (error) {
-      console.error("Error en la petición al backend:", error);
-      alert("Error en la conexión con el servidor.");
+      console.error('Error en el proceso de pago:', error);
+      alert(error instanceof Error ? error.message : "Error al procesar el pago");
     }
   };
 
-  const handlePaymentClose = () => {
-    if (paymentStatus === "approved") {
-      router.push("/appointments");
-    } else {
-      router.push("/");
-    }
+  const calculateTotal = () => {
+    const totalAmount = appointments[0]?.services.reduce((acc, service) => {
+      const serviceInfo = services.find(s => s.id === service.id);
+      return acc + (serviceInfo ? serviceInfo.price : 0);
+    }, 0);
+
+    setTotal(Math.floor(totalAmount || 0));
   };
 
-  if (paymentStatus === "failure") {
+  useEffect(() => {
+    if (appointments.length > 0 && services.length > 0) {
+      calculateTotal();
+    }
+  }, [appointments, services]);
+
+  // Cleanup effect
+  useEffect(() => {
+    return () => {
+      if (paymentStatus === "approved" && !isCreatingAppointment) {
+        localStorage.removeItem('pendingAppointments');
+        localStorage.removeItem('pendingPaymentId');
+      }
+    };
+  }, [paymentStatus, isCreatingAppointment]);
+
+  // Renderizado para estado de carga
+  if (!isUserLoaded) {
     return (
       <div className="container mx-auto px-4">
-        <h1 className="text-black text-3xl font-bold mb-6">Pago Fallido</h1>
-        <p className="text-red-600">El pago no se pudo completar. Intenta nuevamente.</p>
-        <button
-          onClick={() => router.push("/appointments")}
-          className="text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded mt-4"
-        >
-          Volver a la página de citas
-        </button>
+        <h1 className="text-black text-3xl font-bold mb-6">Cargando...</h1>
+        <p>Estamos cargando tu información, por favor espera...</p>
       </div>
     );
   }
 
+  // Renderizado para pago aprobado
+  if (paymentStatus === "approved" && !isCreatingAppointment) {
+    return (
+      <div className="container mx-auto px-4">
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-6">
+          <h2 className="text-2xl font-bold mb-4">¡Pago Confirmado!</h2>
+          <p className="mb-4">Tu pago ha sido procesado exitosamente.</p>
+          <button
+            onClick={handleCreateAppointment}
+            className="bg-green-500 text-white px-6 py-3 rounded hover:bg-green-600"
+          >
+            Agendar Cita
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Renderizado para pago fallido
+  if (paymentStatus === "failure") {
+    return (
+      <div className="container mx-auto px-4">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-6">
+          <h1 className="text-2xl font-bold mb-4">Pago No Completado</h1>
+          <p className="mb-4">El pago no se pudo completar. Por favor, intenta nuevamente.</p>
+          <button
+            onClick={() => router.push("/appointments")}
+            className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600"
+          >
+            Volver a Citas
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Renderizado principal
   return (
     <div className="container mx-auto px-4">
-  <h1 className="text-black text-3xl font-bold mb-6">Confirmación de Cita y Pago</h1>
-  {appointments.length > 0 ? (
-    <div className="text-black mb-6 border p-4 rounded-md bg-gray-50">
-      <h2 className="text-lg font-bold mb-4">Detalles de la Cita</h2>
-      <p><strong>Cliente:</strong> {appointments[0]?.name}</p>
-      <p><strong>Mascota:</strong> {appointments[0]?.namePet}</p>
-      <p><strong>Servicio:</strong> {appointments[0]?.service}</p>
-      <p><strong>Fecha:</strong> {appointments[0]?.date}</p>
-      <p><strong>Hora:</strong> {appointments[0]?.startTime}</p>
-    </div>
-  ) : (
-    <p>No hay citas para mostrar.</p>
-  )}
+      <h1 className="text-black text-3xl font-bold mb-6">Confirmación de Cita y Pago</h1>
+      
+      {appointments.length > 0 ? (
+        <div className="text-black mb-6 border p-4 rounded-md bg-gray-50">
+          <h2 className="text-lg font-bold mb-4">Detalles de la Cita</h2>
+          <p><strong>Mascota:</strong> {appointments[0]?.namePet}</p>
+          <p><strong>Fecha:</strong> {appointments[0]?.date}</p>
+          <p><strong>Hora:</strong> {appointments[0]?.startTime}</p>
+          <p><strong>Servicios:</strong></p>
+          <ul className="list-disc pl-5">
+            {appointments[0]?.services.map((service, index) => {
+              const serviceInfo = services.find(s => s.id === service.id);
+              return (
+                <li key={index}>
+                  {serviceInfo?.name || 'Servicio no encontrado'} - ${serviceInfo?.price || 0}
+                </li>
+              );
+            })}
+          </ul>
 
-      <h2 className="text-lg font-bold">Total: ${total}</h2>
+        </div>
+      ) : (
+        <p>No hay citas para mostrar.</p>
+      )}
+
+      <h2 className="text-lg font-bold mb-4">Total: ${total}</h2>
 
       {!checkoutUrl ? (
         <button
           onClick={handlePayment}
-          className="text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded mt-4"
+          className="bg-green-500 text-white px-6 py-3 rounded hover:bg-green-600"
         >
-          Generar Pago
+          Proceder al Pago
         </button>
       ) : (
-        <div className="mt-4">
-          <p>Esperando confirmación de pago...</p>
-        </div>
+        <PaymentPopup
+          url={checkoutUrl}
+          onClose={() => router.push("/appointments")}
+        />
       )}
-
-      {checkoutUrl && <PaymentPopup url={checkoutUrl} onClose={handlePaymentClose} />}
     </div>
   );
 };
 
 export default PaymentPage;
+
+
+
+
+
+
+
+
+
