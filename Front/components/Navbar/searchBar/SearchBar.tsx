@@ -8,7 +8,7 @@ import services from '../../../app/servicesPets/services';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Service {
-  id: number;
+  id: number | string;
   name: string;
   description: string;
   price: number;
@@ -55,7 +55,7 @@ const SearchBar = () => {
   };
 
   // Navegar al servicio seleccionado
-  const handleSelectService = (serviceId: number) => {
+  const handleSelectService = (serviceId: string | number) => {
     setIsOpen(false);
     setSearchTerm('');
     router.push(`/servicesPets/${serviceId}`);

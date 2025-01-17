@@ -1,6 +1,6 @@
 "use client";
 
-import { ServicePet, UserSession } from "../app/interfaces";
+import { Service, UserSession } from "../app/interfaces";
 import { createContext, useEffect, useState } from "react";
 
 interface AuthContextProps {
@@ -13,8 +13,8 @@ interface AuthContextProps {
   } | null;
   setUser: (user: AuthContextProps["user"]) => void;
   logout: () => void;
-  services: ServicePet[];
-  setServices: (services: ServicePet[]) => void;
+  services: Service[];
+  setServices: (services: Service[]) => void;
   isLoading: boolean;
 }
 
@@ -29,7 +29,7 @@ export const AuthContext = createContext<AuthContextProps>({
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<AuthContextProps["user"]>(null);
-  const [services, setServices] = useState<ServicePet[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Restaurar estado desde localStorage al cargar la página
@@ -88,3 +88,5 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     </AuthContext.Provider>
   );
 };
+
+
