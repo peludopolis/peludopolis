@@ -62,7 +62,7 @@ const CompleteProfileForm = () => {
                 localStorage.setItem('user', JSON.stringify(data));
                 localStorage.removeItem('googleUser');
                 alert('Registro exitoso');
-                router.push('/dashboard');
+                router.push('/login');
             } else {
                 alert('Hubo un problema al completar tu registro. Inténtalo de nuevo.');
             }
