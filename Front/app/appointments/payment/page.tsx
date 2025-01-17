@@ -19,6 +19,7 @@ interface Appointment {
   services: Array<{ id: string }>;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Payment {
   id: string;
   status: string;
@@ -49,6 +50,7 @@ const PaymentPageContent = () => {
       appointments: appointments.length,
       paymentId
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -90,13 +92,8 @@ const PaymentPageContent = () => {
     const savedAppointments = localStorage.getItem('pendingAppointments');
     if (savedAppointments) {
       console.log('Appointments encontrados en localStorage:', savedAppointments);
-      try {
-        const parsed = JSON.parse(savedAppointments);
-        setAppointments(parsed);
-        return;
-      } catch (error) {
-        console.error('Error al parsear appointments desde localStorage:', error);
-      }
+      setAppointments(JSON.parse(savedAppointments));
+      return;
     }
 
     const rawAppointments = searchParams.get("appointments");
@@ -150,14 +147,15 @@ const PaymentPageContent = () => {
         verifyPayment(externalRef);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, user?.accessToken]);
 
   const verifyPayment = async (externalRef: string) => {
+    if (!user?.accessToken) {
+      console.log('No hay token de acceso disponible');
+      return;
+    }
     try {
-      if (!user?.accessToken) {
-        console.log('No hay token de acceso disponible');
-        return;
-      }
 
       console.log('Verificando pago con referencia:', externalRef);
       const paymentResponse = await fetch(`${API_URL}/payments/external-reference/${externalRef}`, {
@@ -260,10 +258,10 @@ const PaymentPageContent = () => {
   };
 
   const handlePayment = async () => {
-    try {
-      if (!user?.user) {
-        throw new Error('No hay usuario logueado');
-      }
+    if (!user?.user) {
+      alert('No hay usuario logueado');
+      return;
+    }
 
       console.log('Iniciando proceso de pago...');
 
@@ -297,7 +295,7 @@ const PaymentPageContent = () => {
       };
 
       console.log('Preferencia de pago:', preference);
-
+      try {
       const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
         method: "POST",
         headers: { 
@@ -334,6 +332,7 @@ const PaymentPageContent = () => {
     if (appointments.length > 0 && services.length > 0) {
       calculateTotal();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appointments, services]);
 
   useEffect(() => {
@@ -447,7 +446,6 @@ const PaymentPage = () => {
 };
 
 export default PaymentPage;
-
 
 
 
