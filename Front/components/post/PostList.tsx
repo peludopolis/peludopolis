@@ -154,7 +154,7 @@ const PostList: React.FC = () => {
               <p className="text-primary text-sm italic line-clamp-3">{post.title}</p>
               <p className="text-gray-700 mb-4 line-clamp-3">{post.description}</p>
               <p className="text-xs text-gray-400">
-                {new Date(post.createdAt).toLocaleString()}
+               {/*  {new Date(post.createdAt).toLocaleString()} */}
               </p>
 
               <div className="border-t pt-4">

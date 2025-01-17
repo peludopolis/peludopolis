@@ -7,6 +7,8 @@ import validator from "validator";
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { GoogleLogin } from '@react-oauth/google';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 const RegisterForm = () => {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
@@ -100,7 +102,7 @@ const RegisterForm = () => {
       const payload = JSON.parse(atob(token.split('.')[1]));
 
       // Llama al backend para verificar si el usuario ya existe
-      const checkRes = await fetch('http://localhost:3001/users/findByEmail/' + payload.email, {
+      const checkRes = await fetch(`${API_URL}/users/findByEmail/` + payload.email, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${credentialResponse.credential}`,
