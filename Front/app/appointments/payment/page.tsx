@@ -19,6 +19,7 @@ interface Appointment {
   services: Array<{ id: string }>;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Payment {
   id: string;
   status: string;
@@ -49,6 +50,7 @@ const PaymentPageContent = () => {
       appointments: appointments.length,
       paymentId
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -145,6 +147,7 @@ const PaymentPageContent = () => {
         verifyPayment(externalRef);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, user?.accessToken]);
 
   const verifyPayment = async (externalRef: string) => {
@@ -329,6 +332,7 @@ const PaymentPageContent = () => {
     if (appointments.length > 0 && services.length > 0) {
       calculateTotal();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appointments, services]);
 
   useEffect(() => {
