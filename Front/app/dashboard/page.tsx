@@ -69,10 +69,10 @@ const Dashboard = () => {
             )}
           </div>
 
-          <h1 className="text-center text-lg text-primary my-5">Tus Experiencias</h1>
+          <h1 className="text-center text-lg text-primary my-5">Experiencias</h1>
           <Experiences userId={user.user.id.toString()} />
 
-          <h1 className="text-center text-lg text-primary my-5">Tus Comentarios</h1>
+          <h1 className="text-center text-lg text-primary my-5">Comentarios</h1>
           <UserComments userId={user.user.id.toString()} apiUrl={apiUrl || ''} />
 
         </div>

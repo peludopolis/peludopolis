@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Trash2, User as UserIcon } from 'lucide-react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 // Datos mockeados de posts
@@ -38,6 +38,8 @@ const MOCK_POSTS = [
 ];
 
 const PostMocks: React.FC = () => {
+    const router = useRouter();
+    
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('es-ES', {
@@ -47,13 +49,18 @@ const PostMocks: React.FC = () => {
         });
     };
 
+    const handleCardClick = () => {
+        router.push('/comunity');
+    };
+
     return (
         <div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6 bg-muted">
                 {MOCK_POSTS.map(post => (
                     <div
                         key={post.id}
-                        className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-[1.05] hover:shadow-2xl relative group"
+                        onClick={handleCardClick}
+                        className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-[1.05] hover:shadow-2xl relative group cursor-pointer"
                     >
                         {post.image && (
                             <div className="h-48 w-full overflow-hidden">
@@ -71,9 +78,6 @@ const PostMocks: React.FC = () => {
                             <div className="flex items-center mb-3 space-x-3">
                                 <UserIcon className="text-cyan-500 w-8 h-8" />
                                 <div>
-                                    {/*                 <h3 className="font-bold text-lg text-gray-800">
-                  ID: {post.userId}
-                </h3> */}
                                     <p className="text-sm text-gray-500">
                                         {formatDate(post.createdAt)}
                                     </p>
