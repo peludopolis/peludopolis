@@ -13,6 +13,9 @@ const AppointmentPage: React.FC = () => {
   const router = useRouter();
   const { user } = useContext(AuthContext);
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+
   useEffect(() => {
     //if (!user) {
       //router.push("/login"); // Redirige a la página de inicio de sesión si no está autenticado
@@ -21,7 +24,7 @@ const AppointmentPage: React.FC = () => {
 
     async function fetchAppointments() {
       try {
-        const response = await fetch("http://localhost:3001/appointments/all"); // Cambiar cuando esté listo el backend
+        const response = await fetch(`${API_URL}/appointments/all`); // Cambiar cuando esté listo el backend
         if (response.ok) {
           const data: Appointment[] = await response.json();
           setAppointments(data);

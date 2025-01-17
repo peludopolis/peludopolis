@@ -41,6 +41,7 @@ export interface User {
 
 
 export interface UserSession {
+  picture: string | undefined;
   id: number;
   name: string;
   email: string;
@@ -49,7 +50,8 @@ export interface UserSession {
   profilePicture?: string;
   login: boolean;
   token: string;
-  user: User;  // Aquí eliminamos el "?" para hacer que el usuario no sea opcional
+  user: User; 
+  isAdmin?: boolean; // Aquí eliminamos el "?" para hacer que el usuario no sea opcional
 }
 
 
