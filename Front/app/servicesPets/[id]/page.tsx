@@ -21,7 +21,7 @@ import {
 import services from '../services';
 
 interface Service {
-  id: number;
+  id: number ;
   name: string;
   description: string;
   price: number;

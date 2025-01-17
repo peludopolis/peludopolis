@@ -15,7 +15,7 @@ const serviceIcons: { [key: string]: React.ComponentType<React.SVGProps<SVGSVGEl
 };
 
 interface Service {
-  id: number;
+  id: string | number;
   name: string;
   description: string;
   price: number;

@@ -57,7 +57,7 @@ export interface UserSession {
 
 
 export interface Service {
-  id: number;
+  id: number | string;
   name: string;
   description: string;
   price: number;
@@ -87,4 +87,20 @@ export interface ServiceSectionProps {
 export interface PaymentPopupProps {
   checkoutUrl: string;
   onClose: () => void;
+}
+
+export interface UserData {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  address?: string; // Puedes agregar campos adicionales si es necesario
+  phone?: string;
+}
+
+""
+
+export interface UserLogin {
+  email: string;
+  password: string;
 }
