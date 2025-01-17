@@ -1,5 +1,4 @@
 import React from 'react'
-import PostMocks from '../../components/post/PostMocks';
 import PostList from '../../components/post/PostList';
 import Link from 'next/link';
 
@@ -15,7 +14,6 @@ const page = () => {
                 Conoce la experiencia de nuestros clientes
             </h1>
             <PostList />
-            <PostMocks />
             <h1 className="text-center font-title text-primary text-2xl font-extrabold sm:text-3xl m-4">
                 Comenta y comparte
             </h1>
