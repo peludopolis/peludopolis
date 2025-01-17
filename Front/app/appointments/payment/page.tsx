@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { AuthContext } from "../../../contexts/authContext";
 import PaymentPopup from "../../../components/PaymentPopup/PaymentPopup";
@@ -27,10 +27,9 @@ interface Payment {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const PaymentPage: React.FC = () => {
+const PaymentPageContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-
   const { user, setUser } = useContext(AuthContext);
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -41,9 +40,7 @@ const PaymentPage: React.FC = () => {
   const [isUserLoaded, setIsUserLoaded] = useState<boolean>(false);
   const [isCreatingAppointment, setIsCreatingAppointment] = useState<boolean>(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
-  
 
-  // Log inicial para debugging
   useEffect(() => {
     console.log('Estado inicial:', {
       user: !!user,
@@ -54,7 +51,6 @@ const PaymentPage: React.FC = () => {
     });
   }, []);
 
-  // Cargar usuario desde localStorage
   useEffect(() => {
     console.log('Intentando cargar usuario desde localStorage...');
     const savedUser = localStorage.getItem("user");
@@ -68,7 +64,6 @@ const PaymentPage: React.FC = () => {
     }
   }, [user, setUser]);
 
-  // Fetch servicios
   useEffect(() => {
     if (!isUserLoaded) {
       console.log('Esperando carga de usuario para fetch de servicios...');
@@ -90,37 +85,31 @@ const PaymentPage: React.FC = () => {
     fetchServices();
   }, [isUserLoaded]);
 
-  // Procesar parámetros de URL y cargar appointments desde localStorage
   useEffect(() => {
     console.log('Procesando parámetros de URL y localStorage...');
-    
-    // Primero intentamos cargar desde localStorage
     const savedAppointments = localStorage.getItem('pendingAppointments');
     if (savedAppointments) {
       console.log('Appointments encontrados en localStorage:', savedAppointments);
       try {
         const parsed = JSON.parse(savedAppointments);
         setAppointments(parsed);
-        return; // Si tenemos datos en localStorage, no procesamos los params
+        return;
       } catch (error) {
         console.error('Error al parsear appointments desde localStorage:', error);
       }
     }
 
-    // Si no hay datos en localStorage, procesamos los parámetros de URL
     const rawAppointments = searchParams.get("appointments");
     if (rawAppointments) {
       try {
         const parsedAppointments = JSON.parse(rawAppointments);
         console.log('Appointments parseados de URL:', parsedAppointments);
         setAppointments(parsedAppointments);
-        // Guardamos en localStorage
         localStorage.setItem('pendingAppointments', JSON.stringify(parsedAppointments));
       } catch (error) {
         console.error('Error al parsear appointments de URL:', error);
       }
     } else {
-
       const namePet = searchParams.get("namePet");
       const services = searchParams.get("services");
       const date = searchParams.get("date");
@@ -137,7 +126,6 @@ const PaymentPage: React.FC = () => {
           };
           console.log('Appointment individual creado:', appointment);
           setAppointments([appointment]);
-          // Guardamos en localStorage
           localStorage.setItem('pendingAppointments', JSON.stringify([appointment]));
         } catch (error) {
           console.error('Error al procesar servicios individuales:', error);
@@ -162,61 +150,22 @@ const PaymentPage: React.FC = () => {
         verifyPayment(externalRef);
       }
     }
-
   }, [searchParams, user?.accessToken]);
 
   const verifyPayment = async (externalRef: string) => {
     try {
-
       if (!user?.accessToken) {
         console.log('No hay token de acceso disponible');
         return;
       }
 
-        const localUrl = "http://localhost:3000";
-        const backUrl = "https://faca-2803-9800-988d-724d-9d84-bc2e-3899-d589.ngrok-free.app";
-
-        console.log("userSession:", user);
-        console.log("userSession.user:", user?.user);
-
-        const externalReference = user?.user?.id || "";
-        console.log("external_reference:", externalReference);
-
-        const preference = {
-            items: appointments.map((appointment) => {
-                const service = services.find((s) => s.name === appointment.service);
-                return {
-                    title: service?.name || "Servicio",
-                    description: service?.description || "Descripción del servicio",
-                    quantity: 1,
-                    currency_id: "ARS",
-                    unit_price: service?.price || 0,
-                };
-            }),
-            payer: {
-                email: user?.user?.email || "",
-            },
-            external_reference: externalReference, // Usamos la variable externa aquí
-  back_urls: {
-    success: `${localUrl}/appointments/payment?status=approved`,
-    failure: `${localUrl}/appointments/payment?status=failure`,
-    pending: `${localUrl}/appointments/payment?status=pending`,
-  },
-  notification_url: `${backUrl}/payments/webhook`,
-  auto_return: "approved",
-};
-
-//http://localhost:3001/payments/external-reference/:reference 
-
-      console.log("External Reference:", preference.external_reference);
-      const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
-        method: "POST",
+      console.log('Verificando pago con referencia:', externalRef);
+      const paymentResponse = await fetch(`${API_URL}/payments/external-reference/${externalRef}`, {
         headers: {
           "Authorization": `Bearer ${user.accessToken}`,
           "Content-Type": "application/json"
         }
       });
-
 
       if (!paymentResponse.ok) {
         const errorData = await paymentResponse.json();
@@ -229,19 +178,16 @@ const PaymentPage: React.FC = () => {
       
       if (paymentData.id) {
         setPaymentId(paymentData.id);
-        // Guardamos el paymentId en localStorage para asegurar que no se pierda
         localStorage.setItem('pendingPaymentId', paymentData.id);
       } else {
         throw new Error('No se recibió ID de pago en la respuesta');
       }
-
     } catch (error) {
       console.error('Error al verificar pago:', error);
       alert('Error al verificar el pago. Por favor, contacta con soporte.');
     }
   };
 
-  // Recuperar paymentId de localStorage
   useEffect(() => {
     const savedPaymentId = localStorage.getItem('pendingPaymentId');
     if (savedPaymentId && !paymentId) {
@@ -267,7 +213,6 @@ const PaymentPage: React.FC = () => {
       });
       alert('No se pueden procesar los datos de la cita. Por favor, intenta nuevamente.');
       return;
-
     }
 
     setIsCreatingAppointment(true);
@@ -280,7 +225,6 @@ const PaymentPage: React.FC = () => {
         user: user.user.id,
         services: appointments[0].services,
         payment_id: paymentId,
-
       };
 
       console.log('Enviando datos de la cita:', appointmentData);
@@ -302,10 +246,8 @@ const PaymentPage: React.FC = () => {
       const data = await response.json();
       console.log('Respuesta exitosa al crear cita:', data);
 
-      // Limpiamos localStorage solo después de una creación exitosa
       localStorage.removeItem('pendingAppointments');
       localStorage.removeItem('pendingPaymentId');
-
       
       alert("Cita agendada correctamente");
       router.push("/appointments");
@@ -372,7 +314,6 @@ const PaymentPage: React.FC = () => {
         setCheckoutUrl(data.init_point);
       } else {
         throw new Error("No se recibió el punto de inicio del checkout");
-
       }
     } catch (error) {
       console.error('Error en el proceso de pago:', error);
@@ -395,7 +336,6 @@ const PaymentPage: React.FC = () => {
     }
   }, [appointments, services]);
 
-  // Cleanup effect
   useEffect(() => {
     return () => {
       if (paymentStatus === "approved" && !isCreatingAppointment) {
@@ -405,7 +345,6 @@ const PaymentPage: React.FC = () => {
     };
   }, [paymentStatus, isCreatingAppointment]);
 
-  // Renderizado para estado de carga
   if (!isUserLoaded) {
     return (
       <div className="container mx-auto px-4">
@@ -415,7 +354,6 @@ const PaymentPage: React.FC = () => {
     );
   }
 
-  // Renderizado para pago aprobado
   if (paymentStatus === "approved" && !isCreatingAppointment) {
     return (
       <div className="container mx-auto px-4">
@@ -433,7 +371,6 @@ const PaymentPage: React.FC = () => {
     );
   }
 
-  // Renderizado para pago fallido
   if (paymentStatus === "failure") {
     return (
       <div className="container mx-auto px-4">
@@ -451,7 +388,6 @@ const PaymentPage: React.FC = () => {
     );
   }
 
-  // Renderizado principal
   return (
     <div className="container mx-auto px-4">
       <h1 className="text-black text-3xl font-bold mb-6">Confirmación de Cita y Pago</h1>
@@ -473,7 +409,6 @@ const PaymentPage: React.FC = () => {
               );
             })}
           </ul>
-
         </div>
       ) : (
         <p>No hay citas para mostrar.</p>
@@ -495,6 +430,19 @@ const PaymentPage: React.FC = () => {
         />
       )}
     </div>
+  );
+};
+
+const PaymentPage = () => {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4">
+        <h1 className="text-black text-3xl font-bold mb-6">Cargando...</h1>
+        <p>Por favor espere mientras se carga la página de pagos...</p>
+      </div>
+    }>
+      <PaymentPageContent />
+    </Suspense>
   );
 };
 
