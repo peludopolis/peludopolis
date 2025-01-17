@@ -7,8 +7,8 @@ import {
   ManyToOne,
   JoinTable,
   OneToOne,
-  OneToMany,
-  JoinColumn
+  JoinColumn,
+  ManyToMany
 } from 'typeorm';
 import { StatusAppointment } from '../enum/status-appointment.enum';
 import { PaymentsDetail } from './paymentsDetail.entity';
@@ -40,7 +40,7 @@ export class Appointment {
   @ManyToOne(() => User, (user) => user.appointments)
   user: User;
 
-  @OneToMany(() => ServicesCatalog, (service) => service.appointment, {
+  @ManyToMany(() => ServicesCatalog, (service) => service.appointment, {
     cascade: true
   })
   @JoinTable()

@@ -173,9 +173,44 @@ const PaymentPage: React.FC = () => {
         return;
       }
 
+        const localUrl = "http://localhost:3000";
+        const backUrl = "https://faca-2803-9800-988d-724d-9d84-bc2e-3899-d589.ngrok-free.app";
 
-      console.log('Verificando pago con referencia:', externalRef);
-      const paymentResponse = await fetch(`${API_URL}/payments/external-reference/${externalRef}`, {
+        console.log("userSession:", user);
+        console.log("userSession.user:", user?.user);
+
+        const externalReference = user?.user?.id || "";
+        console.log("external_reference:", externalReference);
+
+        const preference = {
+            items: appointments.map((appointment) => {
+                const service = services.find((s) => s.name === appointment.service);
+                return {
+                    title: service?.name || "Servicio",
+                    description: service?.description || "Descripción del servicio",
+                    quantity: 1,
+                    currency_id: "ARS",
+                    unit_price: service?.price || 0,
+                };
+            }),
+            payer: {
+                email: user?.user?.email || "",
+            },
+            external_reference: externalReference, // Usamos la variable externa aquí
+  back_urls: {
+    success: `${localUrl}/appointments/payment?status=approved`,
+    failure: `${localUrl}/appointments/payment?status=failure`,
+    pending: `${localUrl}/appointments/payment?status=pending`,
+  },
+  notification_url: `${backUrl}/payments/webhook`,
+  auto_return: "approved",
+};
+
+//http://localhost:3001/payments/external-reference/:reference 
+
+      console.log("External Reference:", preference.external_reference);
+      const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
+        method: "POST",
         headers: {
           "Authorization": `Bearer ${user.accessToken}`,
           "Content-Type": "application/json"

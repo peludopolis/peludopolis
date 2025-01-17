@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Appointment } from 'src/modules/appointments/entities/appointment.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum AnimalType {
   GATO = 'gato',
@@ -110,9 +110,9 @@ export class ServicesCatalog {
   duration: number;
 
   @ApiProperty({
-    description: 'Cita asociada al servicio (relación many-to-one).',
+    description: 'Cita asociada al servicio (relación many-to-many).',
     type: () => Appointment
   })
-  @ManyToOne(() => Appointment, (appointment) => appointment.services)
-  appointment: Appointment;
+  @ManyToMany(() => Appointment, (appointment) => appointment.services)
+  appointment: Appointment[];
 }
