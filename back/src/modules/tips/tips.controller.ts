@@ -73,9 +73,10 @@ export class TipsController {
         throw new BadRequestException('No se encontraron tips.');
       }
       return tips;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      throw new InternalServerErrorException('Error al obtener los tips.');
+      throw new InternalServerErrorException(
+        'Error al obtener los tips.' + error.message
+      );
     }
   }
 }

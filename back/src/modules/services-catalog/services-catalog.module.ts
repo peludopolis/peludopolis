@@ -3,9 +3,10 @@ import { ServicesCatalogController } from './controllers/services-catalog.contro
 import { ServicesCatalogService } from './services/services-catalog.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServicesCatalog } from './entities/services-catalog.entity';
+import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ServicesCatalog])],
+  imports: [TypeOrmModule.forFeature([ServicesCatalog]), UsersModule],
   controllers: [ServicesCatalogController],
   providers: [ServicesCatalogService],
   exports: [ServicesCatalogService]

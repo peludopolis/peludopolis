@@ -47,7 +47,9 @@ export class PostsService {
         }
       };
     } catch (error) {
-      throw new InternalServerErrorException('Failed to create post');
+      throw new InternalServerErrorException(
+        'Failed to create post' + error.message
+      );
     }
   }
 
@@ -111,4 +113,4 @@ export class PostsService {
     return { message: 'Post successfully deleted' };
   }
 }
-console.log ("Hola mundo");
+console.log('Hola mundo');

@@ -145,6 +145,7 @@ export class CommentsService {
     id: string,
     updateCommentDto: UpdateCommentDto
   ): Promise<Comment> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const comment = await this.findOne(id);
     await this.commentRepository.update(id, updateCommentDto);
 
@@ -173,4 +174,3 @@ export class CommentsService {
     };
   }
 }
-
