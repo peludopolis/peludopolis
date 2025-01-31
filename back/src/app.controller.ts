@@ -6,7 +6,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  @Redirect('http://localhost:3000', 302)
+  @Redirect('https://peludopolis-pf.onrender.com', 302)
   getHello(): string {
     return this.appService.getHello();
   }
